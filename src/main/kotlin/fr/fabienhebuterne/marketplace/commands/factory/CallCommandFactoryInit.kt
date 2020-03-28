@@ -39,7 +39,8 @@ class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private va
         )
         val commandClassPath = "$commandPath.Command$commandName"
         try {
-            val cmd = classLoader.loadClass(commandClassPath).newInstance() as ICallCommand<T>
+            @Suppress("UNCHECKED_CAST")
+            val cmd: ICallCommand<T> = classLoader.loadClass(commandClassPath).newInstance() as ICallCommand<T>
             cmd.instance = instance
             cmd.permission = permissionPrefix + commandName
             if (commandSender is Player) {
