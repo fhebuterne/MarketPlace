@@ -1,11 +1,9 @@
-package fr.fabienhebuterne.marketplace.storage;
+package fr.fabienhebuterne.marketplace.storage
 
-import java.util.List;
-
-public interface Repository<T> {
-    public List<T> findAll();
-    public T find(int id);
-    public T create(T entity);
-    public T update(int id, T entity);
-    public boolean delete(int id);
+interface Repository<T> {
+    fun findAll(): List<T>
+    fun find(id: Int): T
+    fun create(entity: T): T
+    fun update(id: Int, entity: T): T
+    fun delete(id: Int): Boolean
 }

@@ -1,4 +1,3 @@
-package fr.fabienhebuterne.marketplace.commands.factory;
+package fr.fabienhebuterne.marketplace.commands.factory.exceptions
 
-public abstract class CustomException extends Exception {
-}
+abstract class CustomException : Exception()

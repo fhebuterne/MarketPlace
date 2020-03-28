@@ -1,74 +1,58 @@
-package fr.fabienhebuterne.marketplace.commands.factory;
+package fr.fabienhebuterne.marketplace.commands.factory
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import static org.bukkit.Bukkit.getServer;
+import fr.fabienhebuterne.marketplace.commands.factory.exceptions.CustomException
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.bukkit.plugin.java.JavaPlugin
 
 // TODO : Move factory in external libs
-public class CallCommandFactoryInit<T extends JavaPlugin> {
-
-    private T instance;
-    private String baseCommand;
-
-    /**
-     * Init this factory with plugin instance
-     *
-     * @param instance Main class of your plugin
-     */
-    public CallCommandFactoryInit(T instance, String baseCommand) {
-        this.instance = instance;
-        this.baseCommand = baseCommand;
-    }
-
-    public boolean onCommandCustomCraft(final CommandSender commandSender,
-                                        final Command command,
-                                        final String commandLabel,
-                                        final String[] args,
-                                        final ClassLoader classLoader,
-                                        String commandPath,
-                                        final String permissionPrefix,
-                                        boolean loadWithArgs) {
+/**
+ * Init this factory with plugin instance
+ *
+ * @param instance Main class of your plugin
+ */
+class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private val baseCommand: String) {
+    fun onCommandCustomCraft(commandSender: CommandSender,
+                             command: Command,
+                             commandLabel: String,
+                             args: Array<String>,
+                             classLoader: ClassLoader,
+                             commandPath: String,
+                             permissionPrefix: String,
+                             loadWithArgs: Boolean): Boolean {
         // TODO : Add boolean to choose use baseCommand or not (ex: use /namePlugin command or just /command)
-        if (!baseCommand.equalsIgnoreCase(commandLabel)) {
-            return true;
+        if (!baseCommand.equals(commandLabel, ignoreCase = true)) {
+            return true
         }
-
-        String commandLowercase;
-
-        if (!loadWithArgs) {
-            commandLowercase = command.getName().toLowerCase();
+        val commandLowercase: String = if (!loadWithArgs) {
+            command.name.toLowerCase()
         } else {
-            if (args.length == 0) {
-                return true;
+            if (args.isEmpty()) {
+                return true
             }
-            commandLowercase = args[0].toLowerCase();
+            args[0].toLowerCase()
         }
-
-        String commandName = commandLowercase.replaceFirst(
-                String.valueOf(commandLowercase.charAt(0)),
-                String.valueOf(commandLowercase.charAt(0)).toUpperCase()
-        );
-        String commandClassPath = commandPath + ".Command" + commandName;
-
+        val commandName = commandLowercase.replaceFirst(commandLowercase[0].toString().toRegex(),
+                commandLowercase[0].toString().toUpperCase()
+        )
+        val commandClassPath = "$commandPath.Command$commandName"
         try {
-            ICallCommand<T> cmd = (ICallCommand<T>) classLoader.loadClass(commandClassPath).newInstance();
-            cmd.setInstance(instance);
-            cmd.setPermission(permissionPrefix + commandName);
-
-            if (!(commandSender instanceof Player)) {
-                cmd.run(getServer(), commandSender, commandLabel, command, args);
+            val cmd = classLoader.loadClass(commandClassPath).newInstance() as ICallCommand<T>
+            cmd.instance = instance
+            cmd.permission = permissionPrefix + commandName
+            if (commandSender is Player) {
+                cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
             } else {
-                cmd.run(getServer(), (Player) commandSender, commandLabel, command, args);
+                cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
             }
-        } catch (CustomException | ClassNotFoundException ignored) {
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ignored: CustomException) {
+        } catch (ignored: ClassNotFoundException) {
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        return true;
+        return true
     }
 
 }

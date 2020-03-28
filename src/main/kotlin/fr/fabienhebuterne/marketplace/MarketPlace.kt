@@ -1,39 +1,32 @@
-package fr.fabienhebuterne.marketplace;
+package fr.fabienhebuterne.marketplace
 
-import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
+import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.JavaPlugin
 
-public class MarketPlace extends JavaPlugin {
+class MarketPlace : JavaPlugin() {
+    private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
 
-    private CallCommandFactoryInit<MarketPlace> callCommandFactoryInit;
-
-    @Override
-    public void onEnable() {
-        this.callCommandFactoryInit = new CallCommandFactoryInit<>(this, "marketplace");
+    override fun onEnable() {
+        callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
     }
 
-    @Override
-    public void onDisable() {
+    override fun onDisable() {}
 
-    }
-
-    @Override
-    public boolean onCommand(final CommandSender sender,
-                             final Command command,
-                             final String commandLabel,
-                             final String[] args) {
-        return this.callCommandFactoryInit.onCommandCustomCraft(
+    override fun onCommand(sender: CommandSender,
+                           command: Command,
+                           commandLabel: String,
+                           args: Array<String>): Boolean {
+        return callCommandFactoryInit.onCommandCustomCraft(
                 sender,
                 command,
                 commandLabel,
                 args,
-                MarketPlace.class.getClassLoader(),
+                MarketPlace::class.java.classLoader,
                 "fr.fabienhebuterne.marketplace.commands",
                 "marketplace.",
                 true
-        );
+        )
     }
-
 }

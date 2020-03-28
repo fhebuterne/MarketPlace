@@ -1,0 +1,9 @@
+name: ${rootProject.name}
+version: ${version}
+main: fr.fabienhebuterne.marketplace.MarketPlace
+author: fabien91
+
+commands:
+  marketplace:
+    usage: /marketplace
+    description: Base command
