@@ -9,8 +9,21 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    implementation 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.4.2'
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.3'
+    testImplementation 'org.mockito:mockito-core:3.3.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.3.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+}
+
+test {
+    useJUnitPlatform()
 }
