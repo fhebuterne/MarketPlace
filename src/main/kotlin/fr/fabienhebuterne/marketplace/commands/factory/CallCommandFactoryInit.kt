@@ -14,14 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin
  * @param instance Main class of your plugin
  */
 class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private val baseCommand: String) {
-    fun onCommandCustomCraft(commandSender: CommandSender,
-                             command: Command,
-                             commandLabel: String,
-                             args: Array<String>,
-                             classLoader: ClassLoader,
-                             commandPath: String,
-                             permissionPrefix: String,
-                             loadWithArgs: Boolean): Boolean {
+    fun onCommand(commandSender: CommandSender,
+                  command: Command,
+                  commandLabel: String,
+                  args: Array<String>,
+                  classLoader: ClassLoader,
+                  commandPath: String,
+                  permissionPrefix: String,
+                  loadWithArgs: Boolean): Boolean {
         // TODO : Add boolean to choose use baseCommand or not (ex: use /namePlugin command or just /command)
         if (!baseCommand.equals(commandLabel, ignoreCase = true)) {
             return true
