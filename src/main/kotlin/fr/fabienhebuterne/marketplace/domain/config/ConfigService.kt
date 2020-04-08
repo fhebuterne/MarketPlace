@@ -1,4 +1,4 @@
-package fr.fabienhebuterne.marketplace.domain
+package fr.fabienhebuterne.marketplace.domain.config
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import kotlinx.serialization.ImplicitReflectionSerializer

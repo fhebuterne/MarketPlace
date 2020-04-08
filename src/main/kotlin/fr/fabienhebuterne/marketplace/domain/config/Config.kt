@@ -1,4 +1,4 @@
-package fr.fabienhebuterne.marketplace.domain
+package fr.fabienhebuterne.marketplace.domain.config
 
 import kotlinx.serialization.Serializable
 
