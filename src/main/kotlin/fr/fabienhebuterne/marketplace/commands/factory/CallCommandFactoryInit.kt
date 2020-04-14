@@ -6,6 +6,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import org.kodein.di.Kodein
 
 // TODO : Move factory in external libs
 /**
@@ -21,7 +22,9 @@ class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private va
                   classLoader: ClassLoader,
                   commandPath: String,
                   permissionPrefix: String,
-                  loadWithArgs: Boolean): Boolean {
+                  loadWithArgs: Boolean,
+                  kodein: Kodein
+    ): Boolean {
         // TODO : Add boolean to choose use baseCommand or not (ex: use /namePlugin command or just /command)
         if (!baseCommand.equals(commandLabel, ignoreCase = true)) {
             return true
@@ -40,7 +43,7 @@ class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private va
         val commandClassPath = "$commandPath.Command$commandName"
         try {
             @Suppress("UNCHECKED_CAST")
-            val cmd: ICallCommand<T> = classLoader.loadClass(commandClassPath).newInstance() as ICallCommand<T>
+            val cmd: ICallCommand<T> = classLoader.loadClass(commandClassPath).getConstructor(Kodein::class.java).newInstance(kodein) as ICallCommand<T>
             cmd.instance = instance
             cmd.permission = permissionPrefix + commandName
             if (commandSender is Player) {

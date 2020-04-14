@@ -43,9 +43,12 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         return insertTo
     }
 
-    override fun findAll(): List<Listings> {
+    override fun findAll(from: Int?, to: Int?): List<Listings> {
         return transaction(marketPlaceDb) {
-            ListingsTable.selectAll().map { fromRow(it) }
+            when (from != null && to != null) {
+                true -> ListingsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
+                false -> ListingsTable.selectAll().map { fromRow(it) }
+            }
         }
     }
 
@@ -70,5 +73,11 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
 
     override fun delete(id: String): Boolean {
         TODO("Not yet implemented")
+    }
+
+    override fun countAll(): Int {
+        return transaction(marketPlaceDb) {
+            ListingsTable.selectAll().count().toInt()
+        }
     }
 }

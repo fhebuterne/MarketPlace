@@ -5,8 +5,12 @@ import fr.fabienhebuterne.marketplace.domain.ItemsTable
 import fr.fabienhebuterne.marketplace.domain.ListingsTable
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
+import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.storage.ItemsRepository
 import fr.fabienhebuterne.marketplace.storage.ItemsRepositoryImpl
+import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.storage.ListingsRepositoryImpl
+import fr.fabienhebuterne.marketplace.utils.Dependency
 import kotlinx.serialization.ImplicitReflectionSerializer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,12 +24,16 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.singleton
 import java.sql.ResultSet
 
+
 class MarketPlace : JavaPlugin() {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
     lateinit var config: ConfigService<Config>
+    lateinit var kodein: Kodein
 
     @ImplicitReflectionSerializer
     override fun onEnable() {
+        Dependency(this, this.classLoader).loadDependencies()
+
         config = ConfigService(this, "config", Config::class)
         config.createOrLoadConfig(false)
         val configParsed = config.getSerialization()
@@ -45,10 +53,30 @@ class MarketPlace : JavaPlugin() {
             //"ALTER TABLE marketplace_listings ENGINE = InnoDB;".execAndMap {}
         }
 
-        Kodein {
+        kodein = Kodein {
             bind<ItemsRepository>() with singleton { ItemsRepositoryImpl(database) }
+            bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
         }
 
+        // TODO : Delete after all tests
+        /*val itemsRepositoryImpl = ItemsRepositoryImpl(database)
+        val create = itemsRepositoryImpl.create(Items(
+                id = UUID.randomUUID(),
+                item = ItemStack(Material.APPLE).serialize()
+        ))
+        val listingsRepositoryImpl = ListingsRepositoryImpl(database)
+        listingsRepositoryImpl.create(Listings(
+                "test",
+                "fab",
+                create.id,
+                1,
+                1,
+                100,
+                "world",
+                System.currentTimeMillis()
+        ))*/
+
+        server.pluginManager.registerEvents(InventoryClickEventListener(this, ListingsRepositoryImpl(database)), this)
     }
 
     override fun onDisable() {}
@@ -65,7 +93,8 @@ class MarketPlace : JavaPlugin() {
                 MarketPlace::class.java.classLoader,
                 "fr.fabienhebuterne.marketplace.commands",
                 "marketplace.",
-                true
+                true,
+                kodein
         )
     }
 
@@ -79,5 +108,4 @@ class MarketPlace : JavaPlugin() {
         }
         return result
     }
-
 }
