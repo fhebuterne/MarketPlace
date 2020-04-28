@@ -62,7 +62,7 @@ class MarketPlace : JavaPlugin() {
         /*val itemsRepositoryImpl = ItemsRepositoryImpl(database)
         val create = itemsRepositoryImpl.create(Items(
                 id = UUID.randomUUID(),
-                item = ItemStack(Material.APPLE).serialize()
+                item = ItemStack(Material.APPLE)
         ))
         val listingsRepositoryImpl = ListingsRepositoryImpl(database)
         listingsRepositoryImpl.create(Listings(

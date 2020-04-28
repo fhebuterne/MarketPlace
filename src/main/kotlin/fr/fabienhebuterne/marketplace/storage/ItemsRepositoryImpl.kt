@@ -2,10 +2,11 @@ package fr.fabienhebuterne.marketplace.storage
 
 import fr.fabienhebuterne.marketplace.domain.Items
 import fr.fabienhebuterne.marketplace.domain.ItemsTable
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
+import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
+import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
@@ -13,24 +14,22 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class ItemsRepositoryImpl(private val marketPlaceDb: Database) : ItemsRepository {
-    private val json = Json(JsonConfiguration.Stable)
-    private val mapSerializer = MapSerializer(String.serializer(), String.serializer())
+    private val json = Json(JsonConfiguration.Stable, context = ITEMSTACK_MODULE)
 
     override fun fromRow(row: ResultRow): Items {
-        val parse: Map<String, String> = json.parse(mapSerializer, row[ItemsTable.item])
+        val itemStack: ItemStack = json.parse(ItemStackSerializer, row[ItemsTable.item])
 
         return Items(
                 id = row[ItemsTable.id].value,
-                item = LinkedHashMap(parse).toMutableMap()
+                item = itemStack
         )
     }
 
     override fun fromEntity(insertTo: InsertStatement<Number>, entity: Items): InsertStatement<Number> {
-        val mapValues: Map<String, String> = entity.item.mapValues { entry -> entry.value.toString() }
-        val itemMutableMap = json.stringify(mapSerializer, mapValues)
+        val itemStack = json.stringify(ItemStackSerializer, entity.item)
 
         insertTo[ItemsTable.id] = EntityID(entity.id, ItemsTable)
-        insertTo[ItemsTable.item] = itemMutableMap
+        insertTo[ItemsTable.item] = itemStack
         return insertTo
     }
 
