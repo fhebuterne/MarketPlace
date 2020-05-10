@@ -72,7 +72,7 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemUuid, listings.price)
 
         if (findExistingListings != null) {
-            val updatedListings = findExistingListings.copy(quantity = findExistingListings.quantity + 1)
+            val updatedListings = findExistingListings.copy(quantity = findExistingListings.quantity + currentItemStack.amount)
             listingsRepository.update(updatedListings)
             player.sendMessage("updated item OK !")
         } else {

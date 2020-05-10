@@ -62,6 +62,14 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         }
     }
 
+    override fun findByUUID(sellerUuid: UUID): List<Listings> {
+        return transaction(marketPlaceDb) {
+            ListingsTable.select {
+                ListingsTable.sellerUuid eq sellerUuid.toString()
+            }.map { fromRow(it) }
+        }
+    }
+
     override fun create(entity: Listings): Listings {
         transaction(marketPlaceDb) {
             ListingsTable.insert { fromEntity(it, entity) }

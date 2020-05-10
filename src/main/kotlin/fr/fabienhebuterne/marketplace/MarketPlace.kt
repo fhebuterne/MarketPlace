@@ -6,6 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.ListingsTable
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
+import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.storage.ItemsRepository
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.ItemsRepositoryImpl
@@ -67,7 +68,9 @@ class MarketPlace : JavaPlugin() {
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
         }
 
+        // TODO : Create factory to init listeners
         server.pluginManager.registerEvents(InventoryClickEventListener(this, ListingsRepositoryImpl(database)), this)
+        server.pluginManager.registerEvents(PlayerJoinEventListener(this, ListingsRepositoryImpl(database)), this)
     }
 
     override fun onDisable() {}
