@@ -7,13 +7,15 @@ import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.storage.ItemsRepository
-import fr.fabienhebuterne.marketplace.storage.ItemsRepositoryImpl
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import fr.fabienhebuterne.marketplace.storage.ListingsRepositoryImpl
+import fr.fabienhebuterne.marketplace.storage.mysql.ItemsRepositoryImpl
+import fr.fabienhebuterne.marketplace.storage.mysql.ListingsRepositoryImpl
 import fr.fabienhebuterne.marketplace.utils.Dependency
 import kotlinx.serialization.ImplicitReflectionSerializer
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.RegisteredServiceProvider
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -27,12 +29,19 @@ import java.sql.ResultSet
 
 class MarketPlace : JavaPlugin() {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
+    private var econ: Economy? = null
     lateinit var config: ConfigService<Config>
     lateinit var kodein: Kodein
 
     @ImplicitReflectionSerializer
     override fun onEnable() {
         Dependency(this, this.classLoader).loadDependencies()
+
+        if (!setupEconomy()) {
+            this.logger.severe("Disabled due to no Economy plugin found!")
+            server.pluginManager.disablePlugin(this)
+            return
+        }
 
         config = ConfigService(this, "config", Config::class)
         config.createOrLoadConfig(false)
@@ -57,24 +66,6 @@ class MarketPlace : JavaPlugin() {
             bind<ItemsRepository>() with singleton { ItemsRepositoryImpl(database) }
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
         }
-
-        // TODO : Delete after all tests
-        /*val itemsRepositoryImpl = ItemsRepositoryImpl(database)
-        val create = itemsRepositoryImpl.create(Items(
-                id = UUID.randomUUID(),
-                item = ItemStack(Material.APPLE)
-        ))
-        val listingsRepositoryImpl = ListingsRepositoryImpl(database)
-        listingsRepositoryImpl.create(Listings(
-                "test",
-                "fab",
-                create.id,
-                1,
-                1,
-                100,
-                "world",
-                System.currentTimeMillis()
-        ))*/
 
         server.pluginManager.registerEvents(InventoryClickEventListener(this, ListingsRepositoryImpl(database)), this)
     }
@@ -107,5 +98,19 @@ class MarketPlace : JavaPlugin() {
             }
         }
         return result
+    }
+
+    private fun setupEconomy(): Boolean {
+        if (server.pluginManager.getPlugin("Vault") == null) {
+            return false
+        }
+        val rsp: RegisteredServiceProvider<Economy> = server.servicesManager.getRegistration(Economy::class.java)
+                ?: return false
+        econ = rsp.provider;
+        return econ != null;
+    }
+
+    fun getEconomy(): Economy {
+        return econ ?: throw Exception("Cannot found economy plugin...")
     }
 }

@@ -10,7 +10,7 @@ import java.text.MessageFormat
 
 class InventoryInitService {
 
-    public fun setBottomInventoryLine(inventory: Inventory) {
+    fun setBottomInventoryLine(inventory: Inventory) {
         val grayStainedGlassPane = ItemStack(Material.STAINED_GLASS_PANE, 1, 7)
 
         val searchItem = getSkull(CommandListings.SEARCH_TEXTURE)
@@ -51,15 +51,20 @@ class InventoryInitService {
     }
 
     // TODO : Add step lore to confirm
-    public fun setBottomLore(itemStack: ItemStack, listings: Listings): ItemStack {
+    fun setBottomLore(itemStack: ItemStack, listings: Listings): ItemStack {
         val itemMeta = itemStack.itemMeta
         val loreItem = mutableListOf<String>()
         loreItem.add("")
         loreItem.add(MessageFormat.format("§6Seller: §e{0}", listings.sellerPseudo))
-        loreItem.add(MessageFormat.format("§6Stack per click: §e{0}", listings.quantity))
-        loreItem.add(MessageFormat.format("§6Total available: §e{0} items", listings.amount * listings.quantity))
+        loreItem.add(MessageFormat.format("§6Price per item: §e{0}", listings.price))
+        loreItem.add(MessageFormat.format("§6Total available: §e{0} items", listings.quantity))
         loreItem.add("")
-        loreItem.add(MessageFormat.format("§6► Left click to buy {0} items", listings.quantity))
+        loreItem.add(MessageFormat.format("§6► Left click to buy 1 item"))
+
+        if (listings.quantity >= 64) {
+            loreItem.add(MessageFormat.format("§6► Right click to buy {0} items", 64))
+        }
+
         loreItem.add(MessageFormat.format("§6► Shift + Click to cancel"))
         loreItem.add("")
         itemMeta.lore = loreItem

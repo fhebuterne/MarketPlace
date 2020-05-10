@@ -10,18 +10,15 @@ version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven ("https://hub.spigotmc.org/nexus/content/repositories/snapshots/" )
-    maven ( "https://oss.sonatype.org/content/repositories/snapshots" )
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://jitpack.io")
     jcenter()
 }
 
 dependencies {
-    compileOnly(files("tmp/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar"))
+    // Tech Stack dependency
     compileOnly("org.kodein.di", "kodein-di-generic-jvm", "6.5.3")
-    testCompileOnly("org.mockito:mockito-core:3.3.0")
-    testCompileOnly("org.mockito:mockito-junit-jupiter:3.3.0")
-    testCompileOnly("org.junit.jupiter:junit-jupiter:5.6.0")
-    testCompileOnly("org.junit.jupiter:junit-jupiter-api:5.6.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.71")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.71")
@@ -31,6 +28,16 @@ dependencies {
     compileOnly("mysql", "mysql-connector-java", "8.0.19")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
     implementation("me.lucko", "jar-relocator", "1.3")
+
+    // Tech Stack TEST dependency
+    testCompileOnly("org.mockito:mockito-core:3.3.0")
+    testCompileOnly("org.mockito:mockito-junit-jupiter:3.3.0")
+    testCompileOnly("org.junit.jupiter:junit-jupiter:5.6.0")
+    testCompileOnly("org.junit.jupiter:junit-jupiter-api:5.6.0")
+
+    // Plugin dependency
+    compileOnly(files("tmp/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar"))
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
 
 tasks.test {
@@ -58,6 +65,8 @@ tasks.processResources {
 
 tasks.shadowJar {
     minimize()
+
+    destinationDirectory.set(file(System.getProperty("outputDir") ?: "$rootDir/build/"))
 
     dependencies {
         exclude(dependency("org.jetbrains.exposed:*"))

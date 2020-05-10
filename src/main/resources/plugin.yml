@@ -2,6 +2,7 @@ name: ${rootProject.name}
 version: ${version}
 main: fr.fabienhebuterne.marketplace.MarketPlace
 author: fabien91
+depend: [Vault]
 
 commands:
   marketplace:
