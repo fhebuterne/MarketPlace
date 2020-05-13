@@ -6,10 +6,8 @@ import fr.fabienhebuterne.marketplace.domain.Items
 import fr.fabienhebuterne.marketplace.domain.Listings
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
-import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.storage.ItemsRepository
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.command.Command
@@ -38,13 +36,13 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         }
 
         val money = args[1].toLong()
-        val hasMoney = instance.getEconomy().has(Bukkit.getOfflinePlayer(player.uniqueId), money.toDouble())
+        /*val hasMoney = instance.getEconomy().has(Bukkit.getOfflinePlayer(player.uniqueId), money.toDouble())
 
         if (!hasMoney) {
             throw NotEnoughMoneyException(player)
         }
 
-        instance.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.uniqueId), money.toDouble())
+        instance.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.uniqueId), money.toDouble())*/
 
         val currentItemStack = player.itemInHand
 

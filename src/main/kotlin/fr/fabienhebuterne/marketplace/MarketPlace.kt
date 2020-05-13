@@ -7,6 +7,8 @@ import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
+import fr.fabienhebuterne.marketplace.services.InventoryInitService
+import fr.fabienhebuterne.marketplace.services.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ItemsRepository
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.ItemsRepositoryImpl
@@ -24,6 +26,7 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import java.sql.ResultSet
 
@@ -66,10 +69,12 @@ class MarketPlace : JavaPlugin() {
         kodein = Kodein {
             bind<ItemsRepository>() with singleton { ItemsRepositoryImpl(database) }
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
+            bind<ListingsService>() with singleton { ListingsService(instance()) }
+            bind<InventoryInitService>() with singleton { InventoryInitService(instance()) }
         }
 
         // TODO : Create factory to init listeners
-        server.pluginManager.registerEvents(InventoryClickEventListener(this, ListingsRepositoryImpl(database)), this)
+        server.pluginManager.registerEvents(InventoryClickEventListener(this, kodein), this)
         server.pluginManager.registerEvents(PlayerJoinEventListener(this, ListingsRepositoryImpl(database)), this)
     }
 
