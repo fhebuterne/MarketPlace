@@ -2,11 +2,11 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
-import fr.fabienhebuterne.marketplace.domain.Items
 import fr.fabienhebuterne.marketplace.domain.Listings
+import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
-import fr.fabienhebuterne.marketplace.storage.ItemsRepository
+import fr.fabienhebuterne.marketplace.services.InventoryInitService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import org.bukkit.Material
 import org.bukkit.Server
@@ -20,7 +20,7 @@ import java.util.*
 class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
 
     private val listingsRepository: ListingsRepository by kodein.instance<ListingsRepository>()
-    private val itemsRepository: ItemsRepository by kodein.instance<ItemsRepository>()
+    private val inventoryInitService: InventoryInitService by kodein.instance<InventoryInitService>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
         if (player.itemInHand.type == Material.AIR) {
@@ -49,37 +49,38 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         val currentItemStackOne = currentItemStack.clone()
         currentItemStackOne.amount = 1
 
-        var findItem = itemsRepository.findByItemStack(currentItemStackOne)
-        if (findItem == null) {
-            findItem = itemsRepository.create(Items(
-                    id = UUID.randomUUID(),
-                    item = currentItemStackOne
-            ))
-        }
-
         val listings = Listings(
+                UUID.randomUUID(),
                 player.uniqueId.toString(),
                 player.name,
-                findItem.id,
+                currentItemStackOne,
                 currentItemStack.amount,
                 money,
                 player.world.name,
-                System.currentTimeMillis()
+                AuditData(
+                        System.currentTimeMillis(),
+                        System.currentTimeMillis(),
+                        System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                )
         )
 
-        val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemUuid, listings.price)
+        val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (findExistingListings != null) {
-            val updatedListings = findExistingListings.copy(quantity = findExistingListings.quantity + currentItemStack.amount)
+            val updatedListings = findExistingListings.copy(
+                    quantity = findExistingListings.quantity + currentItemStack.amount,
+                    auditData = findExistingListings.auditData.copy(
+                            updatedAt = System.currentTimeMillis(),
+                            expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                    )
+            )
             listingsRepository.update(updatedListings)
             player.sendMessage("updated item OK !")
+            player.itemInHand = ItemStack(Material.AIR)
         } else {
-            listingsRepository.create(listings)
-            player.sendMessage("created item OK !")
+            val confirmationAddNewItemInventory = inventoryInitService.confirmationAddNewItem(player, listings)
+            player.openInventory(confirmationAddNewItemInventory)
         }
-
-        player.itemInHand = ItemStack(Material.AIR)
-
     }
 
     private fun longIsValid(number: String): Boolean {

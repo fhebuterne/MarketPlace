@@ -1,18 +1,18 @@
 package fr.fabienhebuterne.marketplace
 
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
-import fr.fabienhebuterne.marketplace.domain.ItemsTable
-import fr.fabienhebuterne.marketplace.domain.ListingsTable
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.services.InventoryInitService
 import fr.fabienhebuterne.marketplace.services.ListingsService
-import fr.fabienhebuterne.marketplace.storage.ItemsRepository
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import fr.fabienhebuterne.marketplace.storage.mysql.ItemsRepositoryImpl
+import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsRepositoryImpl
+import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsRepositoryImpl
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable
 import fr.fabienhebuterne.marketplace.utils.Dependency
 import kotlinx.serialization.ImplicitReflectionSerializer
 import net.milkbowl.vault.economy.Economy
@@ -22,13 +22,11 @@ import org.bukkit.plugin.RegisteredServiceProvider
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
-import java.sql.ResultSet
 
 
 class MarketPlace : JavaPlugin() {
@@ -61,16 +59,14 @@ class MarketPlace : JavaPlugin() {
         )
 
         transaction {
-            SchemaUtils.create(ItemsTable, ListingsTable)
-            //"ALTER TABLE marketplace_items ENGINE = InnoDB;".execAndMap {}
-            //"ALTER TABLE marketplace_listings ENGINE = InnoDB;".execAndMap {}
+            SchemaUtils.create(ListingsTable, MailsTable)
         }
 
         kodein = Kodein {
-            bind<ItemsRepository>() with singleton { ItemsRepositoryImpl(database) }
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
+            bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
             bind<ListingsService>() with singleton { ListingsService(instance()) }
-            bind<InventoryInitService>() with singleton { InventoryInitService(instance()) }
+            bind<InventoryInitService>() with singleton { InventoryInitService() }
         }
 
         // TODO : Create factory to init listeners
@@ -95,17 +91,6 @@ class MarketPlace : JavaPlugin() {
                 true,
                 kodein
         )
-    }
-
-    // TODO : Move in utils class
-    fun <T : Any> String.execAndMap(transform: (ResultSet) -> T): List<T> {
-        val result = arrayListOf<T>()
-        TransactionManager.current().exec(this) { rs ->
-            while (rs.next()) {
-                result += transform(rs)
-            }
-        }
-        return result
     }
 
     private fun setupEconomy(): Boolean {

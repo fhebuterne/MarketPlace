@@ -1,13 +1,13 @@
 package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.domain.Listings
-import fr.fabienhebuterne.marketplace.domain.Pagination
+import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import java.util.*
 
 class ListingsService(private val listingsRepository: ListingsRepository) {
 
-    private val playersView: MutableMap<UUID, Pagination<Listings>> = mutableMapOf()
+    val playersView: MutableMap<UUID, Pagination<Listings>> = mutableMapOf()
 
     fun nextPage(uuid: UUID): Pagination<Listings> {
         val currentPage = playersView[uuid]?.currentPage?.plus(1) ?: 1

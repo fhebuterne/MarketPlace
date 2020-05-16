@@ -1,4 +1,4 @@
-package fr.fabienhebuterne.marketplace.domain
+package fr.fabienhebuterne.marketplace.domain.base
 
 data class Pagination<T>(
         val results: List<T>,
