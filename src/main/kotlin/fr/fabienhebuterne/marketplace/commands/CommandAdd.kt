@@ -2,8 +2,8 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
-import fr.fabienhebuterne.marketplace.domain.Listings
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
 import fr.fabienhebuterne.marketplace.services.InventoryInitService

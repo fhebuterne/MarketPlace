@@ -2,8 +2,10 @@ package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.commands.CommandListings
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
-import fr.fabienhebuterne.marketplace.domain.Listings
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
+import fr.fabienhebuterne.marketplace.domain.paginated.Mails
+import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -15,7 +17,7 @@ import java.util.*
 
 class InventoryInitService {
 
-    val playersConfirmation: MutableMap<UUID, Listings> = mutableMapOf()
+    val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 
     fun listingsInventory(instance: JavaPlugin, pagination: Pagination<Listings>, player: Player): Inventory {
         val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Achat")
@@ -25,12 +27,25 @@ class InventoryInitService {
             inventory.setItem(index, itemStack)
         }
 
-        setBottomInventoryLine(inventory)
+        setBottomInventoryLine(inventory, pagination)
 
         return inventory
     }
 
-    fun setBottomInventoryLine(inventory: Inventory) {
+    fun mailsInventory(instance: JavaPlugin, pagination: Pagination<Mails>, player: Player): Inventory {
+        val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Mails")
+
+        pagination.results.forEachIndexed { index, mails ->
+            //val itemStack = setBottomLore(mails.itemStack, mails)
+            inventory.setItem(index, mails.itemStack)
+        }
+
+        setBottomInventoryLine(inventory, pagination)
+
+        return inventory
+    }
+
+    fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
         val grayStainedGlassPane = ItemStack(Material.STAINED_GLASS_PANE, 1, 7)
 
         val filterItem = ItemStack(Material.REDSTONE_COMPARATOR)
@@ -45,6 +60,17 @@ class InventoryInitService {
         inventory.setItem(51, grayStainedGlassPane)
 
         InventoryLoreEnum.values().forEach {
+            if (it.name == "PREVIOUS_PAGE" || it.name == "NEXT_PAGE") {
+                it.lore = mutableListOf(
+                        "§cPage : ${pagination.currentPage}/${pagination.maxPage()}"
+                )
+            }
+
+            val itemMeta = it.itemStack.itemMeta
+            itemMeta.lore = it.lore
+            it.itemStack.itemMeta = itemMeta
+
+
             inventory.setItem(it.rawSlot, it.itemStack)
         }
     }

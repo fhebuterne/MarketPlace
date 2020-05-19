@@ -1,17 +1,16 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
-import fr.fabienhebuterne.marketplace.domain.Mails
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.createdAt
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.expiredAt
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.id
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.itemStack
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.quantity
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.updatedAt
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.createdAt
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.expiredAt
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.itemStack
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.playerUuid
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.quantity
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.updatedAt
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import org.bukkit.inventory.ItemStack
@@ -53,7 +52,10 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Mails): UpdateBuilder<Number> {
         val itemStackString = json.stringify(ItemStackSerializer, entity.itemStack)
 
-        insertTo[id] = EntityID(entity.id, MailsTable)
+        if (entity.id != null) {
+            insertTo[MailsTable.id] = EntityID(entity.id, MailsTable)
+        }
+
         insertTo[playerUuid] = entity.playerUuid
         insertTo[itemStack] = itemStackString
         insertTo[quantity] = entity.quantity
@@ -64,11 +66,27 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     }
 
     override fun findAll(from: Int?, to: Int?): List<Mails> {
-        TODO("Not yet implemented")
+        return transaction(marketPlaceDb) {
+            when (from != null && to != null) {
+                true -> MailsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
+                false -> MailsTable.selectAll().map { fromRow(it) }
+            }
+        }
     }
 
     override fun find(id: String): Mails? {
         TODO("Not yet implemented")
+    }
+
+    override fun find(playerUuid: String, itemStack: ItemStack): Mails? {
+        val itemStackString = json.stringify(ItemStackSerializer, itemStack)
+
+        return transaction(marketPlaceDb) {
+            MailsTable.select {
+                (MailsTable.playerUuid eq playerUuid) and
+                        (MailsTable.itemStack eq itemStackString)
+            }.map { fromRow(it) }.firstOrNull()
+        }
     }
 
     override fun findByUUID(playerUuid: UUID): List<Mails> {
@@ -100,7 +118,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         return entity
     }
 
-    override fun delete(id: String): Boolean {
+    override fun delete(id: UUID) {
         TODO("Not yet implemented")
     }
 

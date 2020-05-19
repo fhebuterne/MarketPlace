@@ -1,7 +1,7 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
-import fr.fabienhebuterne.marketplace.domain.Listings
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
@@ -44,7 +44,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         val itemStack: ItemStack = json.parse(ItemStackSerializer, row[itemStack])
 
         return Listings(
-                id = row[ListingsTable.id].value,
+                id = row[id].value,
                 sellerUuid = row[sellerUuid],
                 sellerPseudo = row[sellerPseudo],
                 itemStack = itemStack,
@@ -130,8 +130,10 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         return entity
     }
 
-    override fun delete(id: String): Boolean {
-        TODO("Not yet implemented")
+    override fun delete(id: UUID) {
+        transaction(marketPlaceDb) {
+            ListingsTable.deleteWhere { ListingsTable.id eq id }
+        }
     }
 
     override fun countAll(): Int {

@@ -1,13 +1,16 @@
-package fr.fabienhebuterne.marketplace.domain
+package fr.fabienhebuterne.marketplace.domain.paginated
 
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-data class Mails(
+data class Listings(
         val id: UUID,
-        val playerUuid: String,
+        val sellerUuid: String,
+        val sellerPseudo: String,
         val itemStack: ItemStack,
         val quantity: Int = 1,
+        val price: Long,
+        val world: String,
         val auditData: AuditData
-)
+) : Paginated

@@ -6,7 +6,9 @@ import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.services.InventoryInitService
-import fr.fabienhebuterne.marketplace.services.ListingsService
+import fr.fabienhebuterne.marketplace.services.MarketService
+import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
+import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsRepositoryImpl
@@ -34,9 +36,11 @@ class MarketPlace : JavaPlugin() {
     private var econ: Economy? = null
     lateinit var config: ConfigService<Config>
     lateinit var kodein: Kodein
+    lateinit var instance: MarketPlace
 
     @ImplicitReflectionSerializer
     override fun onEnable() {
+        instance = this
         Dependency(this, this.classLoader).loadDependencies()
 
         if (!setupEconomy()) {
@@ -67,6 +71,8 @@ class MarketPlace : JavaPlugin() {
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
             bind<ListingsService>() with singleton { ListingsService(instance()) }
             bind<InventoryInitService>() with singleton { InventoryInitService() }
+            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance()) }
+            bind<MailsService>() with singleton { MailsService(instance()) }
         }
 
         // TODO : Create factory to init listeners

@@ -1,7 +1,7 @@
 package fr.fabienhebuterne.marketplace.listeners
 
 import fr.fabienhebuterne.marketplace.MarketPlace
-import fr.fabienhebuterne.marketplace.domain.Listings
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
