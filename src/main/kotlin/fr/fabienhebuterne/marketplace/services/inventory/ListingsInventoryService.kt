@@ -41,11 +41,15 @@ class ListingsInventoryService(listingsService: ListingsService) : InventoryType
         loreItem.add("")
         loreItem.add("§6► Left click to buy 1 item")
 
+        if (paginated.quantity >= 2) {
+            loreItem.add("§6► Middle click to buy custom quantity items")
+        }
+
         if (paginated.quantity >= 64) {
             loreItem.add("§6► Right click to buy 64 items")
         }
 
-        loreItem.add("§6► Shift + Click to cancel")
+        //loreItem.add("§6► Shift + Click to cancel")
         loreItem.add("")
         itemMeta.lore = loreItem
         itemStack.itemMeta = itemMeta

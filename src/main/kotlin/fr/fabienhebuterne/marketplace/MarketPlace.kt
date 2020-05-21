@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
+import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.services.MarketService
@@ -79,6 +80,7 @@ class MarketPlace : JavaPlugin() {
 
         // TODO : Create factory to init listeners
         server.pluginManager.registerEvents(InventoryClickEventListener(this, kodein), this)
+        server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this, kodein), this)
         server.pluginManager.registerEvents(PlayerJoinEventListener(this, ListingsRepositoryImpl(database)), this)
     }
 

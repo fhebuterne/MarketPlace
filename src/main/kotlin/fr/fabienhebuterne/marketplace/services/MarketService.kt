@@ -10,6 +10,7 @@ import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.util.*
 
 class MarketService(private val marketPlace: MarketPlace,
                     private val listingsService: ListingsService,
@@ -17,15 +18,18 @@ class MarketService(private val marketPlace: MarketPlace,
                     private val mailsRepository: MailsRepository,
                     private val listingsInventoryService: ListingsInventoryService) {
 
-    fun buyItem(player: Player, rawSlot: Int, quantity: Int) {
+    val playersWaitingCustomQuantity: MutableMap<UUID, Int> = mutableMapOf()
+
+    fun buyItem(player: Player, rawSlot: Int, quantity: Int, showMessage: Boolean = false) {
         val paginationListings = listingsService.playersView[player.uniqueId]
         val listings = paginationListings?.results?.get(rawSlot) ?: return
 
         if (listings.quantity < quantity) {
+            if (showMessage) {
+                player.sendMessage("The requested quantity is no longer available...")
+            }
             return
         }
-
-        println(listings)
 
         val listingsDatabase = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 

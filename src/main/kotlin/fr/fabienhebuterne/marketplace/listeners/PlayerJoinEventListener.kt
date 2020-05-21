@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class PlayerJoinEventListener(val marketPlace: MarketPlace, val listingsRepository: ListingsRepository) : Listener {
+class PlayerJoinEventListener(val marketPlace: MarketPlace, private val listingsRepository: ListingsRepository) : Listener {
 
     @EventHandler
     fun onPlayerJoinEvent(event: PlayerJoinEvent) {

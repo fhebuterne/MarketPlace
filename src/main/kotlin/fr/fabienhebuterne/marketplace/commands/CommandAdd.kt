@@ -8,6 +8,7 @@ import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.utils.longIsValid
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.command.Command
@@ -75,13 +76,5 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         }
     }
 
-    private fun longIsValid(number: String): Boolean {
-        try {
-            number.toLong()
-        } catch (e: NumberFormatException) {
-            return false
-        }
-        return true
-    }
 
 }

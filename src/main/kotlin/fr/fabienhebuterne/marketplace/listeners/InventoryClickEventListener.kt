@@ -114,8 +114,13 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
             }
 
             if (event.click == ClickType.MIDDLE) {
-                println("middle click on " + (listingsService.playersView[player.uniqueId]?.results?.get(event.rawSlot)
-                        ?: "null"))
+                val listings = listingsService.playersView[player.uniqueId]?.results?.get(event.rawSlot)
+                if (listings != null) {
+                    marketService.playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
+                    player.sendMessage("Please enter quantity (max available is: ${listings.quantity}) you want to get...")
+                    player.sendMessage("If you want to cancel, write '§a§lcancel§r' in chat")
+                    player.closeInventory()
+                }
             }
         }
     }
