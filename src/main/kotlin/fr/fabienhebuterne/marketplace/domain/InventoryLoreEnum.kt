@@ -7,18 +7,20 @@ const val PREVIOUS_PAGE_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6L
 const val NEXT_PAGE_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU2YTM2MTg0NTllNDNiMjg3YjIyYjdlMjM1ZWM2OTk1OTQ1NDZjNmZjZDZkYzg0YmZjYTRjZjMwYWI5MzExIn19fQ=="
 const val SEARCH_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmMzNWU4Njg0YzdmNzc2YmVmZWRjNDMxOWQwODE0OGM1NGJlYTM5MzIxZTFiZDVkZWY3YTU1Yjg5ZmRhYTA5OSJ9fX0="
 const val MAIL_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmJmM2ZjZGNjZmZkOTYzZTQzMzQ4MTgxMDhlMWU5YWUzYTgwNTY2ZDBkM2QyZDRhYjMwNTFhMmNkODExMzQ4YyJ9fX0="
+const val LISTING_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTlmNGFhY2ZjNjI3ZWU2NGEzMjU3YWQ1Mjc4MzU1NWYyYjM1OGNiN2NjY2I4NjQwNDA5OTc0MDNhNWIxYmQ1MiJ9fX0="
 
 enum class InventoryLoreEnum(
         val rawSlot: Int,
         val itemStack: ItemStack,
         displayName: String,
-        textureBase64: String,
-        var lore: MutableList<String> = mutableListOf()
+        var lore: MutableList<String> = mutableListOf(),
+        val inventoryType: InventoryType? = null
 ) {
-    SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), "§cRecherche...", SEARCH_TEXTURE),
-    MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), "§6Boite de réception", MAIL_TEXTURE),
-    PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), "§cPage précédente", PREVIOUS_PAGE_TEXTURE),
-    NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), "§cPage suivante", NEXT_PAGE_TEXTURE);
+    SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), "§cRecherche..."),
+    LISTING(46, ItemStackReflection.getSkull(LISTING_TEXTURE), "§6Achats", inventoryType = InventoryType.MAILS),
+    MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), "§6Boite de réception", inventoryType = InventoryType.LISTINGS),
+    PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), "§cPage précédente"),
+    NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), "§cPage suivante");
 
     init {
         val itemMeta = itemStack.itemMeta
@@ -26,4 +28,9 @@ enum class InventoryLoreEnum(
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
     }
+}
+
+enum class InventoryType {
+    MAILS,
+    LISTINGS
 }

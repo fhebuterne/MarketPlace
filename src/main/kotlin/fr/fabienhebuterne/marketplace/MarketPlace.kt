@@ -5,8 +5,9 @@ import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
-import fr.fabienhebuterne.marketplace.services.InventoryInitService
 import fr.fabienhebuterne.marketplace.services.MarketService
+import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
+import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
@@ -70,9 +71,10 @@ class MarketPlace : JavaPlugin() {
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
             bind<ListingsService>() with singleton { ListingsService(instance()) }
-            bind<InventoryInitService>() with singleton { InventoryInitService() }
-            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance()) }
+            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance()) }
+            bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }
+            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance()) }
         }
 
         // TODO : Create factory to init listeners

@@ -6,7 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
-import fr.fabienhebuterne.marketplace.services.InventoryInitService
+import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import org.bukkit.Material
 import org.bukkit.Server
@@ -20,7 +20,7 @@ import java.util.*
 class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
 
     private val listingsRepository: ListingsRepository by kodein.instance<ListingsRepository>()
-    private val inventoryInitService: InventoryInitService by kodein.instance<InventoryInitService>()
+    private val listingsInventoryService: ListingsInventoryService by kodein.instance<ListingsInventoryService>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
         if (player.itemInHand.type == Material.AIR) {
@@ -36,14 +36,6 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         }
 
         val money = args[1].toLong()
-        /*val hasMoney = instance.getEconomy().has(Bukkit.getOfflinePlayer(player.uniqueId), money.toDouble())
-
-        if (!hasMoney) {
-            throw NotEnoughMoneyException(player)
-        }
-
-        instance.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.uniqueId), money.toDouble())*/
-
         val currentItemStack = player.itemInHand
 
         val currentItemStackOne = currentItemStack.clone()
@@ -78,7 +70,7 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
             player.sendMessage("updated item OK !")
             player.itemInHand = ItemStack(Material.AIR)
         } else {
-            val confirmationAddNewItemInventory = inventoryInitService.confirmationAddNewItem(player, listings)
+            val confirmationAddNewItemInventory = listingsInventoryService.confirmationAddNewItem(player, listings)
             player.openInventory(confirmationAddNewItemInventory)
         }
     }

@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
+import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
@@ -14,7 +15,7 @@ class MarketService(private val marketPlace: MarketPlace,
                     private val listingsService: ListingsService,
                     private val listingsRepository: ListingsRepository,
                     private val mailsRepository: MailsRepository,
-                    private val inventoryInitService: InventoryInitService) {
+                    private val listingsInventoryService: ListingsInventoryService) {
 
     fun buyItem(player: Player, rawSlot: Int, quantity: Int) {
         val paginationListings = listingsService.playersView[player.uniqueId]
@@ -23,6 +24,8 @@ class MarketService(private val marketPlace: MarketPlace,
         if (listings.quantity < quantity) {
             return
         }
+
+        println(listings)
 
         val listingsDatabase = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
@@ -76,6 +79,6 @@ class MarketService(private val marketPlace: MarketPlace,
 
         player.sendMessage("§aYou just bought $quantity of ${listingsDatabase.itemStack.type} for $needingMoney")
         val refreshInventory = listingsService.getInventoryPaginated(player.uniqueId, paginationListings.currentPage)
-        player.openInventory(inventoryInitService.listingsInventory(marketPlace, refreshInventory, player))
+        player.openInventory(listingsInventoryService.initInventory(marketPlace, refreshInventory, player))
     }
 }
