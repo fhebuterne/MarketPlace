@@ -20,7 +20,7 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
     }
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
-        val listingsPaginated = listingsService.getInventoryPaginated(player.uniqueId, 1)
+        val listingsPaginated = listingsService.getPaginated(player.uniqueId, 1)
 
         val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
         player.openInventory(initListingsInventory)

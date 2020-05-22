@@ -28,6 +28,7 @@ dependencies {
     compileOnly("mysql", "mysql-connector-java", "8.0.19")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
     implementation("me.lucko", "jar-relocator", "1.3")
+    implementation("joda-time:joda-time:2.10.6")
 
     // Tech Stack TEST dependency
     testCompileOnly("org.mockito:mockito-core:3.3.0")

@@ -10,13 +10,12 @@ import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
+import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsRepositoryImpl
-import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable
-import fr.fabienhebuterne.marketplace.storage.mysql.MailsRepositoryImpl
-import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable
+import fr.fabienhebuterne.marketplace.storage.mysql.*
 import fr.fabienhebuterne.marketplace.utils.Dependency
 import kotlinx.serialization.ImplicitReflectionSerializer
 import net.milkbowl.vault.economy.Economy
@@ -65,17 +64,19 @@ class MarketPlace : JavaPlugin() {
         )
 
         transaction {
-            SchemaUtils.create(ListingsTable, MailsTable)
+            SchemaUtils.create(ListingsTable, MailsTable, LogsTable)
         }
 
         kodein = Kodein {
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
-            bind<ListingsService>() with singleton { ListingsService(instance()) }
+            bind<LogsRepository>() with singleton { LogsRepositoryImpl(database) }
+            bind<ListingsService>() with singleton { ListingsService(instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance()) }
-            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance()) }
+            bind<LogsService>() with singleton { LogsService(instance()) }
+            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance(), instance()) }
             bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }
-            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance()) }
+            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance(), instance()) }
         }
 
         // TODO : Create factory to init listeners

@@ -45,7 +45,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
 
         return Listings(
                 id = row[id].value,
-                sellerUuid = row[sellerUuid],
+                sellerUuid = UUID.fromString(row[sellerUuid]),
                 sellerPseudo = row[sellerPseudo],
                 itemStack = itemStack,
                 quantity = row[quantity],
@@ -62,16 +62,20 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Listings): UpdateBuilder<Number> {
         val itemStackString = json.stringify(ItemStackSerializer, entity.itemStack)
 
-        insertTo[id] = EntityID(entity.id, ListingsTable)
-        insertTo[sellerUuid] = entity.sellerUuid
+        entity.id?.let { insertTo[id] = EntityID(it, ListingsTable) }
+        insertTo[sellerUuid] = entity.sellerUuid.toString()
         insertTo[sellerPseudo] = entity.sellerPseudo
         insertTo[itemStack] = itemStackString
         insertTo[quantity] = entity.quantity
         insertTo[price] = entity.price
         insertTo[world] = entity.world
         insertTo[createdAt] = entity.auditData.createdAt
-        insertTo[updatedAt] = entity.auditData.updatedAt
-        insertTo[expiredAt] = entity.auditData.expiredAt
+        if (entity.auditData.updatedAt != null) {
+            insertTo[updatedAt] = entity.auditData.updatedAt
+        }
+        if (entity.auditData.expiredAt != null) {
+            insertTo[expiredAt] = entity.auditData.expiredAt
+        }
         return insertTo
     }
 
@@ -88,12 +92,12 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         TODO("Not yet implemented")
     }
 
-    override fun find(sellerUuid: String, itemStack: ItemStack, price: Long): Listings? {
+    override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Long): Listings? {
         val itemStackString = json.stringify(ItemStackSerializer, itemStack)
 
         return transaction(marketPlaceDb) {
             ListingsTable.select {
-                (ListingsTable.sellerUuid eq sellerUuid) and
+                (ListingsTable.sellerUuid eq sellerUuid.toString()) and
                         (ListingsTable.itemStack eq itemStackString) and
                         (ListingsTable.price eq price)
             }.map { fromRow(it) }.firstOrNull()
@@ -120,7 +124,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
 
         transaction(marketPlaceDb) {
             ListingsTable.update({
-                (sellerUuid eq entity.sellerUuid) and
+                (sellerUuid eq entity.sellerUuid.toString()) and
                         (itemStack eq itemStackString) and
                         (price eq entity.price)
             }) {

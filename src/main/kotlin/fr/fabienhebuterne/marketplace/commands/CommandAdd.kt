@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
+import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.utils.longIsValid
 import org.bukkit.Material
@@ -21,6 +22,7 @@ import java.util.*
 class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
 
     private val listingsRepository: ListingsRepository by kodein.instance<ListingsRepository>()
+    private val listingsService: ListingsService by kodein.instance<ListingsService>()
     private val listingsInventoryService: ListingsInventoryService by kodein.instance<ListingsInventoryService>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
@@ -43,14 +45,13 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         currentItemStackOne.amount = 1
 
         val listings = Listings(
-                UUID.randomUUID(),
-                player.uniqueId.toString(),
-                player.name,
-                currentItemStackOne,
-                currentItemStack.amount,
-                money,
-                player.world.name,
-                AuditData(
+                sellerUuid = player.uniqueId,
+                sellerPseudo = player.name,
+                itemStack = currentItemStackOne,
+                quantity = currentItemStack.amount,
+                price = money,
+                world = player.world.name,
+                auditData = AuditData(
                         System.currentTimeMillis(),
                         System.currentTimeMillis(),
                         System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
@@ -60,21 +61,14 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (findExistingListings != null) {
-            val updatedListings = findExistingListings.copy(
-                    quantity = findExistingListings.quantity + currentItemStack.amount,
-                    auditData = findExistingListings.auditData.copy(
-                            updatedAt = System.currentTimeMillis(),
-                            expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
-                    )
-            )
-            listingsRepository.update(updatedListings)
-            player.sendMessage("updated item OK !")
-            player.itemInHand = ItemStack(Material.AIR)
+            listingsService.updateListings(findExistingListings, currentItemStack, player)
         } else {
             val confirmationAddNewItemInventory = listingsInventoryService.confirmationAddNewItem(player, listings)
             player.openInventory(confirmationAddNewItemInventory)
         }
     }
+
+
 
 
 }

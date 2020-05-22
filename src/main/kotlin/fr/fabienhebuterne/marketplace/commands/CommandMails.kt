@@ -16,7 +16,7 @@ class CommandMails(kodein: Kodein) : CallCommand<MarketPlace>("mails") {
     private val mailsInventoryService: MailsInventoryService by kodein.instance<MailsInventoryService>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
-        val mailsPaginated = mailsService.getInventoryPaginated(player.uniqueId, 1)
+        val mailsPaginated = mailsService.getPaginated(player.uniqueId, 1)
 
         val initListingsInventory = mailsInventoryService.initInventory(instance, mailsPaginated, player)
         player.openInventory(initListingsInventory)

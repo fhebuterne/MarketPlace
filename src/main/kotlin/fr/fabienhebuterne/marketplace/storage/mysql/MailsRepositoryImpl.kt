@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.createdAt
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.expiredAt
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.id
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.itemStack
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.playerUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.quantity
@@ -37,7 +38,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         val itemStack: ItemStack = json.parse(ItemStackSerializer, row[itemStack])
 
         return Mails(
-                id = row[MailsTable.id].value,
+                id = row[id].value,
                 playerUuid = row[playerUuid],
                 itemStack = itemStack,
                 quantity = row[quantity],
@@ -52,16 +53,14 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Mails): UpdateBuilder<Number> {
         val itemStackString = json.stringify(ItemStackSerializer, entity.itemStack)
 
-        if (entity.id != null) {
-            insertTo[MailsTable.id] = EntityID(entity.id, MailsTable)
-        }
+        entity.id?.let { insertTo[id] = EntityID(it, MailsTable)  }
+        entity.auditData.updatedAt?.let { insertTo[updatedAt] = it }
+        entity.auditData.expiredAt?.let { insertTo[expiredAt] = it }
 
         insertTo[playerUuid] = entity.playerUuid
         insertTo[itemStack] = itemStackString
         insertTo[quantity] = entity.quantity
         insertTo[createdAt] = entity.auditData.createdAt
-        insertTo[updatedAt] = entity.auditData.updatedAt
-        insertTo[expiredAt] = entity.auditData.expiredAt
         return insertTo
     }
 

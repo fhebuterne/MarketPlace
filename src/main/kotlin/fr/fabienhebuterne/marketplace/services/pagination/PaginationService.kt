@@ -21,7 +21,7 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             currentPage = 1
         }
 
-        return getInventoryPaginated(uuid, currentPage)
+        return getPaginated(uuid, currentPage)
     }
 
     fun previousPage(uuid: UUID): Pagination<T> {
@@ -33,19 +33,19 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             }
         } ?: 1
 
-        return getInventoryPaginated(uuid, currentPage)
+        return getPaginated(uuid, currentPage)
     }
 
-    fun getInventoryPaginated(uuid: UUID, currentPage: Int = 1): Pagination<T> {
-        var from = 0
-        var to = 45
+    fun getPaginated(uuid: UUID, currentPage: Int = 1, from: Int = 0, to: Int = 45): Pagination<T> {
+        var fromInt = from
+        var toInt = to
 
         if (currentPage > 1) {
-            from = (currentPage - 1) * 45
-            to = from + 45
+            fromInt = (currentPage - 1) * to
+            toInt = from + to
         }
 
-        val results = paginationRepository.findAll(from, to)
+        val results = paginationRepository.findAll(fromInt, toInt)
         val countAll = paginationRepository.countAll()
         val pagination = Pagination(
                 results,

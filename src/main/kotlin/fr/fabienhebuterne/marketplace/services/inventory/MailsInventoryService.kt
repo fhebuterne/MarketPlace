@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.commands.CommandListings
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
+import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -29,7 +30,12 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         val loreItem = mutableListOf<String>()
         loreItem.add("")
         loreItem.add(MessageFormat.format("§6Total available: §e{0} items", paginated.quantity))
+        paginated.auditData.expiredAt?.let {
+            loreItem.add("")
+            loreItem.add("§6Expiration in " + formatInterval(it))
+        }
         loreItem.add("")
+
         itemMeta.lore = loreItem
         itemStack.itemMeta = itemMeta
         return itemStack

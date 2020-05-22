@@ -5,8 +5,8 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 data class Listings(
-        val id: UUID,
-        val sellerUuid: String,
+        val id: UUID? = null,
+        val sellerUuid: UUID,
         val sellerPseudo: String,
         val itemStack: ItemStack,
         val quantity: Int = 1,

@@ -5,17 +5,22 @@ import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
+import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.text.MessageFormat
 import java.util.*
 
-class ListingsInventoryService(listingsService: ListingsService) : InventoryTypeService<Listings>(listingsService) {
-    val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
+class ListingsInventoryService(val listingsService: ListingsService, private val listingsRepository: ListingsRepository) : InventoryTypeService<Listings>(listingsService) {
+    private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 
     override fun initInventory(instance: JavaPlugin, pagination: Pagination<Listings>, player: Player): Inventory {
         val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Achat")
@@ -49,8 +54,12 @@ class ListingsInventoryService(listingsService: ListingsService) : InventoryType
             loreItem.add("§6► Right click to buy 64 items")
         }
 
-        //loreItem.add("§6► Shift + Click to cancel")
         loreItem.add("")
+        paginated.auditData.expiredAt?.let {
+            loreItem.add("§6Expiration in " + formatInterval(it))
+            loreItem.add("")
+        }
+
         itemMeta.lore = loreItem
         itemStack.itemMeta = itemMeta
         return itemStack
@@ -72,5 +81,37 @@ class ListingsInventoryService(listingsService: ListingsService) : InventoryType
         cancelItem.itemMeta = cancelItemMeta
         inventory.setItem(6, cancelItem)
         return inventory
+    }
+
+    fun clickOnAddNewItemConfirmation(event: InventoryClickEvent, player: Player) {
+        if (event.slotType != InventoryType.SlotType.CONTAINER) {
+            return
+        }
+
+        if (event.rawSlot == 2) {
+            itemSell(player)
+        }
+
+        if (event.rawSlot == 6) {
+            cancelSell(player)
+        }
+    }
+
+    private fun itemSell(player: Player) {
+        val paginated = playersConfirmation[player.uniqueId]
+        if (paginated != null && paginated is Listings) {
+            listingsService.create(player, paginated)
+            playersConfirmation.remove(player.uniqueId)
+        }
+        player.closeInventory()
+    }
+
+    private fun cancelSell(player: Player) {
+        val listings = playersConfirmation[player.uniqueId]
+        if (listings != null) {
+            playersConfirmation.remove(player.uniqueId)
+        }
+        player.sendMessage("cancelled sell item")
+        player.closeInventory()
     }
 }
