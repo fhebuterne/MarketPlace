@@ -1,8 +1,10 @@
 package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.commands.CommandListings
+import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
+import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.entity.Player
@@ -39,5 +41,9 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         itemMeta.lore = loreItem
         itemStack.itemMeta = itemMeta
         return itemStack
+    }
+
+    private fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
+        super.setBottomInventoryLine(inventory, pagination, InventoryType.MAILS)
     }
 }

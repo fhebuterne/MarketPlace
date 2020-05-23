@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.commands.CommandListings
+import fr.fabienhebuterne.marketplace.domain.InventoryType.LISTINGS
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
@@ -10,7 +11,6 @@ import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
@@ -113,5 +113,9 @@ class ListingsInventoryService(val listingsService: ListingsService, private val
         }
         player.sendMessage("cancelled sell item")
         player.closeInventory()
+    }
+
+    private fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
+        super.setBottomInventoryLine(inventory, pagination, LISTINGS)
     }
 }

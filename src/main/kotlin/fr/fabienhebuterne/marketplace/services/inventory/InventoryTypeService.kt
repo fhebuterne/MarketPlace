@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
+import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
@@ -31,7 +32,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
         }
     }
 
-    fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
+    open fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>, inventoryType: InventoryType) {
         val grayStainedGlassPane = ItemStack(Material.STAINED_GLASS_PANE, 1, 7)
 
         val filterItem = ItemStack(Material.REDSTONE_COMPARATOR)
@@ -48,7 +49,8 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
         InventoryLoreEnum.values().forEach {
             if (it.name == "PREVIOUS_PAGE" || it.name == "NEXT_PAGE") {
                 it.lore = mutableListOf(
-                        "§cPage : ${pagination.currentPage}/${pagination.maxPage()}"
+                        "§cPage : ${pagination.currentPage}/${pagination.maxPage()}",
+                        "§cTotal items : ${pagination.total}"
                 )
             }
 
@@ -56,8 +58,9 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
             itemMeta.lore = it.lore
             it.itemStack.itemMeta = itemMeta
 
-
-            inventory.setItem(it.rawSlot, it.itemStack)
+            if (it.inventoryType == null || it.inventoryType == inventoryType) {
+                inventory.setItem(it.rawSlot, it.itemStack)
+            }
         }
     }
 

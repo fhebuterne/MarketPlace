@@ -10,6 +10,6 @@ data class Pagination<T : Paginated>(
         val resultPerPage: Int = 45
 ) {
     fun maxPage(): Int {
-        return ceil((results.size.toDouble() / resultPerPage.toDouble())).toInt()
+        return ceil((total.toDouble() / resultPerPage.toDouble())).toInt()
     }
 }

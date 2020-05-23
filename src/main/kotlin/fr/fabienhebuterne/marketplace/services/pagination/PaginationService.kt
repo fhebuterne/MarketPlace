@@ -36,21 +36,31 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
         return getPaginated(uuid, currentPage)
     }
 
-    fun getPaginated(uuid: UUID, currentPage: Int = 1, from: Int = 0, to: Int = 45): Pagination<T> {
+    fun getPaginated(uuid: UUID, currentPage: Int = 1, from: Int = 0, to: Int = 45, resultPerPage: Int = 45): Pagination<T> {
         var fromInt = from
         var toInt = to
+        var currentPageInt = currentPage
 
-        if (currentPage > 1) {
-            fromInt = (currentPage - 1) * to
+        val countAll = paginationRepository.countAll()
+
+        if (currentPageInt > 1) {
+            fromInt = (currentPageInt - 1) * to
             toInt = from + to
         }
 
+        // If currentPage doens't have result
+        if (countAll < fromInt) {
+            currentPageInt = 1
+            fromInt = from
+            toInt = to
+        }
+
         val results = paginationRepository.findAll(fromInt, toInt)
-        val countAll = paginationRepository.countAll()
         val pagination = Pagination(
                 results,
-                currentPage,
-                countAll
+                currentPageInt,
+                countAll,
+                resultPerPage
         )
 
         playersView[uuid] = pagination
