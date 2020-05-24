@@ -2,21 +2,15 @@ package fr.fabienhebuterne.marketplace.listeners
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
-import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
-import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryType
-import org.bukkit.inventory.ItemStack
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -42,6 +36,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
         }
 
         if (event.view.title == "MarketPlace - Mails") {
+            marketService.clickOnMailsInventory(event, player)
             clickOnBottomLineMails(event, player)
         }
 

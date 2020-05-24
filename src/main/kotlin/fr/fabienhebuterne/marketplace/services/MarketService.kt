@@ -9,6 +9,7 @@ import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
+import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import org.bukkit.Bukkit
@@ -22,6 +23,7 @@ import java.util.*
 class MarketService(private val marketPlace: MarketPlace,
                     private val listingsService: ListingsService,
                     private val listingsRepository: ListingsRepository,
+                    private val mailsService: MailsService,
                     private val mailsRepository: MailsRepository,
                     private val listingsInventoryService: ListingsInventoryService,
                     private val logsService: LogsService) {
@@ -53,16 +55,14 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         val needingMoney = listingsDatabase.price * quantity.toDouble()
-        val hasMoney = marketPlace.getEconomy().has(Bukkit.getOfflinePlayer(player.uniqueId), needingMoney)
 
-        if (!hasMoney) {
-            throw NotEnoughMoneyException(player)
-        }
+        takeMoneyBuyer(player, needingMoney)
+        giveMoneySeller(player, needingMoney)
 
-        marketPlace.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.uniqueId), needingMoney)
+        val takeQuantity = listingsDatabase.quantity - quantity
 
-        if (listingsDatabase.quantity > 1) {
-            listingsRepository.update(listingsDatabase.copy(quantity = listingsDatabase.quantity - quantity))
+        if (listingsDatabase.quantity > 1 && takeQuantity > 1) {
+            listingsRepository.update(listingsDatabase.copy(quantity = takeQuantity))
         } else {
             listingsDatabase.id?.let { listingsRepository.delete(it) }
         }
@@ -99,9 +99,25 @@ class MarketService(private val marketPlace: MarketPlace,
                 toLocation = Location.LISTING_INVENTORY
         )
 
+        // TODO : Send notif to seller when item is buyed (executed command with config)
+
         player.sendMessage("§aYou just bought $quantity of ${listingsDatabase.itemStack.type} for $needingMoney")
         val refreshInventory = listingsService.getPaginated(player.uniqueId, paginationListings.currentPage)
         player.openInventory(listingsInventoryService.initInventory(marketPlace, refreshInventory, player))
+    }
+
+    private fun giveMoneySeller(player: Player, money: Double) {
+        marketPlace.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player.uniqueId), money)
+    }
+
+    private fun takeMoneyBuyer(player: Player, needingMoney: Double) {
+        val hasMoney = marketPlace.getEconomy().has(Bukkit.getOfflinePlayer(player.uniqueId), needingMoney)
+
+        if (!hasMoney) {
+            throw NotEnoughMoneyException(player)
+        }
+
+        marketPlace.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.uniqueId), needingMoney)
     }
 
     fun clickOnListingsInventory(event: InventoryClickEvent, player: Player) {
@@ -128,5 +144,57 @@ class MarketService(private val marketPlace: MarketPlace,
                 }
             }
         }
+    }
+
+    fun clickOnMailsInventory(event: InventoryClickEvent, player: Player) {
+        if (event.rawSlot in 0..44) {
+            if (event.currentItem.type == Material.AIR) {
+                return
+            }
+
+            if (event.isLeftClick) {
+                takeItem(player, event.rawSlot)
+            }
+        }
+    }
+
+    private fun takeItem(player: Player, rawSlot: Int) {
+        val paginationMails = mailsService.playersView[player.uniqueId]
+        val mail = paginationMails?.results?.get(rawSlot) ?: return
+
+        val slotInventoryAvailable = player.inventory.contents.clone()
+                .filter { it == null || it.type == Material.AIR }
+                .count()
+
+        val itemPresentSlotAvailable: Int = player.inventory.contents.clone()
+                .filterNotNull()
+                .filter { it.isSimilar(mail.itemStack) }
+                .filter { it.amount < it.maxStackSize }
+                .sumBy { it.maxStackSize - it.amount }
+
+        val itemStack = mail.itemStack.clone()
+        val maxQuantityInventoryAvailable = slotInventoryAvailable * itemStack.maxStackSize + itemPresentSlotAvailable
+
+        val amountItemStack = if (mail.quantity > maxQuantityInventoryAvailable) {
+            maxQuantityInventoryAvailable
+        } else {
+            mail.quantity
+        }
+
+        if (slotInventoryAvailable == 0 && itemPresentSlotAvailable == 0) {
+            player.sendMessage("inventory full ...")
+            return
+        }
+
+        itemStack.amount = amountItemStack
+        player.inventory.addItem(itemStack)
+
+        if (mail.quantity - amountItemStack <= 0) {
+            mail.id?.let { mailsRepository.delete(it) }
+        } else {
+            mailsRepository.update(mail.copy(quantity = mail.quantity - amountItemStack))
+        }
+
+        player.closeInventory()
     }
 }

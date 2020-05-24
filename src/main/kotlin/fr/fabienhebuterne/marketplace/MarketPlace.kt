@@ -76,7 +76,7 @@ class MarketPlace : JavaPlugin() {
             bind<LogsService>() with singleton { LogsService(instance()) }
             bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance(), instance()) }
             bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }
-            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance(), instance()) }
+            bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance(), instance(), instance()) }
         }
 
         // TODO : Create factory to init listeners

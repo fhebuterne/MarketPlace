@@ -32,6 +32,8 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         val loreItem = mutableListOf<String>()
         loreItem.add("")
         loreItem.add(MessageFormat.format("§6Total available: §e{0} items", paginated.quantity))
+        loreItem.add("")
+        loreItem.add("§6► Left click to get all items (depending on the number of slots available) in your inventory")
         paginated.auditData.expiredAt?.let {
             loreItem.add("")
             loreItem.add("§6Expiration in " + formatInterval(it))

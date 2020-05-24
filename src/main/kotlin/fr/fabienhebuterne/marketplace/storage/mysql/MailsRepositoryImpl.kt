@@ -118,7 +118,9 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     }
 
     override fun delete(id: UUID) {
-        TODO("Not yet implemented")
+        transaction(marketPlaceDb) {
+            MailsTable.deleteWhere { MailsTable.id eq id }
+        }
     }
 
     override fun countAll(): Int {
