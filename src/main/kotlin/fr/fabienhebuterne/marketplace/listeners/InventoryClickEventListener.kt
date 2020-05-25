@@ -49,9 +49,10 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
     // TODO : Refactoring common code between listings and mails
     private fun clickOnBottomLineListings(event: InventoryClickEvent, player: Player) {
         listingsInventoryService.clickOnSwitchPage(marketPlace, event, player)
+        listingsInventoryService.clickOnSearch(event, player)
 
         if (event.rawSlot == InventoryLoreEnum.MAIL.rawSlot) {
-            val inventoryPaginated = mailsService.getPaginated(player.uniqueId, 1)
+            val inventoryPaginated = mailsService.getPaginated(player.uniqueId)
             val mailsInventory = mailsInventoryService.initInventory(marketPlace, inventoryPaginated, player)
             player.openInventory(mailsInventory)
         }
@@ -59,9 +60,10 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
 
     private fun clickOnBottomLineMails(event: InventoryClickEvent, player: Player) {
         mailsInventoryService.clickOnSwitchPage(marketPlace, event, player)
+        mailsInventoryService.clickOnSearch(event, player)
 
         if (event.rawSlot == InventoryLoreEnum.LISTING.rawSlot) {
-            val inventoryPaginated = listingsService.getPaginated(player.uniqueId, 1)
+            val inventoryPaginated = listingsService.getPaginated(player.uniqueId)
             val listingsInventory = listingsInventoryService.initInventory(marketPlace, inventoryPaginated, player)
             player.openInventory(listingsInventory)
         }

@@ -79,11 +79,13 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         return insertTo
     }
 
-    override fun findAll(from: Int?, to: Int?): List<Listings> {
+    override fun findAll(from: Int?, to: Int?, searchKeyword: String?): List<Listings> {
         return transaction(marketPlaceDb) {
-            when (from != null && to != null) {
-                true -> ListingsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
-                false -> ListingsTable.selectAll().map { fromRow(it) }
+            when {
+                from != null && to != null && searchKeyword == null -> ListingsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
+                from != null && to != null && searchKeyword != null -> ListingsTable.select { itemStack like "%$searchKeyword%" }.limit(to, from.toLong()).map { fromRow(it) }
+                from == null && to == null && searchKeyword != null -> ListingsTable.select { itemStack like "%$searchKeyword%" }.map { fromRow(it) }
+                else -> ListingsTable.selectAll().map { fromRow(it) }
             }
         }
     }
@@ -140,9 +142,12 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         }
     }
 
-    override fun countAll(): Int {
+    override fun countAll(searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
-            ListingsTable.selectAll().count().toInt()
+            when (searchKeyword == null) {
+                true -> ListingsTable.selectAll().count().toInt()
+                false -> ListingsTable.select { itemStack like "%$searchKeyword%" }.count().toInt()
+            }
         }
     }
 }

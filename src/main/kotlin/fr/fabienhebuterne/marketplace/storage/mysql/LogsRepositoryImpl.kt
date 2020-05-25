@@ -13,11 +13,11 @@ import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.id
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.itemStack
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.logType
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.playerPseudo
+import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.playerUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.price
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.quantity
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.sellerPseudo
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.sellerUuid
-import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.playerUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.toLocation
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -88,7 +88,7 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         return insertTo
     }
 
-    override fun findAll(from: Int?, to: Int?): List<Logs> {
+    override fun findAll(from: Int?, to: Int?, searchKeyword: String?): List<Logs> {
         return transaction(marketPlaceDb) {
             when (from != null && to != null) {
                 true -> LogsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
@@ -124,9 +124,12 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         TODO("Not yet implemented")
     }
 
-    override fun countAll(): Int {
+    override fun countAll(searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
-            LogsTable.selectAll().count().toInt()
+            when (searchKeyword == null) {
+                true -> LogsTable.selectAll().count().toInt()
+                false -> LogsTable.select { itemStack like "%$searchKeyword%" }.count().toInt()
+            }
         }
     }
 }

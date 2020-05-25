@@ -10,8 +10,6 @@ import org.bukkit.inventory.ItemStack
 
 class ListingsService(private val listingsRepository: ListingsRepository, private val logsService: LogsService) : PaginationService<Listings>(listingsRepository) {
     fun updateListings(findExistingListings: Listings, currentItemStack: ItemStack, player: Player) {
-
-
         val updatedListings = findExistingListings.copy(
                 quantity = findExistingListings.quantity + currentItemStack.amount,
                 auditData = findExistingListings.auditData.copy(

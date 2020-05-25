@@ -11,37 +11,42 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
 
     fun nextPage(uuid: UUID): Pagination<T> {
         val pagination = playersView[uuid]
-        var currentPage = pagination?.currentPage
+        val currentPage = pagination?.currentPage
 
-        if (currentPage != null && pagination != null) {
-            if (currentPage < pagination.maxPage()) {
-                currentPage += 1
+        val returnPaginated = pagination?.let {
+            if (it.currentPage < it.maxPage()) {
+                it.copy(currentPage = currentPage?.plus(1) ?: 1)
+            } else {
+                it.copy(currentPage = 1)
             }
-        } else {
-            currentPage = 1
-        }
+        } ?: Pagination(currentPage = 1)
 
-        return getPaginated(uuid, currentPage)
+        return getPaginated(uuid, pagination = returnPaginated)
     }
 
     fun previousPage(uuid: UUID): Pagination<T> {
-        val currentPage = playersView[uuid]?.let {
+        val paginated = playersView[uuid]?.let {
             if (it.currentPage > 1) {
-                it.currentPage.minus(1)
+                it.copy(currentPage = it.currentPage.minus(1))
             } else {
-                1
+                Pagination(currentPage = 1)
             }
-        } ?: 1
+        } ?: Pagination(currentPage = 1)
 
-        return getPaginated(uuid, currentPage)
+        return getPaginated(uuid, pagination = paginated)
     }
 
-    fun getPaginated(uuid: UUID, currentPage: Int = 1, from: Int = 0, to: Int = 45, resultPerPage: Int = 45): Pagination<T> {
+    fun getPaginated(
+            uuid: UUID,
+            from: Int = 0,
+            to: Int = 45,
+            pagination: Pagination<T> = Pagination()
+    ): Pagination<T> {
         var fromInt = from
         var toInt = to
-        var currentPageInt = currentPage
+        var currentPageInt = pagination.currentPage
 
-        val countAll = paginationRepository.countAll()
+        val countAll = paginationRepository.countAll(pagination.searchKeyword)
 
         if (currentPageInt > 1) {
             fromInt = (currentPageInt - 1) * to
@@ -55,16 +60,15 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             toInt = to
         }
 
-        val results = paginationRepository.findAll(fromInt, toInt)
-        val pagination = Pagination(
+        val results = paginationRepository.findAll(fromInt, toInt, pagination.searchKeyword)
+        val paginationUpdated = pagination.copy(
                 results,
                 currentPageInt,
-                countAll,
-                resultPerPage
+                countAll
         )
 
-        playersView[uuid] = pagination
+        playersView[uuid] = paginationUpdated
 
-        return pagination
+        return paginationUpdated
     }
 }

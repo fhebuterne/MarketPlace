@@ -102,7 +102,7 @@ class MarketService(private val marketPlace: MarketPlace,
         // TODO : Send notif to seller when item is buyed (executed command with config)
 
         player.sendMessage("§aYou just bought $quantity of ${listingsDatabase.itemStack.type} for $needingMoney")
-        val refreshInventory = listingsService.getPaginated(player.uniqueId, paginationListings.currentPage)
+        val refreshInventory = listingsService.getPaginated(player.uniqueId, pagination = paginationListings)
         player.openInventory(listingsInventoryService.initInventory(marketPlace, refreshInventory, player))
     }
 

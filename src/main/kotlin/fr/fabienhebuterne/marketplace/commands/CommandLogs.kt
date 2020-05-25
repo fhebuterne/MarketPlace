@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
+import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
@@ -29,7 +30,12 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
             1
         }
 
-        val logsPaginated = logsService.getPaginated(player.uniqueId, currentPage, 0, 10, 10)
+        val logsPaginated = logsService.getPaginated(
+                player.uniqueId,
+                from = 0,
+                to = 10,
+                pagination = Pagination(currentPage = currentPage, resultPerPage = 10)
+        )
         currentPage = logsPaginated.currentPage
 
         player.sendMessage("§8---------------<§6§lMarketPlace§8>---------------")
