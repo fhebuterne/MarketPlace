@@ -6,12 +6,12 @@ import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
+import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import java.text.MessageFormat
 
 class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<Mails>(mailsService) {
     override fun initInventory(instance: JavaPlugin, pagination: Pagination<Mails>, player: Player): Inventory {
@@ -29,16 +29,18 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
 
     override fun setBottomLore(itemStack: ItemStack, paginated: Mails): ItemStack {
         val itemMeta = itemStack.itemMeta
-        val loreItem = mutableListOf<String>()
-        loreItem.add("")
-        loreItem.add(MessageFormat.format("§6Total available: §e{0} items", paginated.quantity))
-        loreItem.add("")
-        loreItem.add("§6► Left click to get all items (depending on the number of slots available) in your inventory")
-        paginated.auditData.expiredAt?.let {
-            loreItem.add("")
-            loreItem.add("§6Expiration in " + formatInterval(it))
+        val loreItem = tl.mailItemBottomLorePlayer.toMutableList()
+        loreItem.replaceAll {
+            it.replace("{0}", paginated.quantity.toString())
         }
-        loreItem.add("")
+
+        paginated.auditData.expiredAt?.let { expiredAt ->
+            loreItem.replaceAll { it.replace("{1}", formatInterval(expiredAt)) }
+        } ?: loreItem.removeIf { it.contains("%expiration%") }
+
+        loreItem.replaceAll {
+            it.replace("%expiration%", "")
+        }
 
         itemMeta.lore = loreItem
         itemStack.itemMeta = itemMeta

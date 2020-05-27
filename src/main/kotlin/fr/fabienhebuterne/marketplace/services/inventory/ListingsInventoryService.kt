@@ -6,7 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
-import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -16,10 +16,9 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import java.text.MessageFormat
 import java.util.*
 
-class ListingsInventoryService(val listingsService: ListingsService, private val listingsRepository: ListingsRepository) : InventoryTypeService<Listings>(listingsService) {
+class ListingsInventoryService(private val listingsService: ListingsService) : InventoryTypeService<Listings>(listingsService) {
     private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 
     override fun initInventory(instance: JavaPlugin, pagination: Pagination<Listings>, player: Player): Inventory {
@@ -38,26 +37,29 @@ class ListingsInventoryService(val listingsService: ListingsService, private val
     // TODO : Add step lore to confirm
     override fun setBottomLore(itemStack: ItemStack, paginated: Listings): ItemStack {
         val itemMeta = itemStack.itemMeta
-        val loreItem = mutableListOf<String>()
-        loreItem.add("")
-        loreItem.add(MessageFormat.format("§6Seller: §e{0}", paginated.sellerPseudo))
-        loreItem.add(MessageFormat.format("§6Price per item: §e{0}", paginated.price))
-        loreItem.add(MessageFormat.format("§6Total available: §e{0} items", paginated.quantity))
-        loreItem.add("")
-        loreItem.add("§6► Left click to buy 1 item")
-
-        if (paginated.quantity >= 2) {
-            loreItem.add("§6► Middle click to buy custom quantity items")
+        val loreItem = tl.listingItemBottomLorePlayer.toMutableList()
+        loreItem.replaceAll {
+            it.replace("{0}", paginated.sellerPseudo)
+                    .replace("{1}", paginated.price.toString())
+                    .replace("{2}", paginated.quantity.toString())
         }
 
-        if (paginated.quantity >= 64) {
-            loreItem.add("§6► Right click to buy 64 items")
+        if (paginated.quantity < 2) {
+            loreItem.removeIf { it.contains("%middle%") }
         }
 
-        loreItem.add("")
-        paginated.auditData.expiredAt?.let {
-            loreItem.add("§6Expiration in " + formatInterval(it))
-            loreItem.add("")
+        if (paginated.quantity < 64) {
+            loreItem.removeIf { it.contains("%right%") }
+        }
+
+        paginated.auditData.expiredAt?.let { expiredAt ->
+            loreItem.replaceAll { it.replace("{3}", formatInterval(expiredAt)) }
+        } ?: loreItem.removeIf { it.contains("%expiration%") }
+
+        loreItem.replaceAll {
+            it.replace("%middle%", "")
+                    .replace("%right%", "")
+                    .replace("%expiration%", "")
         }
 
         itemMeta.lore = loreItem
@@ -111,7 +113,7 @@ class ListingsInventoryService(val listingsService: ListingsService, private val
         if (listings != null) {
             playersConfirmation.remove(player.uniqueId)
         }
-        player.sendMessage("cancelled sell item")
+        player.sendMessage(tl.cancelSelling)
         player.closeInventory()
     }
 

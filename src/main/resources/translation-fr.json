@@ -1,0 +1,69 @@
+{
+  "errors": {
+    "numberNotValid": "§8[§6MarketPlace§8] §6§l{0} §cn'est pas un nombre valide.",
+    "handEmpty": "§8[§6MarketPlace§8] §cVous devez avoir un item en main.",
+    "notEnoughMoney": "§8[§6MarketPlace§8] §cVous n'avez pas assez d'argent pour faire cette action.",
+    "quantityNotAvailable": "§8[§6MarketPlace§8] §cLa quantité demandée n'est pas disponible.",
+    "itemNotExist": "§8[§6MarketPlace§8] §cL'article demandé n'existe pas.",
+    "inventoryFull": "§8[§6MarketPlace§8] §cL'inventaire est plein."
+  },
+  "inventoryEnum": {
+    "search": {
+      "displayName": "§cRecherche...",
+      "lore": []
+    },
+    "listings": {
+      "displayName": "§6Achats",
+      "lore": []
+    },
+    "mails": {
+      "displayName": "§6Boite de réception",
+      "lore": []
+    },
+    "previousPage": {
+      "displayName": "§cPage précédente",
+      "lore": [
+        "§cPage : {0}/{1}",
+        "§cTotal disponible : {2}"
+      ]
+    },
+    "nextPage": {
+      "displayName": "§cPage suivante",
+      "lore": [
+        "§cPage : {0}/{1}",
+        "§cTotal disponible : {2}"
+      ]
+    }
+  },
+  "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aMerci d'entrer la quantité (max disponible: {{maxQuantity}}) que vous souhaitez avoir.",
+  "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aSi vous voulez annuler, écriver '§6§lcancel§a' dans le chat.",
+  "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
+  "listingCreated": "§8[§6MarketPlace§8] §aVous venez de mettre en vente {{quantity}}x{{item}} pour {{unitPrice}}$.",
+  "listingUpdated": "§8[§6MarketPlace§8] §aVous venez d'ajouter {{quantityAdded}} à l'item {{item}}, vous avez désormais au total {{quantityTotal}} items en vente.",
+  "itemBuy": "§8[§6MarketPlace§8] §aVous venez d'acheter {{quantity}}x{{item}} pour {{price}}$.",
+  "cancelBuying": "§8[§6MarketPlace§8] §aVous venez d'annuler votre achat.",
+  "cancelSelling": "§8[§6MarketPlace§8] §aVous venez d'annuler votre vente.",
+  "searchWaiting": "§8[§6MarketPlace§8] §aVeuillez saisir un type d'item (ex: DIRT) ou un mot clef associé au nom / lore de l'item...",
+  "listingItemBottomLorePlayer": [
+    "",
+    "§6Vendeur: §e{0}",
+    "§6Prix unité: §e{1}",
+    "§6Total disponible: §e{2} article(s)",
+    "",
+    "§6► Clique gauche pour acheter 1 article",
+    "%middle%§6► Clique molette pour acheter une quantité personnalisée d'articles",
+    "%right%§6► Clique droit pour acheter 64 articles",
+    "",
+    "%expiration%§6Expiration dans {3}",
+    "%expiration%"
+  ],
+  "mailItemBottomLorePlayer": [
+    "",
+    "§6Total disponible: §e{0} items",
+    "",
+    "§6► Clique gauche pour récuperer les articles (dans la limite des slots disponible) dans votre inventaire",
+    "",
+    "%expiration%§6Expiration dans {1}",
+    "%expiration%"
+  ]
+}

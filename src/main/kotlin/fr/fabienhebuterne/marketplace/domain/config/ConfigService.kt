@@ -18,7 +18,7 @@ class ConfigService<T : Any>(private val instance: MarketPlace,
     private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
     @ImplicitReflectionSerializer
-    fun createOrLoadConfig(copyFromRessource: Boolean) {
+    fun createAndLoadConfig(copyFromRessource: Boolean) {
         file = File(instance.dataFolder, "$fileName.json")
         if (!file.exists()) {
             file.parentFile.mkdirs()

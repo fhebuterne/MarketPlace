@@ -5,6 +5,7 @@ import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
+import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -25,7 +26,6 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
     fun searchItemstack(instance: JavaPlugin, event: AsyncPlayerChatEvent) {
         event.isCancelled = true
         playersWaitingSearch.remove(event.player.uniqueId)
-        event.player.sendMessage("listings search ok")
         val paginated = paginationService.getPaginated(event.player.uniqueId, pagination = Pagination(searchKeyword = event.message))
         val initInventory = initInventory(instance, paginated, event.player)
         event.player.openInventory(initInventory)
@@ -34,7 +34,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
     fun clickOnSearch(event: InventoryClickEvent, player: Player) {
         if (event.rawSlot == InventoryLoreEnum.SEARCH.rawSlot) {
             playersWaitingSearch.add(player.uniqueId)
-            player.sendMessage("§aVeuillez saisir un type d'item (ex: DIRT) ou un mot clef associé au nom / lore de l'item ...")
+            player.sendMessage(tl.searchWaiting)
             player.closeInventory()
         }
     }
@@ -68,15 +68,17 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
         inventory.setItem(51, grayStainedGlassPane)
 
         InventoryLoreEnum.values().forEach {
-            if (it.name == "PREVIOUS_PAGE" || it.name == "NEXT_PAGE") {
-                it.lore = mutableListOf(
-                        "§cPage : ${pagination.currentPage}/${pagination.maxPage()}",
-                        "§cTotal items : ${pagination.total}"
-                )
+            val replace: (t: String) -> String = { t ->
+                t.replace("{0}", pagination.currentPage.toString())
+                        .replace("{1}", pagination.maxPage().toString())
+                        .replace("{2}", pagination.total.toString())
             }
 
+            val loreUpdated = it.lore.toMutableList()
+            loreUpdated.replaceAll(replace)
+
             val itemMeta = it.itemStack.itemMeta
-            itemMeta.lore = it.lore
+            itemMeta.lore = loreUpdated
             it.itemStack.itemMeta = itemMeta
 
             if (it.inventoryType == null || it.inventoryType == inventoryType) {

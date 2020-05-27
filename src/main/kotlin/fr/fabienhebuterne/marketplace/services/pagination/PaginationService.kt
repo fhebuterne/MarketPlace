@@ -29,7 +29,7 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             if (it.currentPage > 1) {
                 it.copy(currentPage = it.currentPage.minus(1))
             } else {
-                Pagination(currentPage = 1)
+                it.copy(currentPage = 1)
             }
         } ?: Pagination(currentPage = 1)
 

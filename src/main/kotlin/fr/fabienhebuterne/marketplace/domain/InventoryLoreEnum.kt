@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.domain
 
 import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
+import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.inventory.ItemStack
 
 const val PREVIOUS_PAGE_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RjOWU0ZGNmYTQyMjFhMWZhZGMxYjViMmIxMWQ4YmVlYjU3ODc5YWYxYzQyMzYyMTQyYmFlMWVkZDUifX19=="
@@ -13,14 +14,14 @@ enum class InventoryLoreEnum(
         val rawSlot: Int,
         val itemStack: ItemStack,
         displayName: String,
-        var lore: MutableList<String> = mutableListOf(),
+        var lore: List<String> = listOf(),
         val inventoryType: InventoryType? = null
 ) {
-    SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), "§cRecherche..."),
-    LISTING(46, ItemStackReflection.getSkull(LISTING_TEXTURE), "§6Achats", inventoryType = InventoryType.MAILS),
-    MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), "§6Boite de réception", inventoryType = InventoryType.LISTINGS),
-    PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), "§cPage précédente"),
-    NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), "§cPage suivante");
+    SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), tl.inventoryEnum.search.displayName, tl.inventoryEnum.search.lore),
+    LISTING(46, ItemStackReflection.getSkull(LISTING_TEXTURE), tl.inventoryEnum.listings.displayName, tl.inventoryEnum.listings.lore, inventoryType = InventoryType.MAILS),
+    MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), tl.inventoryEnum.mails.displayName, tl.inventoryEnum.mails.lore, inventoryType = InventoryType.LISTINGS),
+    PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), tl.inventoryEnum.previousPage.displayName, tl.inventoryEnum.previousPage.lore),
+    NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), tl.inventoryEnum.nextPage.displayName, tl.inventoryEnum.nextPage.lore);
 
     init {
         val itemMeta = itemStack.itemMeta

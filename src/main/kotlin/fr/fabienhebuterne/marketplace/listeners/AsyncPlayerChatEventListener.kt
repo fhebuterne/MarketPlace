@@ -1,15 +1,18 @@
 package fr.fabienhebuterne.marketplace.listeners
 
 import fr.fabienhebuterne.marketplace.MarketPlace
+import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
+import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.longIsValid
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.MessageFormat
 
 class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein: Kodein) : Listener {
 
@@ -25,9 +28,9 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
             event.isCancelled = true
             if (event.message.contains("cancel")) {
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)
-                event.player.sendMessage("cancelled buying ...")
+                event.player.sendMessage(tl.cancelBuying)
             } else if (!longIsValid(event.message)) {
-                event.player.sendMessage("number is not valid retry")
+                throw BadArgumentException(event.player, MessageFormat.format(tl.errors.numberNotValid, event.message))
             } else {
                 marketService.buyItem(event.player, rawSlot, event.message.toInt(), true)
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)

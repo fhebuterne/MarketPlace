@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
+import fr.fabienhebuterne.marketplace.domain.config.Translation
 import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
@@ -31,10 +32,12 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
+lateinit var tl: Translation
 
 class MarketPlace : JavaPlugin() {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
     private var econ: Economy? = null
+    lateinit var translation: ConfigService<Translation>
     lateinit var config: ConfigService<Config>
     lateinit var kodein: Kodein
     lateinit var instance: MarketPlace
@@ -51,8 +54,12 @@ class MarketPlace : JavaPlugin() {
         }
 
         config = ConfigService(this, "config", Config::class)
-        config.createOrLoadConfig(false)
+        config.createAndLoadConfig(false)
         val configParsed = config.getSerialization()
+
+        translation = ConfigService(this, "translation-fr", Translation::class)
+        translation.createAndLoadConfig(true)
+        tl = translation.getSerialization()
 
         callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
 
@@ -74,7 +81,7 @@ class MarketPlace : JavaPlugin() {
             bind<ListingsService>() with singleton { ListingsService(instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance()) }
             bind<LogsService>() with singleton { LogsService(instance()) }
-            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance(), instance()) }
+            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance()) }
             bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }
             bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance(), instance(), instance()) }
         }

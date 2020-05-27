@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -29,7 +30,11 @@ class ListingsService(private val listingsRepository: ListingsRepository, privat
                 toLocation = Location.LISTING_INVENTORY
         )
 
-        player.sendMessage("updated item OK !")
+        val listingUpdated = tl.listingUpdated.replace("{{quantityAdded}}", currentItemStack.amount.toString())
+                .replace("{{item}}", findExistingListings.itemStack.type.toString())
+                .replace("{{quantityTotal}}", updatedListings.quantity.toString())
+
+        player.sendMessage(listingUpdated)
         player.itemInHand = ItemStack(Material.AIR)
     }
 
@@ -46,7 +51,11 @@ class ListingsService(private val listingsRepository: ListingsRepository, privat
                 toLocation = Location.LISTING_INVENTORY
         )
 
-        player.sendMessage("created item after confirmation ok")
+        val listingsCreatedMessage = tl.listingCreated.replace("{{quantity}}", listings.quantity.toString())
+                .replace("{{item}}", listings.itemStack.type.toString())
+                .replace("{{unitPrice}}", listings.price.toString())
+
+        player.sendMessage(listingsCreatedMessage)
         player.itemInHand = ItemStack(Material.AIR)
     }
 }

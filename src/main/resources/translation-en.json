@@ -1,0 +1,69 @@
+{
+  "errors": {
+    "numberNotValid": "§7[§6MarketPlace§7] §6§l{0} §cis not a valid number.",
+    "handEmpty": "§7[§6MarketPlace§7] §cYou need to have item in your hand.",
+    "notEnoughMoney": "§7[§6MarketPlace§7] §cNot enough money to do this action.",
+    "quantityNotAvailable": "§7[§6MarketPlace§7] §cThe requested quantity is no longer available.",
+    "itemNotExist": "§7[§6MarketPlace§7] §cThe requested item does not exist.",
+    "inventoryFull": "§8[§6MarketPlace§8] §cThe inventory is full."
+  },
+  "inventoryEnum": {
+    "search": {
+      "displayName": "§cSearch...",
+      "lore": []
+    },
+    "listings": {
+      "displayName": "§6Listings",
+      "lore": []
+    },
+    "mails": {
+      "displayName": "§6Mails",
+      "lore": []
+    },
+    "previousPage": {
+      "displayName": "§cPrevious page",
+      "lore": [
+        "§cPage : {0}/{1}",
+        "§cTotal items : {2}"
+      ]
+    },
+    "nextPage": {
+      "displayName": "§cNext page",
+      "lore": [
+        "§cPage : {0}/{1}",
+        "§cTotal items : {2}"
+      ]
+    }
+  },
+  "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{maxQuantity}}) you want to get.",
+  "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aIf you want to cancel, write '§6§lcancel§a' in chat.",
+  "commandAddUsage": "§7[§6MarketPlace§7] §cUsage: /marketplace add <money>",
+  "listingCreated": "§7[§6MarketPlace§7] §aYou just put on sale {0}x{1} for {3}$.",
+  "listingUpdated": "§7[§6MarketPlace§7] §aYou just added {0} to item {1}, you now have a total {3} items in sale.",
+  "itemBuy": "§8[§6MarketPlace§8] §aYou just bought {{quantity}}x{{item}} for {{price}}$.",
+  "cancelBuying": "§7[§6MarketPlace§7] §aYou just canceled your purchase.",
+  "cancelSelling": "§7[§6MarketPlace§7] §aYou just canceled your sale.",
+  "searchWaiting": "§7[§6MarketPlace§7] §aPlease enter a type of item (ex: DIRT) or a keyword associated with the name / lore of the item...",
+  "listingItemBottomLorePlayer": [
+    "",
+    "§6Seller: §e{0}",
+    "§6Unit price: §e{1}",
+    "§6Total available: §e{2} items",
+    "",
+    "§6► Left click to buy 1 item",
+    "%middle%§6► Middle click to buy custom quantity items",
+    "%right%§6► Right click to buy 64 items",
+    "",
+    "%expiration%§6Expiration in {3}",
+    ""
+  ],
+  "mailItemBottomLorePlayer": [
+    "",
+    "§6Total available: §e{0} items",
+    "",
+    "§6► Left click to get all items (depending on the number of slots available) in your inventory",
+    "",
+    "%expiration%§6Expiration in {1}",
+    "%expiration%"
+  ]
+}

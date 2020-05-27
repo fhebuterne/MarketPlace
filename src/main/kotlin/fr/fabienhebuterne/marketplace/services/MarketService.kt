@@ -12,6 +12,7 @@ import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
+import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -36,7 +37,7 @@ class MarketService(private val marketPlace: MarketPlace,
 
         if (listings.quantity < quantity) {
             if (showMessage) {
-                player.sendMessage("The requested quantity is no longer available...")
+                player.sendMessage(tl.errors.quantityNotAvailable)
             }
             return
         }
@@ -45,12 +46,12 @@ class MarketService(private val marketPlace: MarketPlace,
 
         // TODO : custom exception
         if (listingsDatabase == null) {
-            player.sendMessage("Item no exist ...")
+            player.sendMessage(tl.errors.itemNotExist)
             return
         }
 
         if (listingsDatabase.quantity < quantity) {
-            player.sendMessage("The requested quantity is no longer available...")
+            player.sendMessage(tl.errors.quantityNotAvailable)
             return
         }
 
@@ -101,7 +102,11 @@ class MarketService(private val marketPlace: MarketPlace,
 
         // TODO : Send notif to seller when item is buyed (executed command with config)
 
-        player.sendMessage("§aYou just bought $quantity of ${listingsDatabase.itemStack.type} for $needingMoney")
+        val itemBuyMessage = tl.itemBuy.replace("{{quantity}}", quantity.toString())
+                .replace("{{item}}", listingsDatabase.itemStack.type.toString())
+                .replace("{{price}}", needingMoney.toString())
+
+        player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(player.uniqueId, pagination = paginationListings)
         player.openInventory(listingsInventoryService.initInventory(marketPlace, refreshInventory, player))
     }
@@ -138,8 +143,8 @@ class MarketService(private val marketPlace: MarketPlace,
                 val listings = listingsService.playersView[player.uniqueId]?.results?.get(event.rawSlot)
                 if (listings != null) {
                     playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
-                    player.sendMessage("Please enter quantity (max available is: ${listings.quantity}) you want to get...")
-                    player.sendMessage("If you want to cancel, write '§a§lcancel§r' in chat")
+                    player.sendMessage(tl.clickMiddleListingInventoryOne.replace("{{maxQuantity}}", listings.quantity.toString()))
+                    player.sendMessage(tl.clickMiddleListingInventoryTwo)
                     player.closeInventory()
                 }
             }
@@ -182,7 +187,7 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         if (slotInventoryAvailable == 0 && itemPresentSlotAvailable == 0) {
-            player.sendMessage("inventory full ...")
+            player.sendMessage(tl.errors.inventoryFull)
             return
         }
 

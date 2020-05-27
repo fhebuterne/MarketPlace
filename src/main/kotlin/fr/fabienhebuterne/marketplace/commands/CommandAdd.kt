@@ -9,15 +9,15 @@ import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
+import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.longIsValid
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import java.util.*
+import java.text.MessageFormat
 
 class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
 
@@ -31,11 +31,11 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         }
 
         if (args.size <= 1) {
-            throw BadArgumentException(player, "§cUsage: /marketplace add <money>")
+            throw BadArgumentException(player, tl.commandAddUsage)
         }
 
         if (!longIsValid(args[1])) {
-            throw BadArgumentException(player, "${args[1]} is not a valid number")
+            throw BadArgumentException(player, MessageFormat.format(tl.errors.numberNotValid, args[1]))
         }
 
         val money = args[1].toLong()
