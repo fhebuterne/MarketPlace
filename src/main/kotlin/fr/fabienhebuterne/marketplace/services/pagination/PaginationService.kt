@@ -60,7 +60,7 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             toInt = to
         }
 
-        val results = paginationRepository.findAll(fromInt, toInt, pagination.searchKeyword)
+        val results = paginationRepository.findAll(fromInt, toInt, pagination.searchKeyword, pagination.filter)
         val paginationUpdated = pagination.copy(
                 results,
                 currentPageInt,

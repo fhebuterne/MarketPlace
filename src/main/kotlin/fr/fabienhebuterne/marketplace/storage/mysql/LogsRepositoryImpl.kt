@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
@@ -88,7 +89,7 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         return insertTo
     }
 
-    override fun findAll(from: Int?, to: Int?, searchKeyword: String?): List<Logs> {
+    override fun findAll(from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Logs> {
         return transaction(marketPlaceDb) {
             when (from != null && to != null) {
                 true -> LogsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }

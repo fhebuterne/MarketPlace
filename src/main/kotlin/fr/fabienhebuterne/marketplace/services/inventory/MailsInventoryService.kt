@@ -9,6 +9,7 @@ import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
@@ -18,7 +19,7 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Mails")
 
         pagination.results.forEachIndexed { index, mails ->
-            val itemStack = setBottomLore(mails.itemStack.clone(), mails)
+            val itemStack = setBaseBottomLore(mails.itemStack.clone(), mails)
             inventory.setItem(index, itemStack)
         }
 
@@ -27,7 +28,7 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         return inventory
     }
 
-    override fun setBottomLore(itemStack: ItemStack, paginated: Mails): ItemStack {
+    override fun setBaseBottomLore(itemStack: ItemStack, paginated: Mails): ItemStack {
         val itemMeta = itemStack.itemMeta
         val loreItem = tl.mailItemBottomLorePlayer.toMutableList()
         loreItem.replaceAll {
@@ -49,5 +50,9 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
 
     private fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
         super.setBottomInventoryLine(inventory, pagination, InventoryType.MAILS)
+    }
+
+    fun clickOnFilter(instance: JavaPlugin, event: InventoryClickEvent, player: Player) {
+        super.clickOnFilter(instance, event, player, InventoryType.MAILS)
     }
 }

@@ -1,7 +1,9 @@
 package fr.fabienhebuterne.marketplace.services.inventory
 
+import fr.fabienhebuterne.marketplace.domain.InventoryFilterEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryType
+import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
@@ -21,7 +23,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
 
     abstract fun initInventory(instance: JavaPlugin, pagination: Pagination<T>, player: Player): Inventory
 
-    abstract fun setBottomLore(itemStack: ItemStack, paginated: T): ItemStack
+    abstract fun setBaseBottomLore(itemStack: ItemStack, paginated: T): ItemStack
 
     fun searchItemstack(instance: JavaPlugin, event: AsyncPlayerChatEvent) {
         event.isCancelled = true
@@ -53,17 +55,28 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
         }
     }
 
+    fun clickOnFilter(instance: JavaPlugin, event: InventoryClickEvent, player: Player, inventoryType: InventoryType) {
+        if (event.rawSlot == InventoryLoreEnum.FILTER.rawSlot) {
+            var pagination = paginationService.playersView[player.uniqueId] ?: Pagination()
+
+            val findByNameAndType = InventoryFilterEnum.findByNameAndType(pagination.filter.filterName, pagination.filter.filterType)
+            val nextFilter = InventoryFilterEnum.next(findByNameAndType.order, inventoryType)
+            pagination = pagination.copy(filter = Filter(
+                    filterName = nextFilter.filterName,
+                    filterType = nextFilter.filterType
+            ))
+
+            val nextPage = paginationService.getPaginated(player.uniqueId, pagination = pagination)
+            val initInventory = initInventory(instance, nextPage, player)
+            player.openInventory(initInventory)
+        }
+    }
+
     open fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>, inventoryType: InventoryType) {
         val grayStainedGlassPane = ItemStack(Material.STAINED_GLASS_PANE, 1, 7)
 
-        val filterItem = ItemStack(Material.REDSTONE_COMPARATOR)
-        val filterItemMeta = filterItem.itemMeta
-        filterItemMeta.displayName = "§aFiltrer par : ???"
-        filterItem.itemMeta = filterItemMeta
-
         inventory.setItem(47, grayStainedGlassPane)
         inventory.setItem(48, grayStainedGlassPane)
-        inventory.setItem(49, filterItem)
         inventory.setItem(50, grayStainedGlassPane)
         inventory.setItem(51, grayStainedGlassPane)
 
@@ -72,6 +85,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
                 t.replace("{0}", pagination.currentPage.toString())
                         .replace("{1}", pagination.maxPage().toString())
                         .replace("{2}", pagination.total.toString())
+                        .replace("{3}", "${pagination.filter.filterName} - ${pagination.filter.filterType}")
             }
 
             val loreUpdated = it.lore.toMutableList()

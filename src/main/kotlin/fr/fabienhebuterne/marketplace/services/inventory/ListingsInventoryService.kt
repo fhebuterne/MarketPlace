@@ -25,7 +25,12 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Achat")
 
         pagination.results.forEachIndexed { index, listings ->
-            val itemStack = setBottomLore(listings.itemStack.clone(), listings)
+            val itemStack = if (listings.sellerUuid == player.uniqueId) {
+                setSellerBottomLore(listings.itemStack.clone(), listings)
+            } else {
+                setBaseBottomLore(listings.itemStack.clone(), listings)
+            }
+
             inventory.setItem(index, itemStack)
         }
 
@@ -34,8 +39,25 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         return inventory
     }
 
+    private fun setSellerBottomLore(itemStack: ItemStack, paginated: Listings): ItemStack {
+        val itemMeta = itemStack.itemMeta
+        var loreItem = itemMeta.lore
+
+        if (loreItem == null) {
+            loreItem = mutableListOf()
+        }
+
+        loreItem.add("")
+        loreItem.add("Vous ne pouvez pas acheter vos articles.")
+        loreItem.add("")
+
+        itemMeta.lore = loreItem
+        itemStack.itemMeta = itemMeta
+        return itemStack
+    }
+
     // TODO : Add step lore to confirm
-    override fun setBottomLore(itemStack: ItemStack, paginated: Listings): ItemStack {
+    override fun setBaseBottomLore(itemStack: ItemStack, paginated: Listings): ItemStack {
         val itemMeta = itemStack.itemMeta
         val loreItem = tl.listingItemBottomLorePlayer.toMutableList()
         loreItem.replaceAll {
@@ -119,5 +141,9 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
     private fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
         super.setBottomInventoryLine(inventory, pagination, LISTINGS)
+    }
+
+    fun clickOnFilter(instance: JavaPlugin, event: InventoryClickEvent, player: Player) {
+        super.clickOnFilter(instance, event, player, LISTINGS)
     }
 }

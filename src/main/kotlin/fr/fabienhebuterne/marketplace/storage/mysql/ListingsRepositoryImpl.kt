@@ -1,6 +1,9 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.base.Filter
+import fr.fabienhebuterne.marketplace.domain.base.FilterName
+import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
@@ -79,13 +82,46 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         return insertTo
     }
 
-    override fun findAll(from: Int?, to: Int?, searchKeyword: String?): List<Listings> {
+    private fun filterDomainToStorage(filter: Filter): Pair<Column<*>, SortOrder> {
+        val filterNameConverted = when (filter.filterName) {
+            FilterName.CREATED_AT -> createdAt
+            FilterName.EXPIRED_AT -> expiredAt
+            FilterName.PRICE -> price
+        }
+
+        val filterTypeConverted = when (filter.filterType) {
+            FilterType.ASC -> SortOrder.ASC
+            FilterType.DESC -> SortOrder.DESC
+        }
+
+        return Pair(filterNameConverted, filterTypeConverted)
+    }
+
+    override fun findAll(from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Listings> {
         return transaction(marketPlaceDb) {
             when {
-                from != null && to != null && searchKeyword == null -> ListingsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
-                from != null && to != null && searchKeyword != null -> ListingsTable.select { itemStack like "%$searchKeyword%" }.limit(to, from.toLong()).map { fromRow(it) }
-                from == null && to == null && searchKeyword != null -> ListingsTable.select { itemStack like "%$searchKeyword%" }.map { fromRow(it) }
-                else -> ListingsTable.selectAll().map { fromRow(it) }
+                from != null && to != null && searchKeyword == null -> {
+                    ListingsTable.selectAll()
+                            .limit(to, from.toLong())
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                from != null && to != null && searchKeyword != null -> {
+                    ListingsTable.select { itemStack like "%$searchKeyword%" }
+                            .limit(to, from.toLong())
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                from == null && to == null && searchKeyword != null -> {
+                    ListingsTable.select { itemStack like "%$searchKeyword%" }
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                else -> {
+                    ListingsTable.selectAll()
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
             }
         }
     }

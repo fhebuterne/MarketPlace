@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
@@ -131,23 +132,31 @@ class MarketService(private val marketPlace: MarketPlace,
                 return
             }
 
-            if (event.isLeftClick) {
-                buyItem(player, event.rawSlot, 1)
-            }
+            val paginationListings = listingsService.playersView[player.uniqueId]
+            val listings = paginationListings?.results?.get(event.rawSlot) ?: return
 
-            if (event.isRightClick) {
-                buyItem(player, event.rawSlot, 64)
+            if (listings.sellerUuid != player.uniqueId) {
+                clickToBuyItem(event, player, listings)
+            } else {
+                // TODO : Click to remove items with seller
             }
+        }
+    }
 
-            if (event.click == ClickType.MIDDLE) {
-                val listings = listingsService.playersView[player.uniqueId]?.results?.get(event.rawSlot)
-                if (listings != null) {
-                    playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
-                    player.sendMessage(tl.clickMiddleListingInventoryOne.replace("{{maxQuantity}}", listings.quantity.toString()))
-                    player.sendMessage(tl.clickMiddleListingInventoryTwo)
-                    player.closeInventory()
-                }
-            }
+    private fun clickToBuyItem(event: InventoryClickEvent, player: Player, listings: Listings) {
+        if (event.isLeftClick) {
+            buyItem(player, event.rawSlot, 1)
+        }
+
+        if (event.isRightClick) {
+            buyItem(player, event.rawSlot, 64)
+        }
+
+        if (event.click == ClickType.MIDDLE) {
+            playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
+            player.sendMessage(tl.clickMiddleListingInventoryOne.replace("{{maxQuantity}}", listings.quantity.toString()))
+            player.sendMessage(tl.clickMiddleListingInventoryTwo)
+            player.closeInventory()
         }
     }
 

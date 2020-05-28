@@ -1,6 +1,9 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.base.Filter
+import fr.fabienhebuterne.marketplace.domain.base.FilterName
+import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
@@ -53,7 +56,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Mails): UpdateBuilder<Number> {
         val itemStackString = json.stringify(ItemStackSerializer, entity.itemStack)
 
-        entity.id?.let { insertTo[id] = EntityID(it, MailsTable)  }
+        entity.id?.let { insertTo[id] = EntityID(it, MailsTable) }
         entity.auditData.updatedAt?.let { insertTo[updatedAt] = it }
         entity.auditData.expiredAt?.let { insertTo[expiredAt] = it }
 
@@ -64,13 +67,46 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         return insertTo
     }
 
-    override fun findAll(from: Int?, to: Int?, searchKeyword: String?): List<Mails> {
+    private fun filterDomainToStorage(filter: Filter): Pair<Column<*>, SortOrder> {
+        val filterNameConverted = when (filter.filterName) {
+            FilterName.CREATED_AT -> createdAt
+            FilterName.EXPIRED_AT -> expiredAt
+            else -> createdAt
+        }
+
+        val filterTypeConverted = when (filter.filterType) {
+            FilterType.ASC -> SortOrder.ASC
+            FilterType.DESC -> SortOrder.DESC
+        }
+
+        return Pair(filterNameConverted, filterTypeConverted)
+    }
+
+    override fun findAll(from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Mails> {
         return transaction(marketPlaceDb) {
             when {
-                from != null && to != null && searchKeyword == null -> MailsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
-                from != null && to != null && searchKeyword != null -> MailsTable.select { itemStack like "%$searchKeyword%" }.limit(to, from.toLong()).map { fromRow(it) }
-                from == null && to == null && searchKeyword != null -> MailsTable.select { itemStack like "%$searchKeyword%" }.map { fromRow(it) }
-                else -> MailsTable.selectAll().map { fromRow(it) }
+                from != null && to != null && searchKeyword == null -> {
+                    MailsTable.selectAll()
+                            .limit(to, from.toLong())
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                from != null && to != null && searchKeyword != null -> {
+                    MailsTable.select { itemStack like "%$searchKeyword%" }
+                            .orderBy(filterDomainToStorage(filter))
+                            .limit(to, from.toLong())
+                            .map { fromRow(it) }
+                }
+                from == null && to == null && searchKeyword != null -> {
+                    MailsTable.select { itemStack like "%$searchKeyword%" }
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                else -> {
+                    MailsTable.selectAll()
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
             }
         }
     }

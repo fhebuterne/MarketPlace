@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.domain
 
 import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
 import fr.fabienhebuterne.marketplace.tl
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 const val PREVIOUS_PAGE_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RjOWU0ZGNmYTQyMjFhMWZhZGMxYjViMmIxMWQ4YmVlYjU3ODc5YWYxYzQyMzYyMTQyYmFlMWVkZDUifX19=="
@@ -20,6 +21,7 @@ enum class InventoryLoreEnum(
     SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), tl.inventoryEnum.search.displayName, tl.inventoryEnum.search.lore),
     LISTING(46, ItemStackReflection.getSkull(LISTING_TEXTURE), tl.inventoryEnum.listings.displayName, tl.inventoryEnum.listings.lore, inventoryType = InventoryType.MAILS),
     MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), tl.inventoryEnum.mails.displayName, tl.inventoryEnum.mails.lore, inventoryType = InventoryType.LISTINGS),
+    FILTER(49, ItemStack(Material.REDSTONE_COMPARATOR), "Filters", listOf("Current : {3}")),
     PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), tl.inventoryEnum.previousPage.displayName, tl.inventoryEnum.previousPage.lore),
     NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), tl.inventoryEnum.nextPage.displayName, tl.inventoryEnum.nextPage.lore);
 

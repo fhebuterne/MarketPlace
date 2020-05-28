@@ -50,6 +50,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
     private fun clickOnBottomLineListings(event: InventoryClickEvent, player: Player) {
         listingsInventoryService.clickOnSwitchPage(marketPlace, event, player)
         listingsInventoryService.clickOnSearch(event, player)
+        listingsInventoryService.clickOnFilter(marketPlace, event, player)
 
         if (event.rawSlot == InventoryLoreEnum.MAIL.rawSlot) {
             val inventoryPaginated = mailsService.getPaginated(player.uniqueId)
@@ -61,6 +62,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
     private fun clickOnBottomLineMails(event: InventoryClickEvent, player: Player) {
         mailsInventoryService.clickOnSwitchPage(marketPlace, event, player)
         mailsInventoryService.clickOnSearch(event, player)
+        mailsInventoryService.clickOnFilter(marketPlace, event, player)
 
         if (event.rawSlot == InventoryLoreEnum.LISTING.rawSlot) {
             val inventoryPaginated = listingsService.getPaginated(player.uniqueId)
