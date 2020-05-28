@@ -29,6 +29,11 @@ class ConfigService<T : Any>(private val instance: MarketPlace,
             }
         }
 
+        loadConfig()
+    }
+
+    @ImplicitReflectionSerializer
+    fun loadConfig() {
         obj = json.parse(kClass.serializer(), file.readText(Charsets.UTF_8))
     }
 

@@ -35,6 +35,10 @@ import org.kodein.di.generic.singleton
 lateinit var tl: Translation
 
 class MarketPlace : JavaPlugin() {
+    companion object {
+        var isReload: Boolean = false
+    }
+
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
     private var econ: Economy? = null
     lateinit var translation: ConfigService<Translation>

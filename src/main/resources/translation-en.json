@@ -1,11 +1,12 @@
 {
   "errors": {
-    "numberNotValid": "§7[§6MarketPlace§7] §6§l{0} §cis not a valid number.",
-    "handEmpty": "§7[§6MarketPlace§7] §cYou need to have item in your hand.",
-    "notEnoughMoney": "§7[§6MarketPlace§7] §cNot enough money to do this action.",
-    "quantityNotAvailable": "§7[§6MarketPlace§7] §cThe requested quantity is no longer available.",
-    "itemNotExist": "§7[§6MarketPlace§7] §cThe requested item does not exist.",
-    "inventoryFull": "§8[§6MarketPlace§8] §cThe inventory is full."
+    "numberNotValid": "§8[§6MarketPlace§8] §6§l{0} §cis not a valid number.",
+    "handEmpty": "§8[§6MarketPlace§8] §cYou need to have item in your hand.",
+    "notEnoughMoney": "§8[§6MarketPlace§8] §cNot enough money to do this action.",
+    "quantityNotAvailable": "§8[§6MarketPlace§8] §cThe requested quantity is no longer available.",
+    "itemNotExist": "§8[§6MarketPlace§8] §cThe requested item does not exist.",
+    "inventoryFull": "§8[§6MarketPlace§8] §cThe inventory is full.",
+    "reloadNotAvailable": "§8[§6MarketPlace§8] §cThe plugin is not available, please wait..."
   },
   "inventoryEnum": {
     "search": {
@@ -37,13 +38,15 @@
   },
   "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{maxQuantity}}) you want to get.",
   "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aIf you want to cancel, write '§6§lcancel§a' in chat.",
-  "commandAddUsage": "§7[§6MarketPlace§7] §cUsage: /marketplace add <money>",
-  "listingCreated": "§7[§6MarketPlace§7] §aYou just put on sale {0}x{1} for {3}$.",
-  "listingUpdated": "§7[§6MarketPlace§7] §aYou just added {0} to item {1}, you now have a total {3} items in sale.",
+  "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
+  "commandReloadStart": "§8[§6MarketPlace§8] §aPlugin reload in progress...",
+  "commandReloadFinish": "§8[§6MarketPlace§8] §aPlugin reload ended...",
+  "listingCreated": "§8[§6MarketPlace§8] §aYou just put on sale {0}x{1} for {3}$.",
+  "listingUpdated": "§8[§6MarketPlace§8] §aYou just added {0} to item {1}, you now have a total {3} items in sale.",
   "itemBuy": "§8[§6MarketPlace§8] §aYou just bought {{quantity}}x{{item}} for {{price}}$.",
-  "cancelBuying": "§7[§6MarketPlace§7] §aYou just canceled your purchase.",
-  "cancelSelling": "§7[§6MarketPlace§7] §aYou just canceled your sale.",
-  "searchWaiting": "§7[§6MarketPlace§7] §aPlease enter a type of item (ex: DIRT) or a keyword associated with the name / lore of the item...",
+  "cancelBuying": "§8[§6MarketPlace§8] §aYou just canceled your purchase.",
+  "cancelSelling": "§8[§6MarketPlace§8] §aYou just canceled your sale.",
+  "searchWaiting": "§8[§6MarketPlace§8] §aPlease enter a type of item (ex: DIRT) or a keyword associated with the name / lore of the item...",
   "listingItemBottomLorePlayer": [
     "",
     "§6Seller: §e{0}",

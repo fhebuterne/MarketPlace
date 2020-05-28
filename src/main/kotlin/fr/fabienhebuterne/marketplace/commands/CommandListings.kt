@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
+import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -20,6 +21,12 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
     }
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
+        // TODO : Put this in common code (callCommand)
+        if (MarketPlace.isReload) {
+            player.sendMessage(tl.errors.reloadNotAvailable)
+            return
+        }
+
         val listingsPaginated = listingsService.getPaginated(player.uniqueId)
         val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
         player.openInventory(initListingsInventory)

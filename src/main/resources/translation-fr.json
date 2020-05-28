@@ -5,7 +5,8 @@
     "notEnoughMoney": "§8[§6MarketPlace§8] §cVous n'avez pas assez d'argent pour faire cette action.",
     "quantityNotAvailable": "§8[§6MarketPlace§8] §cLa quantité demandée n'est pas disponible.",
     "itemNotExist": "§8[§6MarketPlace§8] §cL'article demandé n'existe pas.",
-    "inventoryFull": "§8[§6MarketPlace§8] §cL'inventaire est plein."
+    "inventoryFull": "§8[§6MarketPlace§8] §cL'inventaire est plein.",
+    "reloadNotAvailable": "§8[§6MarketPlace§8] §cLe plugin n'est pas disponible, merci de patienter..."
   },
   "inventoryEnum": {
     "search": {
@@ -38,6 +39,8 @@
   "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aMerci d'entrer la quantité (max disponible: {{maxQuantity}}) que vous souhaitez avoir.",
   "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aSi vous voulez annuler, écriver '§6§lcancel§a' dans le chat.",
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
+  "commandReloadStart": "§8[§6MarketPlace§8] §aRedémarrage du plugin en cours...",
+  "commandReloadFinish": "§8[§6MarketPlace§8] §aRedémarrage du plugin terminé...",
   "listingCreated": "§8[§6MarketPlace§8] §aVous venez de mettre en vente {{quantity}}x{{item}} pour {{unitPrice}}$.",
   "listingUpdated": "§8[§6MarketPlace§8] §aVous venez d'ajouter {{quantityAdded}} à l'item {{item}}, vous avez désormais au total {{quantityTotal}} items en vente.",
   "itemBuy": "§8[§6MarketPlace§8] §aVous venez d'acheter {{quantity}}x{{item}} pour {{price}}$.",

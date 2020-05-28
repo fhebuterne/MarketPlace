@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
+import fr.fabienhebuterne.marketplace.MarketPlace.Companion.isReload
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
@@ -26,6 +27,12 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
     private val listingsInventoryService: ListingsInventoryService by kodein.instance<ListingsInventoryService>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
+        // TODO : Put this in common code (callCommand)
+        if (isReload) {
+            player.sendMessage(tl.errors.reloadNotAvailable)
+            return
+        }
+
         if (player.itemInHand.type == Material.AIR) {
             throw HandEmptyException(player)
         }

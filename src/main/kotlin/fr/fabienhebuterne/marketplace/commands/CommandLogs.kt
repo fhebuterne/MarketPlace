@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
+import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.longIsValid
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -24,6 +25,12 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
     private val logsService: LogsService by kodein.instance<LogsService>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
+        // TODO : Put this in common code (callCommand)
+        if (MarketPlace.isReload) {
+            player.sendMessage(tl.errors.reloadNotAvailable)
+            return
+        }
+
         var currentPage = if (args.size == 2 && longIsValid(args[1]) && args[1].toInt() != 0) {
             args[1].toInt()
         } else {

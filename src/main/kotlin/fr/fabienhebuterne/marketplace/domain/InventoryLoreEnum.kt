@@ -13,7 +13,7 @@ const val LISTING_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh
 enum class InventoryLoreEnum(
         val rawSlot: Int,
         val itemStack: ItemStack,
-        displayName: String,
+        var displayName: String,
         var lore: List<String> = listOf(),
         val inventoryType: InventoryType? = null
 ) {
@@ -34,4 +34,17 @@ enum class InventoryLoreEnum(
 enum class InventoryType {
     MAILS,
     LISTINGS
+}
+
+fun reloadTranslation() {
+    InventoryLoreEnum.SEARCH.displayName = tl.inventoryEnum.search.displayName
+    InventoryLoreEnum.SEARCH.lore = tl.inventoryEnum.search.lore
+    InventoryLoreEnum.LISTING.displayName = tl.inventoryEnum.listings.displayName
+    InventoryLoreEnum.LISTING.lore = tl.inventoryEnum.listings.lore
+    InventoryLoreEnum.MAIL.displayName = tl.inventoryEnum.mails.displayName
+    InventoryLoreEnum.MAIL.lore = tl.inventoryEnum.mails.lore
+    InventoryLoreEnum.PREVIOUS_PAGE.displayName = tl.inventoryEnum.previousPage.displayName
+    InventoryLoreEnum.PREVIOUS_PAGE.lore = tl.inventoryEnum.previousPage.lore
+    InventoryLoreEnum.NEXT_PAGE.displayName = tl.inventoryEnum.nextPage.displayName
+    InventoryLoreEnum.NEXT_PAGE.lore = tl.inventoryEnum.nextPage.lore
 }

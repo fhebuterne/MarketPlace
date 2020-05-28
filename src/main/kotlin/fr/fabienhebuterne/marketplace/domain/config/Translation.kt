@@ -9,6 +9,8 @@ data class Translation(
         val clickMiddleListingInventoryOne: String,
         val clickMiddleListingInventoryTwo: String,
         val commandAddUsage: String,
+        val commandReloadStart: String,
+        val commandReloadFinish: String,
         val listingCreated: String,
         val listingUpdated: String,
         val itemBuy: String,
@@ -26,7 +28,8 @@ data class Errors(
         val notEnoughMoney: String,
         val quantityNotAvailable: String,
         val itemNotExist: String,
-        val inventoryFull: String
+        val inventoryFull: String,
+        val reloadNotAvailable: String
 )
 
 @Serializable
