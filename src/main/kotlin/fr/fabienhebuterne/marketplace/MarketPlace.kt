@@ -102,6 +102,10 @@ class MarketPlace : JavaPlugin() {
                            command: Command,
                            commandLabel: String,
                            args: Array<String>): Boolean {
+
+        println(command.aliases)
+        println(commandLabel)
+
         return callCommandFactoryInit.onCommand(
                 sender,
                 command,

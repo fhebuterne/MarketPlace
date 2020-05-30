@@ -20,7 +20,8 @@ data class Translation(
         val listingItemBottomLoreSeller: List<String>,
         val listingItemBottomLoreSellerConfirmation: List<String>,
         val listingItemBottomLorePlayer: List<String>,
-        val mailItemBottomLorePlayer: List<String>
+        val mailItemBottomLorePlayer: List<String>,
+        val commandHelp: List<String>
 )
 
 @Serializable

@@ -26,13 +26,15 @@ class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private va
                   kodein: Kodein
     ): Boolean {
         // TODO : Add boolean to choose use baseCommand or not (ex: use /namePlugin command or just /command)
-        if (!baseCommand.equals(commandLabel, ignoreCase = true)) {
+        if (!baseCommand.equals(commandLabel, ignoreCase = true) && !command.aliases.contains(commandLabel)) {
             return true
         }
         val commandLowercase: String = if (!loadWithArgs) {
             command.name.toLowerCase()
         } else {
             if (args.isEmpty()) {
+                val commandClassPathHelp = "$commandPath.CommandHelp"
+                instanceCommand(classLoader, commandClassPathHelp, kodein, permissionPrefix, "help", commandSender, commandLabel, command, args)
                 return true
             }
             args[0].toLowerCase()
@@ -42,21 +44,28 @@ class CallCommandFactoryInit<T : JavaPlugin>(private val instance: T, private va
         )
         val commandClassPath = "$commandPath.Command$commandName"
         try {
-            @Suppress("UNCHECKED_CAST")
-            val cmd: ICallCommand<T> = classLoader.loadClass(commandClassPath).getConstructor(Kodein::class.java).newInstance(kodein) as ICallCommand<T>
-            cmd.instance = instance
-            cmd.permission = permissionPrefix + commandName
-            if (commandSender is Player) {
-                cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
-            } else {
-                cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
-            }
+            instanceCommand(classLoader, commandClassPath, kodein, permissionPrefix, commandName, commandSender, commandLabel, command, args)
         } catch (ignored: CustomException) {
         } catch (ignored: ClassNotFoundException) {
+            val commandClassPathHelp = "$commandPath.CommandHelp"
+            instanceCommand(classLoader, commandClassPathHelp, kodein, permissionPrefix, commandName, commandSender, commandLabel, command, args)
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return true
     }
+
+    private fun instanceCommand(classLoader: ClassLoader, commandClassPath: String, kodein: Kodein, permissionPrefix: String, commandName: String, commandSender: CommandSender, commandLabel: String, command: Command, args: Array<String>) {
+        @Suppress("UNCHECKED_CAST")
+        val cmd: ICallCommand<T> = classLoader.loadClass(commandClassPath).getConstructor(Kodein::class.java).newInstance(kodein) as ICallCommand<T>
+        cmd.instance = instance
+        cmd.permission = permissionPrefix + commandName
+        if (commandSender is Player) {
+            cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
+        } else {
+            cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
+        }
+    }
+
 
 }
