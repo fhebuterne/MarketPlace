@@ -47,6 +47,21 @@
   "cancelBuying": "§8[§6MarketPlace§8] §aVous venez d'annuler votre achat.",
   "cancelSelling": "§8[§6MarketPlace§8] §aVous venez d'annuler votre vente.",
   "searchWaiting": "§8[§6MarketPlace§8] §aVeuillez saisir un type d'item (ex: DIRT) ou un mot clef associé au nom / lore de l'item...",
+  "listingItemBottomLoreSeller": [
+    "",
+    "§6Prix unité: §e{0}",
+    "§6Total disponible: §e{1} article(s)",
+    "%expiration%§6Expiration dans: §e{2}",
+    "",
+    "§c► Vous ne pouvez pas acheter vos articles",
+    "§6► Clique gauche pour retirer vos articles",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmation": [
+    "",
+    "§6► Confirmer avec Shift+Clique gauche pour les retirer des achats",
+    ""
+  ],
   "listingItemBottomLorePlayer": [
     "",
     "§6Vendeur: §e{0}",
@@ -64,7 +79,7 @@
     "",
     "§6Total disponible: §e{0} items",
     "",
-    "§6► Clique gauche pour récuperer les articles (dans la limite des slots disponible) dans votre inventaire",
+    "§6► Clique gauche pour récuperer les articles dans votre inventaire",
     "",
     "%expiration%§6Expiration dans {1}",
     "%expiration%"

@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
@@ -135,12 +136,66 @@ class MarketService(private val marketPlace: MarketPlace,
             val paginationListings = listingsService.playersView[player.uniqueId]
             val listings = paginationListings?.results?.get(event.rawSlot) ?: return
 
+            // TODO : Add removing for admin
             if (listings.sellerUuid != player.uniqueId) {
                 clickToBuyItem(event, player, listings)
             } else {
-                // TODO : Click to remove items with seller
+                clickToRemoveItem(event, player, listings)
             }
         }
+    }
+
+    private fun clickToRemoveItem(event: InventoryClickEvent, player: Player, listings: Listings) {
+        if (listingsInventoryService.playersWaitingRemove[player.uniqueId] != null) {
+            if (event.isShiftClick && event.isLeftClick) {
+                if (forwardListingsToMails(listings, player, event)) return
+            }
+            listingsInventoryService.playersWaitingRemove.remove(player.uniqueId)
+
+            val initInventory = listingsInventoryService.initInventory(marketPlace, listingsService.playersView[player.uniqueId]
+                    ?: Pagination(), player)
+            player.openInventory(initInventory)
+        } else {
+            if (event.isLeftClick) {
+                val itemStack = event.currentItem.clone()
+                val itemMeta = itemStack.itemMeta
+                val lore = if (itemMeta.hasLore()) {
+                    itemMeta.lore
+                } else {
+                    mutableListOf()
+                }
+
+                lore.addAll(tl.listingItemBottomLoreSellerConfirmation)
+
+                itemMeta.lore = lore
+                itemStack.itemMeta = itemMeta
+                event.currentItem = itemStack
+                listingsInventoryService.playersWaitingRemove[player.uniqueId] = listings
+            }
+        }
+    }
+
+    private fun forwardListingsToMails(listings: Listings, player: Player, event: InventoryClickEvent): Boolean {
+        // TODO : add audit log
+        val listingsFind = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+
+        if (listingsFind == null) {
+            // TODO : throw exception here
+            player.sendMessage(tl.errors.itemNotExist)
+            return true
+        }
+
+        listingsService.playersView[player.uniqueId] = listingsService.playersView[player.uniqueId]?.let {
+            val elementToRemove = it.results.filterIndexed { index, _ -> index == event.rawSlot }
+            val copy = listingsService.playersView[player.uniqueId]?.copy(
+                    results = it.results.minus(elementToRemove)
+            )
+            copy
+        } ?: Pagination()
+
+        listingsFind.id?.let { listingsRepository.delete(it) }
+        mailsService.saveListingsToMail(listingsFind)
+        return false
     }
 
     private fun clickToBuyItem(event: InventoryClickEvent, player: Player, listings: Listings) {

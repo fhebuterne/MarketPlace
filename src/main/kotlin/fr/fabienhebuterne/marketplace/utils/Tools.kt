@@ -12,7 +12,11 @@ fun longIsValid(number: String): Boolean {
     return true
 }
 
-fun formatInterval(currentTimestamp: Long): String {
+fun formatInterval(currentTimestamp: Long): String? {
+    if (currentTimestamp < System.currentTimeMillis()) {
+        return null
+    }
+
     val interval = Interval(System.currentTimeMillis(), currentTimestamp)
     val period: Period = interval.toPeriod()
 

@@ -36,7 +36,9 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
-            loreItem.replaceAll { it.replace("{1}", formatInterval(expiredAt)) }
+            formatInterval(expiredAt)?.let { interval ->
+                loreItem.replaceAll { it.replace("{1}", interval) }
+            }
         } ?: loreItem.removeIf { it.contains("%expiration%") }
 
         loreItem.replaceAll {
