@@ -8,13 +8,11 @@ import fr.fabienhebuterne.marketplace.storage.MailsRepository
 class MailsService(private val mailsRepository: MailsRepository) : PaginationService<Mails>(mailsRepository) {
 
     fun saveListingsToMail(listings: Listings) {
-        val mails = mailsRepository.find(listings.sellerUuid.toString(), listings.itemStack)
-
-        // TODO : Add audit log here
+        val mails = mailsRepository.find(listings.sellerUuid, listings.itemStack)
 
         if (mails == null) {
             val mailCreation = Mails(
-                    playerUuid = listings.sellerUuid.toString(),
+                    playerUuid = listings.sellerUuid,
                     itemStack = listings.itemStack,
                     quantity = listings.quantity,
                     auditData = AuditData(

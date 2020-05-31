@@ -31,7 +31,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 object LogsTable : UUIDTable("marketplace_logs") {
-    val playerUuid = LogsTable.varchar("player_uuid", 36)
+    val playerUuid = LogsTable.varchar("player_uuid", 36).nullable()
     val playerPseudo = LogsTable.varchar("player_pseudo", 16)
     val sellerUuid = LogsTable.varchar("seller_uuid", 36).nullable()
     val sellerPseudo = LogsTable.varchar("seller_pseudo", 16).nullable()
@@ -89,7 +89,7 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         return insertTo
     }
 
-    override fun findAll(from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Logs> {
+    override fun findAll(uuid: UUID?, from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Logs> {
         return transaction(marketPlaceDb) {
             when (from != null && to != null) {
                 true -> LogsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
@@ -125,7 +125,7 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         TODO("Not yet implemented")
     }
 
-    override fun countAll(searchKeyword: String?): Int {
+    override fun countAll(uuid: UUID?, searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
             when (searchKeyword == null) {
                 true -> LogsTable.selectAll().count().toInt()

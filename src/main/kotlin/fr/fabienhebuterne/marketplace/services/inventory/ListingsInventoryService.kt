@@ -94,8 +94,8 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
-            formatInterval(expiredAt)?.let {
-                loreItem.replaceAll { it.replace("{3}", it) }
+            formatInterval(expiredAt)?.let { listings ->
+                loreItem.replaceAll { it.replace("{3}", listings) }
             }
         } ?: loreItem.removeIf { it.contains("%expiration%") }
 

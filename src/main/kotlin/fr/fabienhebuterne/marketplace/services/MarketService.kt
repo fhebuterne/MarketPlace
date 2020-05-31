@@ -71,12 +71,12 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
 
-        val mailsDatabase = mailsRepository.find(player.uniqueId.toString(), listingsDatabase.itemStack)
+        val mailsDatabase = mailsRepository.find(player.uniqueId, listingsDatabase.itemStack)
 
         if (mailsDatabase == null) {
             mailsRepository.create(
                     Mails(
-                            playerUuid = player.uniqueId.toString(),
+                            playerUuid = player.uniqueId,
                             itemStack = listings.itemStack,
                             quantity = quantity,
                             auditData = AuditData(
@@ -98,8 +98,8 @@ class MarketService(private val marketPlace: MarketPlace,
                 quantity,
                 needingMoney.toLong(),
                 logType = LogType.BUY,
-                fromLocation = Location.PLAYER_INVENTORY,
-                toLocation = Location.LISTING_INVENTORY
+                fromLocation = Location.LISTING_INVENTORY,
+                toLocation = Location.MAIL_INVENTORY
         )
 
         // TODO : Send notif to seller when item is buyed (executed command with config)
@@ -176,7 +176,6 @@ class MarketService(private val marketPlace: MarketPlace,
     }
 
     private fun forwardListingsToMails(listings: Listings, player: Player, event: InventoryClickEvent): Boolean {
-        // TODO : add audit log
         val listingsFind = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (listingsFind == null) {
@@ -184,6 +183,16 @@ class MarketService(private val marketPlace: MarketPlace,
             player.sendMessage(tl.errors.itemNotExist)
             return true
         }
+
+        logsService.createFrom(
+                player,
+                listings,
+                listings.quantity,
+                null,
+                LogType.CANCEL,
+                Location.LISTING_INVENTORY,
+                Location.MAIL_INVENTORY
+        )
 
         listingsService.playersView[player.uniqueId] = listingsService.playersView[player.uniqueId]?.let {
             val elementToRemove = it.results.filterIndexed { index, _ -> index == event.rawSlot }
@@ -255,8 +264,23 @@ class MarketService(private val marketPlace: MarketPlace,
             return
         }
 
+        if (mail.playerUuid != player.uniqueId) {
+            player.sendMessage("§cOperation not allowed ...")
+            return
+        }
+
         itemStack.amount = amountItemStack
         player.inventory.addItem(itemStack)
+
+        logsService.createFrom(
+                player,
+                mail,
+                mail.quantity,
+                null,
+                LogType.GET,
+                Location.MAIL_INVENTORY,
+                Location.PLAYER_INVENTORY
+        )
 
         if (mail.quantity - amountItemStack <= 0) {
             mail.id?.let { mailsRepository.delete(it) }

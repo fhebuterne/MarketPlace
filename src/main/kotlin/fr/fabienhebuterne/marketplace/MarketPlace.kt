@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.config.Translation
 import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
+import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
@@ -57,6 +58,8 @@ class MarketPlace : JavaPlugin() {
             return
         }
 
+        // TODO : Add method to check missing key/value in current file (compare with resource jar file)
+
         config = ConfigService(this, "config", Config::class)
         config.createAndLoadConfig(false)
         val configParsed = config.getSerialization()
@@ -88,12 +91,18 @@ class MarketPlace : JavaPlugin() {
             bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance()) }
             bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }
             bind<MarketService>() with singleton { MarketService(instance, instance(), instance(), instance(), instance(), instance(), instance()) }
+            bind<ExpirationService>() with singleton { ExpirationService(instance, instance(), instance(), instance()) }
         }
 
         // TODO : Create factory to init listeners
         server.pluginManager.registerEvents(InventoryClickEventListener(this, kodein), this)
         server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this, kodein), this)
         server.pluginManager.registerEvents(PlayerJoinEventListener(this, ListingsRepositoryImpl(database)), this)
+
+        // Start tasks to check items expired
+        val expirationService: ExpirationService by kodein.instance<ExpirationService>()
+        expirationService.startTaskExpirationListingsToMails()
+        expirationService.startTaskExpirationMailsToDelete()
     }
 
     override fun onDisable() {}
@@ -102,10 +111,6 @@ class MarketPlace : JavaPlugin() {
                            command: Command,
                            commandLabel: String,
                            args: Array<String>): Boolean {
-
-        println(command.aliases)
-        println(commandLabel)
-
         return callCommandFactoryInit.onCommand(
                 sender,
                 command,

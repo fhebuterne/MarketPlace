@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.listeners
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
+import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
@@ -65,7 +66,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
         mailsInventoryService.clickOnFilter(marketPlace, event, player)
 
         if (event.rawSlot == InventoryLoreEnum.LISTING.rawSlot) {
-            val inventoryPaginated = listingsService.getPaginated(player.uniqueId)
+            val inventoryPaginated = listingsService.getPaginated(player.uniqueId, pagination = Pagination(showAll = true))
             val listingsInventory = listingsInventoryService.initInventory(marketPlace, inventoryPaginated, player)
             player.openInventory(listingsInventory)
         }

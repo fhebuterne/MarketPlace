@@ -2,10 +2,11 @@ package fr.fabienhebuterne.marketplace.services.pagination
 
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
+import fr.fabienhebuterne.marketplace.services.base.EntityService
 import fr.fabienhebuterne.marketplace.storage.PaginationRepository
 import java.util.*
 
-abstract class PaginationService<T : Paginated>(private val paginationRepository: PaginationRepository<T>) {
+abstract class PaginationService<T : Paginated>(private val paginationRepository: PaginationRepository<T>) : EntityService<T>(paginationRepository) {
 
     val playersView: MutableMap<UUID, Pagination<T>> = mutableMapOf()
 
@@ -46,7 +47,11 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
         var toInt = to
         var currentPageInt = pagination.currentPage
 
-        val countAll = paginationRepository.countAll(pagination.searchKeyword)
+        val countAll = if (!pagination.showAll) {
+            paginationRepository.countAll(uuid, pagination.searchKeyword)
+        } else {
+            paginationRepository.countAll(searchKeyword = pagination.searchKeyword)
+        }
 
         if (currentPageInt > 1) {
             fromInt = (currentPageInt - 1) * to
@@ -60,7 +65,12 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             toInt = to
         }
 
-        val results = paginationRepository.findAll(fromInt, toInt, pagination.searchKeyword, pagination.filter)
+        val results = if (!pagination.showAll) {
+            paginationRepository.findAll(uuid, fromInt, toInt, pagination.searchKeyword, pagination.filter)
+        } else {
+            paginationRepository.findAll(from = fromInt, to = toInt, searchKeyword = pagination.searchKeyword, filter = pagination.filter)
+        }
+
         val paginationUpdated = pagination.copy(
                 results,
                 currentPageInt,

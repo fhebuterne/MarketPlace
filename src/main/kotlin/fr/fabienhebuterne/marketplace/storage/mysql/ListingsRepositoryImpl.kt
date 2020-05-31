@@ -97,28 +97,37 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         return Pair(filterNameConverted, filterTypeConverted)
     }
 
-    override fun findAll(from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Listings> {
+    override fun findAll(uuid: UUID?, from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Listings> {
         return transaction(marketPlaceDb) {
+            // TODO : Find better solution refactoring with extraction ?
+            val selectBase = if (uuid == null) {
+                ListingsTable.selectAll()
+            } else {
+                if (searchKeyword == null) {
+                    ListingsTable.select {
+                        sellerUuid eq uuid.toString()
+                    }
+                } else {
+                    ListingsTable.select {
+                        sellerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
+                    }
+                }
+            }
+
             when {
-                from != null && to != null && searchKeyword == null -> {
-                    ListingsTable.selectAll()
+                from != null && to != null -> {
+                    selectBase
                             .limit(to, from.toLong())
                             .orderBy(filterDomainToStorage(filter))
                             .map { fromRow(it) }
                 }
-                from != null && to != null && searchKeyword != null -> {
-                    ListingsTable.select { itemStack like "%$searchKeyword%" }
-                            .limit(to, from.toLong())
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
-                from == null && to == null && searchKeyword != null -> {
-                    ListingsTable.select { itemStack like "%$searchKeyword%" }
+                from == null && to == null -> {
+                    selectBase
                             .orderBy(filterDomainToStorage(filter))
                             .map { fromRow(it) }
                 }
                 else -> {
-                    ListingsTable.selectAll()
+                    selectBase
                             .orderBy(filterDomainToStorage(filter))
                             .map { fromRow(it) }
                 }
@@ -178,7 +187,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         }
     }
 
-    override fun countAll(searchKeyword: String?): Int {
+    override fun countAll(uuid: UUID?, searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
             when (searchKeyword == null) {
                 true -> ListingsTable.selectAll().count().toInt()

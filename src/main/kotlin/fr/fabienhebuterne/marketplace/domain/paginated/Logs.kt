@@ -22,7 +22,9 @@ data class Logs(
 enum class LogType {
     SELL,
     BUY,
-    EXPIRED
+    EXPIRED,
+    CANCEL,
+    GET
 }
 
 enum class Location {

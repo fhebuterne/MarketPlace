@@ -12,7 +12,8 @@ data class Pagination<T : Paginated>(
         val filter: Filter = Filter(
                 FilterName.CREATED_AT,
                 FilterType.DESC
-        )
+        ),
+        val showAll: Boolean = false
 ) {
     fun maxPage(): Int {
         return ceil((total.toDouble() / resultPerPage.toDouble())).toInt()

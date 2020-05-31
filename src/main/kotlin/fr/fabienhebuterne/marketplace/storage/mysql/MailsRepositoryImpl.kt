@@ -42,7 +42,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
 
         return Mails(
                 id = row[id].value,
-                playerUuid = row[playerUuid],
+                playerUuid = UUID.fromString(row[playerUuid]),
                 itemStack = itemStack,
                 quantity = row[quantity],
                 auditData = AuditData(
@@ -60,7 +60,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         entity.auditData.updatedAt?.let { insertTo[updatedAt] = it }
         entity.auditData.expiredAt?.let { insertTo[expiredAt] = it }
 
-        insertTo[playerUuid] = entity.playerUuid
+        insertTo[playerUuid] = entity.playerUuid.toString()
         insertTo[itemStack] = itemStackString
         insertTo[quantity] = entity.quantity
         insertTo[createdAt] = entity.auditData.createdAt
@@ -82,28 +82,37 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         return Pair(filterNameConverted, filterTypeConverted)
     }
 
-    override fun findAll(from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Mails> {
+    override fun findAll(uuid: UUID?, from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Mails> {
         return transaction(marketPlaceDb) {
+            // TODO : Find better solution refactoring with extraction ?
+            val selectBase = if (uuid == null) {
+                MailsTable.selectAll()
+            } else {
+                if (searchKeyword == null) {
+                    MailsTable.select {
+                        playerUuid eq uuid.toString()
+                    }
+                } else {
+                    MailsTable.select {
+                        playerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
+                    }
+                }
+            }
+
             when {
-                from != null && to != null && searchKeyword == null -> {
-                    MailsTable.selectAll()
+                from != null && to != null -> {
+                    selectBase
                             .limit(to, from.toLong())
                             .orderBy(filterDomainToStorage(filter))
                             .map { fromRow(it) }
                 }
-                from != null && to != null && searchKeyword != null -> {
-                    MailsTable.select { itemStack like "%$searchKeyword%" }
-                            .orderBy(filterDomainToStorage(filter))
-                            .limit(to, from.toLong())
-                            .map { fromRow(it) }
-                }
-                from == null && to == null && searchKeyword != null -> {
-                    MailsTable.select { itemStack like "%$searchKeyword%" }
+                from == null && to == null -> {
+                    selectBase
                             .orderBy(filterDomainToStorage(filter))
                             .map { fromRow(it) }
                 }
                 else -> {
-                    MailsTable.selectAll()
+                    selectBase
                             .orderBy(filterDomainToStorage(filter))
                             .map { fromRow(it) }
                 }
@@ -115,12 +124,12 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         TODO("Not yet implemented")
     }
 
-    override fun find(playerUuid: String, itemStack: ItemStack): Mails? {
+    override fun find(playerUuid: UUID, itemStack: ItemStack): Mails? {
         val itemStackString = json.stringify(ItemStackSerializer, itemStack)
 
         return transaction(marketPlaceDb) {
             MailsTable.select {
-                (MailsTable.playerUuid eq playerUuid) and
+                (MailsTable.playerUuid eq playerUuid.toString()) and
                         (MailsTable.itemStack eq itemStackString)
             }.map { fromRow(it) }.firstOrNull()
         }
@@ -146,7 +155,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
 
         transaction(marketPlaceDb) {
             MailsTable.update({
-                (playerUuid eq entity.playerUuid) and
+                (playerUuid eq entity.playerUuid.toString()) and
                         (itemStack eq itemStackString)
             }) {
                 fromEntity(it, entity)
@@ -161,7 +170,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         }
     }
 
-    override fun countAll(searchKeyword: String?): Int {
+    override fun countAll(uuid: UUID?, searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
             when (searchKeyword == null) {
                 true -> MailsTable.selectAll().count().toInt()

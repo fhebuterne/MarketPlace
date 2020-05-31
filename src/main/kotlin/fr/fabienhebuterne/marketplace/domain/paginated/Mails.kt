@@ -6,7 +6,7 @@ import java.util.*
 
 data class Mails(
         val id: UUID? = null,
-        val playerUuid: String,
+        val playerUuid: UUID,
         val itemStack: ItemStack,
         val quantity: Int = 1,
         val auditData: AuditData

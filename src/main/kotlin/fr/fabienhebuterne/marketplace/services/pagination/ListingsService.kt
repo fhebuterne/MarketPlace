@@ -18,7 +18,7 @@ class ListingsService(private val listingsRepository: ListingsRepository, privat
                         expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
                 )
         )
-        listingsRepository.update(updatedListings)
+        update(updatedListings)
 
         logsService.createFrom(
                 player,
@@ -39,7 +39,7 @@ class ListingsService(private val listingsRepository: ListingsRepository, privat
     }
 
     fun create(player: Player, listings: Listings) {
-        listingsRepository.create(listings)
+        create(listings)
 
         logsService.createFrom(
                 player,

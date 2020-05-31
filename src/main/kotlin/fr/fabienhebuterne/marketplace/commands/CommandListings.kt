@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
+import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.tl
@@ -28,7 +29,7 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
         }
 
         listingsInventoryService.playersWaitingRemove.remove(player.uniqueId)
-        val listingsPaginated = listingsService.getPaginated(player.uniqueId)
+        val listingsPaginated = listingsService.getPaginated(player.uniqueId, pagination = Pagination(showAll = true))
         val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
         player.openInventory(initListingsInventory)
     }
