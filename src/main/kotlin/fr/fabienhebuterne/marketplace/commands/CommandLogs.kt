@@ -3,7 +3,6 @@ package fr.fabienhebuterne.marketplace.commands
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
-import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
@@ -45,67 +44,72 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
         )
         currentPage = logsPaginated.currentPage
 
-        player.sendMessage("§8---------------<§6§lMarketPlace§8>---------------")
+        player.sendMessage(tl.logs.header)
         logsPaginated.results.forEach {
             formatLogMessage(player, it)
         }
 
-        val message = TextComponent("§8-----")
+        val message = TextComponent(tl.logs.footer.split("%previousPage%")[0])
 
         if (currentPage > 1) {
-            val previousPage = TextComponent("§8[§6§l<§8]")
-            previousPage.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder("Page précédente").create())
+            val previousPage = TextComponent(tl.logs.previousPageExist)
+            previousPage.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(tl.logs.previousPage).create())
             previousPage.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs ${currentPage - 1}")
             message.addExtra(previousPage)
         } else {
-            message.addExtra("§8---")
+            message.addExtra(tl.logs.previousPageNotExist)
         }
 
-        TextComponent.fromLegacyText("§8---------<§6§lPage ${logsPaginated.currentPage}/${logsPaginated.maxPage()}§8>---------").forEach {
+        val footerMiddle = tl.logs.footer.split("%previousPage%")[1]
+                .replace("{{currentPage}}", logsPaginated.currentPage.toString())
+                .replace("{{maxPage}}", logsPaginated.maxPage().toString())
+                .replaceAfter("%nextPage%", "")
+                .replace("%nextPage%", "")
+
+        TextComponent.fromLegacyText(footerMiddle).forEach {
             message.addExtra(it)
         }
 
         if (currentPage < logsPaginated.maxPage()) {
-            val nextPage = TextComponent("§8[§6§l>§8]")
-            nextPage.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder("Page suivante").create())
+            val nextPage = TextComponent(tl.logs.nextPageExist)
+            nextPage.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(tl.logs.nextPage).create())
             nextPage.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs ${currentPage + 1}")
             message.addExtra(nextPage)
         } else {
-            message.addExtra("§8---")
+            message.addExtra(tl.logs.nextPageNotExist)
         }
 
-        message.addExtra("§8-----")
+        message.addExtra(tl.logs.footer.split("%nextPage%")[1])
 
         player.spigot().sendMessage(message)
     }
 
     private fun formatLogMessage(player: Player, logs: Logs) {
-        val prefix = TextComponent("§8[§6%logType%§8] ".replace("%logType%", logs.logType.name))
-        prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder("${logs.fromLocation} -> ${logs.toLocation}").create())
+        val prefix = TextComponent(tl.logs.prefix.replace("{{logType}}", tl.logs.type[logs.logType].orEmpty()))
+
+        val prefixHover = tl.logs.prefixHover.replace("{{fromLocation}}", logs.fromLocation.toString())
+                .replace("{{toLocation}}", logs.toLocation.toString())
+                .replace("{{createdAt}}", logs.auditData.createdAt.toString())
+
+        prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(prefixHover).create())
 
         val msg = TextComponent("")
         msg.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, ComponentBuilder(logs.itemStack?.let { ItemStackReflection.serializeItemStack(it) }).create())
-        if (logs.logType == LogType.BUY) {
-            TextComponent.fromLegacyText("§6${logs.playerPseudo} §aa acheté §6${logs.quantity}x${logs.itemStack?.type?.name} §apour ${logs.price}$ à §6${logs.sellerPseudo}").forEach {
-                msg.addExtra(it)
-            }
-        }
-
-        if (logs.logType == LogType.SELL) {
-            TextComponent.fromLegacyText("§6${logs.playerPseudo} §aa vendu §6${logs.quantity}x${logs.itemStack?.type?.name} §apour ${logs.price}$").forEach {
-                msg.addExtra(it)
-            }
-        }
-
-        if (logs.logType == LogType.EXPIRED) {
-            TextComponent.fromLegacyText("§aLes §6${logs.quantity}x${logs.itemStack?.type?.name} §ade §6${logs.playerPseudo} §aont expirées").forEach {
-                msg.addExtra(it)
-            }
+        TextComponent.fromLegacyText(getMessageLogType(logs)).forEach {
+            msg.addExtra(it)
         }
 
         prefix.addExtra(msg)
-
         player.spigot().sendMessage(prefix)
+    }
+
+    private fun getMessageLogType(logs: Logs): String {
+        return tl.logs.message[logs.logType].orEmpty()
+                .replace("{{playerPseudo}}", logs.playerPseudo)
+                .replace("{{quantity}}", logs.quantity.toString())
+                .replace("{{itemStack}}", logs.itemStack?.type?.name.orEmpty())
+                .replace("{{price}}", logs.price.toString())
+                .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
     }
 
 }

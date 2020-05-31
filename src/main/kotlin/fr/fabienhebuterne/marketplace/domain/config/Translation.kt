@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.domain.config
 
+import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +22,8 @@ data class Translation(
         val listingItemBottomLoreSellerConfirmation: List<String>,
         val listingItemBottomLorePlayer: List<String>,
         val mailItemBottomLorePlayer: List<String>,
-        val commandHelp: List<String>
+        val commandHelp: List<String>,
+        val logs: LogsTranslation
 )
 
 @Serializable
@@ -48,4 +50,20 @@ data class InventoryEnum(
 data class Item(
         val displayName: String,
         val lore: MutableList<String> = mutableListOf()
+)
+
+@Serializable
+data class LogsTranslation(
+        val header: String,
+        val footer: String,
+        val previousPageExist: String,
+        val previousPageNotExist: String,
+        val nextPageExist: String,
+        val nextPageNotExist: String,
+        val previousPage: String,
+        val nextPage: String,
+        val prefix: String,
+        val prefixHover: String,
+        val type: MutableMap<LogType, String> = mutableMapOf(),
+        val message: MutableMap<LogType, String> = mutableMapOf()
 )

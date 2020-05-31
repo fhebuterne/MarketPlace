@@ -54,7 +54,7 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
                 id = row[id].value,
                 playerUuid = UUID.fromString(row[playerUuid]),
                 playerPseudo = row[playerPseudo],
-                sellerUuid = UUID.fromString(row[sellerUuid]),
+                sellerUuid = row[sellerUuid]?.let { UUID.fromString(row[sellerUuid]) },
                 sellerPseudo = row[sellerPseudo],
                 itemStack = itemStack,
                 quantity = row[quantity],

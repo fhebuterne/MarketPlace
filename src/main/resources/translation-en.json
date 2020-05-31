@@ -92,5 +92,31 @@
     "§6/mp logs: §aAfficher les logs.",
     "§6/mp reload: §aRecharger le plugin.",
     "§8-------------------------------------------------"
-  ]
+  ],
+  "logs": {
+    "header": "§8---------------<§6§lMarketPlace§8>---------------",
+    "footer": "§8-----%previousPage%§8---------<§6§lPage {{currentPage}}/{{maxPage}}§8>---------%nextPage%§8-----",
+    "previousPageExist": "§8[§6§l<§8]",
+    "previousPageNotExist": "§8---",
+    "nextPageExist": "§8[§6§l>§8]",
+    "nextPageNotExist": "§8---",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "prefix": "§8[§6{{logType}}§8] ",
+    "prefixHover": "{{fromLocation}} -> {{toLocation}}\nDate : {{createdAt}}",
+    "type": {
+      "BUY": "Buy",
+      "SELL": "Sell",
+      "EXPIRED": "Expired",
+      "CANCEL": "Cancel",
+      "GET": "Get"
+    },
+    "message": {
+      "BUY": "§6{{playerPseudo}} §abought §6${{quantity}}x${{itemStack}} §afor {{price}}$ at §6{{sellerPseudo}}",
+      "SELL": "§6{{playerPseudo}} §asold §6{{quantity}}x{{itemStack}} §afor {{price}}$",
+      "EXPIRED": "§aThe §6{{quantity}}x{{itemStack}} §aof §6{{playerPseudo}} §ahad expired",
+      "CANCEL": "§6{{playerPseudo}} §acanceled the sale of §6{{quantity}}x{{itemStack}}",
+      "GET": "§6{{playerPseudo}} §acollected §6{{quantity}}x{{itemStack}} §afrom his inbox"
+    }
+  }
 }
