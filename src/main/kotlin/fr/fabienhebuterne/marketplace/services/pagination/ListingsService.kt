@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.services.pagination
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
@@ -9,13 +10,13 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class ListingsService(private val listingsRepository: ListingsRepository, private val logsService: LogsService) : PaginationService<Listings>(listingsRepository) {
+class ListingsService(private val marketPlace: MarketPlace, listingsRepository: ListingsRepository, private val logsService: LogsService) : PaginationService<Listings>(listingsRepository) {
     fun updateListings(findExistingListings: Listings, currentItemStack: ItemStack, player: Player) {
         val updatedListings = findExistingListings.copy(
                 quantity = findExistingListings.quantity + currentItemStack.amount,
                 auditData = findExistingListings.auditData.copy(
                         updatedAt = System.currentTimeMillis(),
-                        expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                        expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
                 )
         )
         update(updatedListings)

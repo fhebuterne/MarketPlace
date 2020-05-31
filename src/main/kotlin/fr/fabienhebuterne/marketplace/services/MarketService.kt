@@ -82,7 +82,7 @@ class MarketService(private val marketPlace: MarketPlace,
                             auditData = AuditData(
                                     createdAt = System.currentTimeMillis(),
                                     updatedAt = System.currentTimeMillis(),
-                                    expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                                    expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
                             )
                     )
             )

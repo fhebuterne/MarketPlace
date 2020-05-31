@@ -61,7 +61,7 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
                 auditData = AuditData(
                         System.currentTimeMillis(),
                         System.currentTimeMillis(),
-                        System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                        System.currentTimeMillis() + (instance.config.getSerialization().expiration.playerToListings * 1000)
                 )
         )
 

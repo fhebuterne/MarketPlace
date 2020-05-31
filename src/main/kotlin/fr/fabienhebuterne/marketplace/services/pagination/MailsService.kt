@@ -1,11 +1,12 @@
 package fr.fabienhebuterne.marketplace.services.pagination
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 
-class MailsService(private val mailsRepository: MailsRepository) : PaginationService<Mails>(mailsRepository) {
+class MailsService(private val marketPlace: MarketPlace, private val mailsRepository: MailsRepository) : PaginationService<Mails>(mailsRepository) {
 
     fun saveListingsToMail(listings: Listings) {
         val mails = mailsRepository.find(listings.sellerUuid, listings.itemStack)
@@ -18,7 +19,7 @@ class MailsService(private val mailsRepository: MailsRepository) : PaginationSer
                     auditData = AuditData(
                             createdAt = System.currentTimeMillis(),
                             updatedAt = System.currentTimeMillis(),
-                            expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                            expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
                     )
             )
             mailsRepository.create(mailCreation)
@@ -27,7 +28,7 @@ class MailsService(private val mailsRepository: MailsRepository) : PaginationSer
                     quantity = mails.quantity + listings.quantity,
                     auditData = mails.auditData.copy(
                             updatedAt = System.currentTimeMillis(),
-                            expiredAt = System.currentTimeMillis() + (3600 * 24 * 7 * 1000)
+                            expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
                     )
             )
             mailsRepository.update(mailUpdate)

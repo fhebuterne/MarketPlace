@@ -15,15 +15,29 @@ class ExpirationService(
         private val logsService: LogsService
 ) {
 
-    // TODO : Put time in config.json
     fun startTaskExpirationListingsToMails() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(marketPlace, {
             val findAllListings = listingsService.findAll()
             findAllListings.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
-                    // TODO : Execute notif command
+                    marketPlace.config.getSerialization().expiration.listingsToMailsNotifCommand.forEach { command ->
+                        val commandReplace = command.replace("{{playerPseudo}}", it.sellerPseudo)
+                                .replace("{{playerUUID}}", it.sellerUuid.toString())
+                                .replace("{{quantity}}", it.quantity.toString())
+                                .replace("{{itemStack}}", it.itemStack.type.toString())
+                                .replace("{{price}}", it.price.toString())
+
+                        if (Bukkit.isPrimaryThread()) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
+                        } else {
+                            Bukkit.getScheduler().runTaskLater(marketPlace, {
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
+                            }, 20)
+                        }
+                    }
+
                     logsService.createFrom(
-                            Bukkit.getOfflinePlayer(it.sellerUuid).player,
+                            Bukkit.getOfflinePlayer(it.sellerUuid),
                             it,
                             it.quantity,
                             null,
@@ -44,7 +58,21 @@ class ExpirationService(
             val findAllMails = mailsService.findAll()
             findAllMails.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
-                    // TODO : Execute notif command
+                    marketPlace.config.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
+                        val commandReplace = command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name)
+                                .replace("{{playerUUID}}", it.playerUuid.toString())
+                                .replace("{{quantity}}", it.quantity.toString())
+                                .replace("{{itemStack}}", it.itemStack.type.toString())
+
+                        if (Bukkit.isPrimaryThread()) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
+                        } else {
+                            Bukkit.getScheduler().runTaskLater(marketPlace, {
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
+                            }, 20)
+                        }
+                    }
+
                     logsService.createFrom(
                             Bukkit.getOfflinePlayer(it.playerUuid).player,
                             it,

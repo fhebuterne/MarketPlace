@@ -85,8 +85,8 @@ class MarketPlace : JavaPlugin() {
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(database) }
-            bind<ListingsService>() with singleton { ListingsService(instance(), instance()) }
-            bind<MailsService>() with singleton { MailsService(instance()) }
+            bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance()) }
+            bind<MailsService>() with singleton { MailsService(instance, instance()) }
             bind<LogsService>() with singleton { LogsService(instance()) }
             bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance()) }
             bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }

@@ -5,5 +5,15 @@
     "port": 3306,
     "username": "minecraft",
     "password": ""
+  },
+  "expiration": {
+    "playerToListings": 604800,
+    "listingsToMails": 604800,
+    "listingsToMailsNotifCommand": [
+      "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has expired from listings and its in your mailbox."
+    ],
+    "mailsToDeleteNotifCommand": [
+      "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has expired from mailbox and has been deleted."
+    ]
   }
 }

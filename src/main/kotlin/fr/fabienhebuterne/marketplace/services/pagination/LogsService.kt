@@ -3,12 +3,12 @@ package fr.fabienhebuterne.marketplace.services.pagination
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.*
 import fr.fabienhebuterne.marketplace.storage.LogsRepository
-import org.bukkit.entity.Player
+import org.bukkit.OfflinePlayer
 
 class LogsService(private val logsRepository: LogsRepository) : PaginationService<Logs>(logsRepository) {
 
     fun createFrom(
-            player: Player,
+            player: OfflinePlayer,
             paginated: Paginated,
             quantity: Int,
             needingMoney: Long?,
