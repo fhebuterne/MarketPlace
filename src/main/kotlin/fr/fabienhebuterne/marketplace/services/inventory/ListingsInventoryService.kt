@@ -20,7 +20,6 @@ import java.util.*
 
 class ListingsInventoryService(private val listingsService: ListingsService) : InventoryTypeService<Listings>(listingsService) {
     private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
-    val playersWaitingRemove: MutableMap<UUID, Paginated> = mutableMapOf()
 
     override fun initInventory(instance: JavaPlugin, pagination: Pagination<Listings>, player: Player): Inventory {
         val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Achat")

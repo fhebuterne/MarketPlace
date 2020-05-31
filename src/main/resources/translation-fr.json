@@ -54,12 +54,7 @@
     "%expiration%§6Expiration dans: §e{2}",
     "",
     "§c► Vous ne pouvez pas acheter vos articles",
-    "§6► Clique gauche pour retirer vos articles",
-    ""
-  ],
-  "listingItemBottomLoreSellerConfirmation": [
-    "",
-    "§6► Confirmer avec Shift+Clique gauche pour les retirer des achats",
+    "§6► Shift + Clique gauche pour retirer vos articles",
     ""
   ],
   "listingItemBottomLorePlayer": [

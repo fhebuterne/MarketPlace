@@ -146,42 +146,22 @@ class MarketService(private val marketPlace: MarketPlace,
     }
 
     private fun clickToRemoveItem(event: InventoryClickEvent, player: Player, listings: Listings) {
-        if (listingsInventoryService.playersWaitingRemove[player.uniqueId] != null) {
-            if (event.isShiftClick && event.isLeftClick) {
-                if (forwardListingsToMails(listings, player, event)) return
-            }
-            listingsInventoryService.playersWaitingRemove.remove(player.uniqueId)
+        if (event.isShiftClick && event.isLeftClick) {
+            forwardListingsToMails(listings, player, event)
 
             val initInventory = listingsInventoryService.initInventory(marketPlace, listingsService.playersView[player.uniqueId]
                     ?: Pagination(), player)
             player.openInventory(initInventory)
-        } else {
-            if (event.isLeftClick) {
-                val itemStack = event.currentItem.clone()
-                val itemMeta = itemStack.itemMeta
-                val lore = if (itemMeta.hasLore()) {
-                    itemMeta.lore
-                } else {
-                    mutableListOf()
-                }
-
-                lore.addAll(tl.listingItemBottomLoreSellerConfirmation)
-
-                itemMeta.lore = lore
-                itemStack.itemMeta = itemMeta
-                event.currentItem = itemStack
-                listingsInventoryService.playersWaitingRemove[player.uniqueId] = listings
-            }
         }
     }
 
-    private fun forwardListingsToMails(listings: Listings, player: Player, event: InventoryClickEvent): Boolean {
+    private fun forwardListingsToMails(listings: Listings, player: Player, event: InventoryClickEvent) {
         val listingsFind = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (listingsFind == null) {
             // TODO : throw exception here
             player.sendMessage(tl.errors.itemNotExist)
-            return true
+            return
         }
 
         logsService.createFrom(
@@ -204,7 +184,6 @@ class MarketService(private val marketPlace: MarketPlace,
 
         listingsFind.id?.let { listingsRepository.delete(it) }
         mailsService.saveListingsToMail(listingsFind)
-        return false
     }
 
     private fun clickToBuyItem(event: InventoryClickEvent, player: Player, listings: Listings) {
