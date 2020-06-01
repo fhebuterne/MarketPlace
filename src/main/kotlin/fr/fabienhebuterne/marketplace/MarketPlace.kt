@@ -50,6 +50,7 @@ class MarketPlace : JavaPlugin() {
     @ImplicitReflectionSerializer
     override fun onEnable() {
         instance = this
+        Dependency(this).downloadDependencies()
         Dependency(this).loadDependencies()
 
         if (!setupEconomy()) {
