@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.commands
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.tl
@@ -16,6 +17,7 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
 
     private val listingsService: ListingsService by kodein.instance<ListingsService>()
     private val listingsInventoryService: ListingsInventoryService by kodein.instance<ListingsInventoryService>()
+    private val marketService: MarketService by kodein.instance<MarketService>()
 
     companion object {
         const val BIG_CHEST_SIZE = 54
@@ -28,6 +30,7 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
             return
         }
 
+        marketService.playersWaitingDefinedQuantity.remove(player.uniqueId)
         val listingsPaginated = listingsService.getPaginated(player.uniqueId, pagination = Pagination(showAll = true))
         val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
         player.openInventory(initListingsInventory)

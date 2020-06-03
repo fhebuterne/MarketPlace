@@ -57,6 +57,16 @@
     "§6► Shift + Clique gauche pour retirer vos articles",
     ""
   ],
+  "listingItemBottomLoreSellerConfirmationLeftClick": [
+    "",
+    "§6► Clique gauche pour confirmer votre achat d'un article.",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmationRightClick": [
+    "",
+    "§6► Clique droit pour confirmer votre achat de 64 articles.",
+    ""
+  ],
   "listingItemBottomLorePlayer": [
     "",
     "§6Vendeur: §e{0}",

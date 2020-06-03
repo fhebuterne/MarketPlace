@@ -19,6 +19,8 @@ data class Translation(
         val cancelSelling: String,
         val searchWaiting: String,
         val listingItemBottomLoreSeller: List<String>,
+        val listingItemBottomLoreSellerConfirmationLeftClick: List<String>,
+        val listingItemBottomLoreSellerConfirmationRightClick: List<String>,
         val listingItemBottomLorePlayer: List<String>,
         val mailItemBottomLorePlayer: List<String>,
         val commandHelp: List<String>,

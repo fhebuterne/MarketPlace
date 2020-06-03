@@ -57,6 +57,16 @@
     "§6► Shift + Left click to remove your items",
     ""
   ],
+  "listingItemBottomLoreSellerConfirmationLeftClick": [
+    "",
+    "§6► Left click to confirm your purchase of one item.",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmationRightClick": [
+    "",
+    "§6► Right click to confirm your purchase of 64 items.",
+    ""
+  ],
   "listingItemBottomLorePlayer": [
     "",
     "§6Seller: §e{0}",

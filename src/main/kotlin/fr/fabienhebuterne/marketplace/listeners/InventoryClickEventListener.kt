@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.listeners
 
 import fr.fabienhebuterne.marketplace.MarketPlace
+import fr.fabienhebuterne.marketplace.commands.factory.exceptions.CustomException
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.services.MarketService
@@ -25,6 +26,16 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
 
     @EventHandler
     fun onInventoryClickEvent(event: InventoryClickEvent) {
+        try {
+            execute(event)
+        } catch (ignored: CustomException) {
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    // TODO: Factory to put in common code for hidden exception
+    private fun execute(event: InventoryClickEvent) {
         val player: Player = event.view.player as Player
 
         if (event.view.title.contains("MarketPlace")) {
@@ -44,7 +55,6 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
         if (event.view.title == "MarketPlace - Vente - Confirmation") {
             listingsInventoryService.clickOnAddNewItemConfirmation(event, player)
         }
-
     }
 
     // TODO : Refactoring common code between listings and mails

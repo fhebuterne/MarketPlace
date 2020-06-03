@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.listeners
 
 import fr.fabienhebuterne.marketplace.MarketPlace
+import fr.fabienhebuterne.marketplace.commands.factory.exceptions.CustomException
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
@@ -22,6 +23,16 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
 
     @EventHandler
     fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {
+        try {
+            execute(event)
+        } catch (ignored: CustomException) {
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    // TODO: Factory to put in common code for hidden exception
+    private fun execute(event: AsyncPlayerChatEvent) {
         // Buy custom quantity
         val rawSlot = marketService.playersWaitingCustomQuantity[event.player.uniqueId]
         if (rawSlot != null) {

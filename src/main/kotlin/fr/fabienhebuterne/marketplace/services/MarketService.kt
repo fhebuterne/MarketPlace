@@ -20,8 +20,13 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.inventory.ItemStack
 import java.util.*
 
+data class WaitingDefinedQuantity(
+        val listings: Listings,
+        val clickType: ClickType
+)
 
 class MarketService(private val marketPlace: MarketPlace,
                     private val listingsService: ListingsService,
@@ -32,6 +37,7 @@ class MarketService(private val marketPlace: MarketPlace,
                     private val logsService: LogsService) {
 
     val playersWaitingCustomQuantity: MutableMap<UUID, Int> = mutableMapOf()
+    val playersWaitingDefinedQuantity: MutableMap<UUID, WaitingDefinedQuantity> = mutableMapOf()
 
     fun buyItem(player: Player, rawSlot: Int, quantity: Int, showMessage: Boolean = false) {
         val paginationListings = listingsService.playersView[player.uniqueId]
@@ -187,19 +193,50 @@ class MarketService(private val marketPlace: MarketPlace,
     }
 
     private fun clickToBuyItem(event: InventoryClickEvent, player: Player, listings: Listings) {
-        if (event.isLeftClick) {
-            buyItem(player, event.rawSlot, 1)
-        }
+        confirmationBuyItem(event, player, listings, ClickType.LEFT, 1, tl.listingItemBottomLoreSellerConfirmationLeftClick)
 
-        if (event.isRightClick) {
-            buyItem(player, event.rawSlot, 64)
-        }
+        confirmationBuyItem(event, player, listings, ClickType.RIGHT, 64, tl.listingItemBottomLoreSellerConfirmationRightClick)
 
         if (event.click == ClickType.MIDDLE) {
             playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
             player.sendMessage(tl.clickMiddleListingInventoryOne.replace("{{maxQuantity}}", listings.quantity.toString()))
             player.sendMessage(tl.clickMiddleListingInventoryTwo)
             player.closeInventory()
+        }
+    }
+
+    private fun confirmationBuyItem(
+            event: InventoryClickEvent,
+            player: Player,
+            listings: Listings,
+            clickType: ClickType,
+            quantity: Int,
+            translationLore: List<String>
+    ) {
+        if (event.click != clickType) {
+            return
+        }
+
+        if (listings.quantity < quantity) {
+            return
+        }
+
+        if (playersWaitingDefinedQuantity[player.uniqueId] != null
+                && playersWaitingDefinedQuantity[player.uniqueId] == WaitingDefinedQuantity(listings, clickType)) {
+            playersWaitingDefinedQuantity.remove(player.uniqueId)
+            buyItem(player, event.rawSlot, quantity)
+        } else {
+            val itemStack: ItemStack = listingsInventoryService.setBaseBottomLore(listings.itemStack.clone(), listings)
+            val itemMeta = itemStack.itemMeta
+            val lore = itemMeta.lore
+
+            lore.addAll(translationLore)
+
+            itemMeta.lore = lore
+            itemStack.itemMeta = itemMeta
+            event.currentItem = itemStack
+
+            playersWaitingDefinedQuantity[player.uniqueId] = WaitingDefinedQuantity(listings, event.click)
         }
     }
 
