@@ -31,7 +31,11 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
         }
 
         marketService.playersWaitingDefinedQuantity.remove(player.uniqueId)
-        val listingsPaginated = listingsService.getPaginated(player.uniqueId, pagination = Pagination(showAll = true))
+        val listingsPaginated = listingsService.getPaginated(pagination = Pagination(
+                showAll = true,
+                currentPlayer = player.uniqueId,
+                viewPlayer = player.uniqueId
+        ))
         val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
         player.openInventory(initListingsInventory)
     }

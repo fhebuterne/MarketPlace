@@ -115,7 +115,7 @@ class MarketService(private val marketPlace: MarketPlace,
                 .replace("{{price}}", needingMoney.toString())
 
         player.sendMessage(itemBuyMessage)
-        val refreshInventory = listingsService.getPaginated(player.uniqueId, pagination = paginationListings)
+        val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
         player.openInventory(listingsInventoryService.initInventory(marketPlace, refreshInventory, player))
     }
 
@@ -156,7 +156,7 @@ class MarketService(private val marketPlace: MarketPlace,
             forwardListingsToMails(listings, player, event)
 
             val initInventory = listingsInventoryService.initInventory(marketPlace, listingsService.playersView[player.uniqueId]
-                    ?: Pagination(), player)
+                    ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player)
             player.openInventory(initInventory)
         }
     }
@@ -186,7 +186,7 @@ class MarketService(private val marketPlace: MarketPlace,
                     results = it.results.minus(elementToRemove)
             )
             copy
-        } ?: Pagination()
+        } ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
 
         listingsFind.id?.let { listingsRepository.delete(it) }
         mailsService.saveListingsToMail(listingsFind)

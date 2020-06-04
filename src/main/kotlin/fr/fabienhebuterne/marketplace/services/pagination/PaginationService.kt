@@ -20,9 +20,9 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             } else {
                 it.copy(currentPage = 1)
             }
-        } ?: Pagination(currentPage = 1)
+        } ?: Pagination(currentPage = 1, currentPlayer = uuid, viewPlayer = uuid)
 
-        return getPaginated(uuid, pagination = returnPaginated)
+        return getPaginated(pagination = returnPaginated)
     }
 
     fun previousPage(uuid: UUID): Pagination<T> {
@@ -32,23 +32,22 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             } else {
                 it.copy(currentPage = 1)
             }
-        } ?: Pagination(currentPage = 1)
+        } ?: Pagination(currentPage = 1, currentPlayer = uuid, viewPlayer = uuid)
 
-        return getPaginated(uuid, pagination = paginated)
+        return getPaginated(pagination = paginated)
     }
 
     fun getPaginated(
-            uuid: UUID,
             from: Int = 0,
             to: Int = 45,
-            pagination: Pagination<T> = Pagination()
+            pagination: Pagination<T>
     ): Pagination<T> {
         var fromInt = from
         var toInt = to
         var currentPageInt = pagination.currentPage
 
         val countAll = if (!pagination.showAll) {
-            paginationRepository.countAll(uuid, pagination.searchKeyword)
+            paginationRepository.countAll(pagination.currentPlayer, pagination.searchKeyword)
         } else {
             paginationRepository.countAll(searchKeyword = pagination.searchKeyword)
         }
@@ -66,7 +65,7 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
         }
 
         val results = if (!pagination.showAll) {
-            paginationRepository.findAll(uuid, fromInt, toInt, pagination.searchKeyword, pagination.filter)
+            paginationRepository.findAll(pagination.currentPlayer, fromInt, toInt, pagination.searchKeyword, pagination.filter)
         } else {
             paginationRepository.findAll(from = fromInt, to = toInt, searchKeyword = pagination.searchKeyword, filter = pagination.filter)
         }
@@ -77,7 +76,7 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
                 countAll
         )
 
-        playersView[uuid] = paginationUpdated
+        playersView[pagination.viewPlayer] = paginationUpdated
 
         return paginationUpdated
     }

@@ -28,7 +28,11 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
     fun searchItemstack(instance: JavaPlugin, event: AsyncPlayerChatEvent) {
         event.isCancelled = true
         playersWaitingSearch.remove(event.player.uniqueId)
-        val paginated = paginationService.getPaginated(event.player.uniqueId, pagination = Pagination(searchKeyword = event.message))
+        val paginated = paginationService.getPaginated(pagination = Pagination(
+                searchKeyword = event.message,
+                currentPlayer = event.player.uniqueId,
+                viewPlayer = event.player.uniqueId
+        ))
         val initInventory = initInventory(instance, paginated, event.player)
         event.player.openInventory(initInventory)
     }
@@ -57,7 +61,8 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
 
     fun clickOnFilter(instance: JavaPlugin, event: InventoryClickEvent, player: Player, inventoryType: InventoryType) {
         if (event.rawSlot == InventoryLoreEnum.FILTER.rawSlot) {
-            var pagination = paginationService.playersView[player.uniqueId] ?: Pagination()
+            var pagination = paginationService.playersView[player.uniqueId]
+                    ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
 
             val findByNameAndType = InventoryFilterEnum.findByNameAndType(pagination.filter.filterName, pagination.filter.filterType)
             val nextFilter = InventoryFilterEnum.next(findByNameAndType.order, inventoryType)
@@ -66,7 +71,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
                     filterType = nextFilter.filterType
             ))
 
-            val nextPage = paginationService.getPaginated(player.uniqueId, pagination = pagination)
+            val nextPage = paginationService.getPaginated(pagination = pagination)
             val initInventory = initInventory(instance, nextPage, player)
             player.openInventory(initInventory)
         }

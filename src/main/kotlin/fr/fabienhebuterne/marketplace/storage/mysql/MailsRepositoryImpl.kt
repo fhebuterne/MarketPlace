@@ -84,20 +84,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
 
     override fun findAll(uuid: UUID?, from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Mails> {
         return transaction(marketPlaceDb) {
-            // TODO : Find better solution refactoring with extraction ?
-            val selectBase = if (uuid == null) {
-                MailsTable.selectAll()
-            } else {
-                if (searchKeyword == null) {
-                    MailsTable.select {
-                        playerUuid eq uuid.toString()
-                    }
-                } else {
-                    MailsTable.select {
-                        playerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
-                    }
-                }
-            }
+            val selectBase = buildSelect(uuid, searchKeyword)
 
             when {
                 from != null && to != null -> {
@@ -172,9 +159,22 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
 
     override fun countAll(uuid: UUID?, searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
-            when (searchKeyword == null) {
-                true -> MailsTable.selectAll().count().toInt()
-                false -> MailsTable.select { itemStack like "%$searchKeyword%" }.count().toInt()
+            buildSelect(uuid, searchKeyword).count().toInt()
+        }
+    }
+
+    private fun buildSelect(uuid: UUID?, searchKeyword: String?): Query {
+        return if (uuid == null) {
+            MailsTable.selectAll()
+        } else {
+            if (searchKeyword == null) {
+                MailsTable.select {
+                    playerUuid eq uuid.toString()
+                }
+            } else {
+                MailsTable.select {
+                    playerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
+                }
             }
         }
     }

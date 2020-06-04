@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.domain.base
 
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
+import java.util.*
 import kotlin.math.ceil
 
 data class Pagination<T : Paginated>(
@@ -13,7 +14,9 @@ data class Pagination<T : Paginated>(
                 FilterName.CREATED_AT,
                 FilterType.DESC
         ),
-        val showAll: Boolean = false
+        val showAll: Boolean = false,
+        val currentPlayer: UUID,
+        val viewPlayer: UUID
 ) {
     fun maxPage(): Int {
         return ceil((total.toDouble() / resultPerPage.toDouble())).toInt()

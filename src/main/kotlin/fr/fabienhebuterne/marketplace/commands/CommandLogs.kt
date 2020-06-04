@@ -37,10 +37,9 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
         }
 
         val logsPaginated = logsService.getPaginated(
-                player.uniqueId,
                 from = 0,
                 to = 10,
-                pagination = Pagination(currentPage = currentPage, resultPerPage = 10)
+                pagination = Pagination(currentPage = currentPage, resultPerPage = 10, currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
         )
         currentPage = logsPaginated.currentPage
 
