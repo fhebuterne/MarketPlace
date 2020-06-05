@@ -28,7 +28,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
             val itemStack = if (listings.sellerUuid == player.uniqueId) {
                 setSellerBottomLore(listings.itemStack.clone(), listings)
             } else {
-                setBaseBottomLore(listings.itemStack.clone(), listings)
+                setBaseBottomLore(listings.itemStack.clone(), listings, player)
             }
 
             inventory.setItem(index, itemStack)
@@ -49,13 +49,13 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
         loreItem.addAll(tl.listingItemBottomLoreSeller.toMutableList())
         loreItem.replaceAll {
-            it.replace("{0}", paginated.price.toString())
-                    .replace("{1}", paginated.quantity.toString())
+            it.replace("{{price}}", paginated.price.toString())
+                    .replace("{{quantity}}", paginated.quantity.toString())
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { interval ->
-                loreItem.replaceAll { it.replace("{2}", interval) }
+                loreItem.replaceAll { it.replace("{{expiration}}", interval) }
             }
         } ?: loreItem.removeIf { it.contains("%expiration%") }
 
@@ -69,7 +69,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
     }
 
     // TODO : Add step lore to confirm
-    override fun setBaseBottomLore(itemStack: ItemStack, paginated: Listings): ItemStack {
+    override fun setBaseBottomLore(itemStack: ItemStack, paginated: Listings, player: Player): ItemStack {
         val itemMeta = itemStack.itemMeta
         val loreItem = if (itemMeta.hasLore()) {
             itemMeta.lore
@@ -79,9 +79,9 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
         loreItem.addAll(tl.listingItemBottomLorePlayer.toMutableList())
         loreItem.replaceAll {
-            it.replace("{0}", paginated.sellerPseudo)
-                    .replace("{1}", paginated.price.toString())
-                    .replace("{2}", paginated.quantity.toString())
+            it.replace("{{sellerPseudo}}", paginated.sellerPseudo)
+                    .replace("{{price}}", paginated.price.toString())
+                    .replace("{{quantity}}", paginated.quantity.toString())
         }
 
         if (paginated.quantity < 2) {
@@ -94,7 +94,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { listings ->
-                loreItem.replaceAll { it.replace("{3}", listings) }
+                loreItem.replaceAll { it.replace("{{expiration}}", listings) }
             }
         } ?: loreItem.removeIf { it.contains("%expiration%") }
 
@@ -102,6 +102,10 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
             it.replace("%middle%", "")
                     .replace("%right%", "")
                     .replace("%expiration%", "")
+        }
+
+        if (player.hasPermission("marketplace.listings.other.remove")) {
+            loreItem.addAll(tl.mailItemBottomLorePlayerAdmin)
         }
 
         itemMeta.lore = loreItem

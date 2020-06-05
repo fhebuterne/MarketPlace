@@ -23,7 +23,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
 
     abstract fun initInventory(instance: JavaPlugin, pagination: Pagination<T>, player: Player): Inventory
 
-    abstract fun setBaseBottomLore(itemStack: ItemStack, paginated: T): ItemStack
+    abstract fun setBaseBottomLore(itemStack: ItemStack, paginated: T, player: Player): ItemStack
 
     fun searchItemstack(instance: JavaPlugin, event: AsyncPlayerChatEvent) {
         event.isCancelled = true
@@ -87,10 +87,10 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
 
         InventoryLoreEnum.values().forEach {
             val replace: (t: String) -> String = { t ->
-                t.replace("{0}", pagination.currentPage.toString())
-                        .replace("{1}", pagination.maxPage().toString())
-                        .replace("{2}", pagination.total.toString())
-                        .replace("{3}", "${pagination.filter.filterName} - ${pagination.filter.filterType}")
+                t.replace("{{currentPage}}", pagination.currentPage.toString())
+                        .replace("{{maxPage}}", pagination.maxPage().toString())
+                        .replace("{{total}}", pagination.total.toString())
+                        .replace("{{filter}}", "${pagination.filter.filterName} - ${pagination.filter.filterType}")
             }
 
             val loreUpdated = it.lore.toMutableList()

@@ -24,15 +24,15 @@
     "previousPage": {
       "displayName": "§cPrevious page",
       "lore": [
-        "§cPage : {0}/{1}",
-        "§cTotal items : {2}"
+        "§cPage : {{currentPage}}/{{maxPage}}",
+        "§cTotal items : {{total}}"
       ]
     },
     "nextPage": {
       "displayName": "§cNext page",
       "lore": [
-        "§cPage : {0}/{1}",
-        "§cTotal items : {2}"
+        "§cPage : {{currentPage}}/{{maxPage}}",
+        "§cTotal items : {{total}}"
       ]
     }
   },
@@ -41,17 +41,17 @@
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
   "commandReloadStart": "§8[§6MarketPlace§8] §aPlugin reload in progress...",
   "commandReloadFinish": "§8[§6MarketPlace§8] §aPlugin reload ended...",
-  "listingCreated": "§8[§6MarketPlace§8] §aYou just put on sale {0}x{1} for {3}$.",
-  "listingUpdated": "§8[§6MarketPlace§8] §aYou just added {0} to item {1}, you now have a total {3} items in sale.",
+  "listingCreated": "§8[§6MarketPlace§8] §aYou just put on sale {{quantity}}x{{item}} for {{unitPrice}}$.",
+  "listingUpdated": "§8[§6MarketPlace§8] §aYou just added {{quantityAdded}} to item {{item}}, you now have a total {{quantityTotal}} items in sale.",
   "itemBuy": "§8[§6MarketPlace§8] §aYou just bought {{quantity}}x{{item}} for {{price}}$.",
   "cancelBuying": "§8[§6MarketPlace§8] §aYou just canceled your purchase.",
   "cancelSelling": "§8[§6MarketPlace§8] §aYou just canceled your sale.",
   "searchWaiting": "§8[§6MarketPlace§8] §aPlease enter a type of item (ex: DIRT) or a keyword associated with the name / lore of the item...",
   "listingItemBottomLoreSeller": [
     "",
-    "§6Unit price: §e{0}",
-    "§6Total available: §e{1} article(s)",
-    "%expiration%§6Expiration dans: §e{2}",
+    "§6Unit price: §e{{price}}",
+    "§6Total available: §e{{quantity}} article(s)",
+    "%expiration%§6Expiration dans: §e{{expiration}}",
     "",
     "§c► Vous ne pouvez pas acheter vos articles",
     "§6► Shift + Left click to remove your items",
@@ -59,34 +59,48 @@
   ],
   "listingItemBottomLoreSellerConfirmationLeftClick": [
     "",
-    "§6► Left click to confirm your purchase of one item.",
+    "§6► Left click to confirm your purchase of one item",
     ""
   ],
   "listingItemBottomLoreSellerConfirmationRightClick": [
     "",
-    "§6► Right click to confirm your purchase of 64 items.",
+    "§6► Right click to confirm your purchase of 64 items",
     ""
   ],
   "listingItemBottomLorePlayer": [
     "",
-    "§6Seller: §e{0}",
-    "§6Unit price: §e{1}",
-    "§6Total available: §e{2} items",
+    "§6Seller: §e{{sellerPseudo}}",
+    "§6Unit price: §e{{price}}",
+    "§6Total available: §e{{quantity}} items",
     "",
     "§6► Left click to buy 1 item",
     "%middle%§6► Middle click to buy custom quantity items",
     "%right%§6► Right click to buy 64 items",
     "",
-    "%expiration%§6Expiration in {3}",
+    "%expiration%§6Expiration in {{expiration}}",
+    ""
+  ],
+  "listingItemBottomLorePlayerAdmin": [
+    "",
+    "§c► Shift + Right click to forwards items in player mailbox",
     ""
   ],
   "mailItemBottomLorePlayer": [
     "",
-    "§6Total available: §e{0} items",
+    "§6Total available: §e{{quantity}} items",
     "",
     "§6► Left click to get all items in your inventory",
     "",
-    "%expiration%§6Expiration in {1}",
+    "%expiration%§6Expiration in {{expiration}}",
+    "%expiration%"
+  ],
+  "mailItemBottomLorePlayerAdmin": [
+    "",
+    "§6Total available: §e{{quantity}} items",
+    "",
+    "§c► Shift + Right click to get all items in your inventory.",
+    "",
+    "%expiration%§6Expiration in {{expiration}}",
     "%expiration%"
   ],
   "commandHelp": [

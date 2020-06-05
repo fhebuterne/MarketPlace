@@ -22,7 +22,9 @@ data class Translation(
         val listingItemBottomLoreSellerConfirmationLeftClick: List<String>,
         val listingItemBottomLoreSellerConfirmationRightClick: List<String>,
         val listingItemBottomLorePlayer: List<String>,
+        val listingItemBottomLorePlayerAdmin: List<String>,
         val mailItemBottomLorePlayer: List<String>,
+        val mailItemBottomLorePlayerAdmin: List<String>,
         val commandHelp: List<String>,
         val logs: LogsTranslation
 )

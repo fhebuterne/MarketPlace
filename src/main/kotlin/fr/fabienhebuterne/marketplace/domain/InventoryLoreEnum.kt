@@ -21,7 +21,7 @@ enum class InventoryLoreEnum(
     SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), tl.inventoryEnum.search.displayName, tl.inventoryEnum.search.lore),
     LISTING(46, ItemStackReflection.getSkull(LISTING_TEXTURE), tl.inventoryEnum.listings.displayName, tl.inventoryEnum.listings.lore, inventoryType = InventoryType.MAILS),
     MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), tl.inventoryEnum.mails.displayName, tl.inventoryEnum.mails.lore, inventoryType = InventoryType.LISTINGS),
-    FILTER(49, ItemStack(Material.REDSTONE_COMPARATOR), "Filters", listOf("Current : {3}")),
+    FILTER(49, ItemStack(Material.REDSTONE_COMPARATOR), "Filters", listOf("Current : {{filter}}")),
     PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), tl.inventoryEnum.previousPage.displayName, tl.inventoryEnum.previousPage.lore),
     NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), tl.inventoryEnum.nextPage.displayName, tl.inventoryEnum.nextPage.lore);
 

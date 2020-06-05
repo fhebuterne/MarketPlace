@@ -24,15 +24,15 @@
     "previousPage": {
       "displayName": "§cPage précédente",
       "lore": [
-        "§cPage : {0}/{1}",
-        "§cTotal disponible : {2}"
+        "§cPage : {{currentPage}}/{{maxPage}}",
+        "§cTotal disponible : {{total}}"
       ]
     },
     "nextPage": {
       "displayName": "§cPage suivante",
       "lore": [
-        "§cPage : {0}/{1}",
-        "§cTotal disponible : {2}"
+        "§cPage : {{currentPage}}/{{maxPage}}",
+        "§cTotal disponible : {{total}}"
       ]
     }
   },
@@ -49,9 +49,9 @@
   "searchWaiting": "§8[§6MarketPlace§8] §aVeuillez saisir un type d'item (ex: DIRT) ou un mot clef associé au nom / lore de l'item...",
   "listingItemBottomLoreSeller": [
     "",
-    "§6Prix unité: §e{0}",
-    "§6Total disponible: §e{1} article(s)",
-    "%expiration%§6Expiration dans: §e{2}",
+    "§6Prix unité: §e{{price}}",
+    "§6Total disponible: §e{{quantity}} article(s)",
+    "%expiration%§6Expiration dans: §e{{expiration}}",
     "",
     "§c► Vous ne pouvez pas acheter vos articles",
     "§6► Shift + Clique gauche pour retirer vos articles",
@@ -59,34 +59,48 @@
   ],
   "listingItemBottomLoreSellerConfirmationLeftClick": [
     "",
-    "§6► Clique gauche pour confirmer votre achat d'un article.",
+    "§6► Clique gauche pour confirmer votre achat d'un article",
     ""
   ],
   "listingItemBottomLoreSellerConfirmationRightClick": [
     "",
-    "§6► Clique droit pour confirmer votre achat de 64 articles.",
+    "§6► Clique droit pour confirmer votre achat de 64 articles",
     ""
   ],
   "listingItemBottomLorePlayer": [
     "",
-    "§6Vendeur: §e{0}",
-    "§6Prix unité: §e{1}",
-    "§6Total disponible: §e{2} article(s)",
+    "§6Vendeur: §e{{sellerPseudo}}",
+    "§6Prix unité: §e{{price}}",
+    "§6Total disponible: §e{{quantity}} article(s)",
     "",
     "§6► Clique gauche pour acheter 1 article",
     "%middle%§6► Clique molette pour acheter une quantité personnalisée d'articles",
     "%right%§6► Clique droit pour acheter 64 articles",
     "",
-    "%expiration%§6Expiration dans {3}",
+    "%expiration%§6Expiration dans {{expiration}}",
     "%expiration%"
+  ],
+  "listingItemBottomLorePlayerAdmin": [
+    "",
+    "§c► Shift + Clique droit pour transférer les articles dans la boite de réception du joueur",
+    ""
   ],
   "mailItemBottomLorePlayer": [
     "",
-    "§6Total disponible: §e{0} items",
+    "§6Total disponible: §e{{quantity}} items",
     "",
     "§6► Clique gauche pour récuperer les articles dans votre inventaire",
     "",
-    "%expiration%§6Expiration dans {1}",
+    "%expiration%§6Expiration dans {{expiration}}",
+    "%expiration%"
+  ],
+  "mailItemBottomLorePlayerAdmin": [
+    "",
+    "§6Total disponible: §e{{quantity}} items",
+    "",
+    "§c► Shift + Clique droit pour récuperer les articles dans votre inventaire",
+    "",
+    "%expiration%§6Expiration dans {{expiration}}",
     "%expiration%"
   ],
   "commandHelp": [

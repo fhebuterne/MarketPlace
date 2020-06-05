@@ -142,23 +142,28 @@ class MarketService(private val marketPlace: MarketPlace,
             val paginationListings = listingsService.playersView[player.uniqueId]
             val listings = paginationListings?.results?.get(event.rawSlot) ?: return
 
-            // TODO : Add removing for admin
             if (listings.sellerUuid != player.uniqueId) {
                 clickToBuyItem(event, player, listings)
+
+                if (player.hasPermission("marketplace.listings.other.remove")) {
+                    clickToRemoveItem(event, player, listings, event.isShiftClick && event.isRightClick)
+                }
             } else {
-                clickToRemoveItem(event, player, listings)
+                clickToRemoveItem(event, player, listings, event.isShiftClick && event.isLeftClick)
             }
         }
     }
 
-    private fun clickToRemoveItem(event: InventoryClickEvent, player: Player, listings: Listings) {
-        if (event.isShiftClick && event.isLeftClick) {
-            forwardListingsToMails(listings, player, event)
-
-            val initInventory = listingsInventoryService.initInventory(marketPlace, listingsService.playersView[player.uniqueId]
-                    ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player)
-            player.openInventory(initInventory)
+    private fun clickToRemoveItem(event: InventoryClickEvent, player: Player, listings: Listings, isClickValid: Boolean) {
+        if (!isClickValid) {
+            return
         }
+
+        forwardListingsToMails(listings, player, event)
+
+        val initInventory = listingsInventoryService.initInventory(marketPlace, listingsService.playersView[player.uniqueId]
+                ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player)
+        player.openInventory(initInventory)
     }
 
     private fun forwardListingsToMails(listings: Listings, player: Player, event: InventoryClickEvent) {
@@ -226,7 +231,7 @@ class MarketService(private val marketPlace: MarketPlace,
             playersWaitingDefinedQuantity.remove(player.uniqueId)
             buyItem(player, event.rawSlot, quantity)
         } else {
-            val itemStack: ItemStack = listingsInventoryService.setBaseBottomLore(listings.itemStack.clone(), listings)
+            val itemStack: ItemStack = listingsInventoryService.setBaseBottomLore(listings.itemStack.clone(), listings, player)
             val itemMeta = itemStack.itemMeta
             val lore = itemMeta.lore
 
@@ -246,13 +251,17 @@ class MarketService(private val marketPlace: MarketPlace,
                 return
             }
 
+            if (event.isShiftClick && event.isRightClick && player.hasPermission("marketplace.mails.other.take")) {
+                takeItem(player, event.rawSlot, true)
+            }
+
             if (event.isLeftClick) {
                 takeItem(player, event.rawSlot)
             }
         }
     }
 
-    private fun takeItem(player: Player, rawSlot: Int) {
+    private fun takeItem(player: Player, rawSlot: Int, isAdmin: Boolean = false) {
         val paginationMails = mailsService.playersView[player.uniqueId]
         val mail = paginationMails?.results?.get(rawSlot) ?: return
 
@@ -280,7 +289,7 @@ class MarketService(private val marketPlace: MarketPlace,
             return
         }
 
-        if (mail.playerUuid != player.uniqueId) {
+        if (mail.playerUuid != player.uniqueId && !isAdmin) {
             player.sendMessage("§cOperation not allowed ...")
             return
         }

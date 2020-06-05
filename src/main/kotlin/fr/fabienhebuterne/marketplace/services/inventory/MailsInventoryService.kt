@@ -19,7 +19,7 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Mails")
 
         pagination.results.forEachIndexed { index, mails ->
-            val itemStack = setBaseBottomLore(mails.itemStack.clone(), mails)
+            val itemStack = setBaseBottomLore(mails.itemStack.clone(), mails, player)
             inventory.setItem(index, itemStack)
         }
 
@@ -28,16 +28,22 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         return inventory
     }
 
-    override fun setBaseBottomLore(itemStack: ItemStack, paginated: Mails): ItemStack {
+    override fun setBaseBottomLore(itemStack: ItemStack, paginated: Mails, player: Player): ItemStack {
         val itemMeta = itemStack.itemMeta
-        val loreItem = tl.mailItemBottomLorePlayer.toMutableList()
+
+        val loreItem = if (player.hasPermission("marketplace.mails.other.remove") && paginated.playerUuid != player.uniqueId) {
+            tl.mailItemBottomLorePlayerAdmin.toMutableList()
+        } else {
+            tl.mailItemBottomLorePlayer.toMutableList()
+        }
+
         loreItem.replaceAll {
-            it.replace("{0}", paginated.quantity.toString())
+            it.replace("{{quantity}}", paginated.quantity.toString())
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { interval ->
-                loreItem.replaceAll { it.replace("{1}", interval) }
+                loreItem.replaceAll { it.replace("{{expiration}}", interval) }
             }
         } ?: loreItem.removeIf { it.contains("%expiration%") }
 
