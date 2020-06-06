@@ -83,6 +83,7 @@ class MarketService(private val marketPlace: MarketPlace,
             mailsRepository.create(
                     Mails(
                             playerUuid = player.uniqueId,
+                            playerPseudo = player.name,
                             itemStack = listings.itemStack,
                             quantity = quantity,
                             auditData = AuditData(

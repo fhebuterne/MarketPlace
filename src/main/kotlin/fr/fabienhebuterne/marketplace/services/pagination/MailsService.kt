@@ -14,6 +14,7 @@ class MailsService(private val marketPlace: MarketPlace, private val mailsReposi
         if (mails == null) {
             val mailCreation = Mails(
                     playerUuid = listings.sellerUuid,
+                    playerPseudo = listings.sellerPseudo,
                     itemStack = listings.itemStack,
                     quantity = listings.quantity,
                     auditData = AuditData(

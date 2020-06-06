@@ -47,7 +47,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
             clickOnBottomLineListings(event, player)
         }
 
-        if (event.view.title == "MarketPlace - Mails") {
+        if (event.view.title.contains("MarketPlace - Mails")) {
             marketService.clickOnMailsInventory(event, player)
             clickOnBottomLineMails(event, player)
         }

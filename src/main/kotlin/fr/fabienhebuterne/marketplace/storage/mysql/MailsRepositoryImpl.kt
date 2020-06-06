@@ -12,6 +12,7 @@ import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.createdAt
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.expiredAt
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.id
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.itemStack
+import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.playerPseudo
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.playerUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.quantity
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.updatedAt
@@ -27,6 +28,7 @@ import java.util.*
 
 object MailsTable : UUIDTable("marketplace_mails") {
     val playerUuid = MailsTable.varchar("player_uuid", 36)
+    val playerPseudo = MailsTable.varchar("player_pseudo", 16)
     val itemStack = MailsTable.text("item_stack")
     val quantity = MailsTable.integer("quantity")
     val createdAt = MailsTable.long("created_at")
@@ -43,6 +45,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         return Mails(
                 id = row[id].value,
                 playerUuid = UUID.fromString(row[playerUuid]),
+                playerPseudo = row[playerPseudo],
                 itemStack = itemStack,
                 quantity = row[quantity],
                 auditData = AuditData(
@@ -61,6 +64,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
         entity.auditData.expiredAt?.let { insertTo[expiredAt] = it }
 
         insertTo[playerUuid] = entity.playerUuid.toString()
+        insertTo[playerPseudo] = entity.playerPseudo
         insertTo[itemStack] = itemStackString
         insertTo[quantity] = entity.quantity
         insertTo[createdAt] = entity.auditData.createdAt

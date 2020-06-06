@@ -8,6 +8,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.formatInterval
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
@@ -16,7 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<Mails>(mailsService) {
     override fun initInventory(instance: JavaPlugin, pagination: Pagination<Mails>, player: Player): Inventory {
-        val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Mails")
+        val currentPlayerName = Bukkit.getOfflinePlayer(pagination.currentPlayer).name
+        val inventory = instance.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Mails - $currentPlayerName")
 
         pagination.results.forEachIndexed { index, mails ->
             val itemStack = setBaseBottomLore(mails.itemStack.clone(), mails, player)

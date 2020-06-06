@@ -98,7 +98,7 @@ class MarketPlace : JavaPlugin() {
         // TODO : Create factory to init listeners
         server.pluginManager.registerEvents(InventoryClickEventListener(this, kodein), this)
         server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this, kodein), this)
-        server.pluginManager.registerEvents(PlayerJoinEventListener(this, ListingsRepositoryImpl(database)), this)
+        server.pluginManager.registerEvents(PlayerJoinEventListener(ListingsRepositoryImpl(database), MailsRepositoryImpl(database)), this)
 
         // Start tasks to check items expired
         val expirationService: ExpirationService by kodein.instance<ExpirationService>()
