@@ -103,12 +103,22 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
     }
 
     private fun getMessageLogType(logs: Logs): String {
-        return tl.logs.message[logs.logType].orEmpty()
-                .replace("{{playerPseudo}}", logs.playerPseudo)
-                .replace("{{quantity}}", logs.quantity.toString())
-                .replace("{{itemStack}}", logs.itemStack?.type?.name.orEmpty())
-                .replace("{{price}}", logs.price.toString())
-                .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
+        return if (logs.adminUuid != null) {
+            tl.logs.adminMessage[logs.logType].orEmpty()
+                    .replace("{{adminPseudo}}", logs.adminPseudo.orEmpty())
+                    .replace("{{playerPseudo}}", logs.playerPseudo)
+                    .replace("{{quantity}}", logs.quantity.toString())
+                    .replace("{{itemStack}}", logs.itemStack?.type?.name.orEmpty())
+                    .replace("{{price}}", logs.price.toString())
+                    .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
+        } else {
+            tl.logs.message[logs.logType].orEmpty()
+                    .replace("{{playerPseudo}}", logs.playerPseudo)
+                    .replace("{{quantity}}", logs.quantity.toString())
+                    .replace("{{itemStack}}", logs.itemStack?.type?.name.orEmpty())
+                    .replace("{{price}}", logs.price.toString())
+                    .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
+        }
     }
 
 }

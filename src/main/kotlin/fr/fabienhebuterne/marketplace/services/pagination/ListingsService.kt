@@ -22,11 +22,11 @@ class ListingsService(private val marketPlace: MarketPlace, listingsRepository: 
         update(updatedListings)
 
         logsService.createFrom(
-                player,
-                updatedListings,
-                currentItemStack.amount,
-                null,
-                LogType.SELL,
+                player = player,
+                paginated = updatedListings,
+                quantity = currentItemStack.amount,
+                needingMoney = findExistingListings.price,
+                logType = LogType.SELL,
                 fromLocation = Location.PLAYER_INVENTORY,
                 toLocation = Location.LISTING_INVENTORY
         )
@@ -43,11 +43,11 @@ class ListingsService(private val marketPlace: MarketPlace, listingsRepository: 
         create(listings)
 
         logsService.createFrom(
-                player,
-                listings,
-                listings.quantity,
-                listings.price,
-                LogType.SELL,
+                player = player,
+                paginated = listings,
+                quantity = listings.quantity,
+                needingMoney = listings.price,
+                logType = LogType.SELL,
                 fromLocation = Location.PLAYER_INVENTORY,
                 toLocation = Location.LISTING_INVENTORY
         )

@@ -136,6 +136,10 @@
       "EXPIRED": "§aLes §6{{quantity}}x{{itemStack}} §ade §6{{playerPseudo}} §aont expirées",
       "CANCEL": "§6{{playerPseudo}} §aa annulé la vente de §6{{quantity}}x{{itemStack}}",
       "GET": "§6{{playerPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade sa boite de réception"
+    },
+    "adminMessage": {
+      "CANCEL": "§6{{adminPseudo}} §aa annulé la vente du joueur {{playerPseudo}} pour §6{{quantity}}x{{itemStack}}",
+      "GET": "§6{{adminPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade la boite de réception du joueur {{playerPseudo}}"
     }
   }
 }

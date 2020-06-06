@@ -10,6 +10,8 @@ data class Logs(
         val playerPseudo: String,
         val sellerUuid: UUID? = null,
         val sellerPseudo: String? = null,
+        val adminUuid: UUID? = null,
+        val adminPseudo: String? = null,
         val itemStack: ItemStack? = null,
         val quantity: Int = 1,
         val price: Long? = null,

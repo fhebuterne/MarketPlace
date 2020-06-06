@@ -4,11 +4,13 @@ import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.*
 import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
 class LogsService(private val logsRepository: LogsRepository) : PaginationService<Logs>(logsRepository) {
 
     fun createFrom(
             player: OfflinePlayer,
+            adminPlayer: Player? = null,
             paginated: Paginated,
             quantity: Int,
             needingMoney: Long?,
@@ -27,6 +29,13 @@ class LogsService(private val logsRepository: LogsRepository) : PaginationServic
                         createdAt = System.currentTimeMillis()
                 )
         )
+
+        if (adminPlayer != null) {
+            logs = logs.copy(
+                    adminUuid = adminPlayer.uniqueId,
+                    adminPseudo = adminPlayer.name
+            )
+        }
 
         if (needingMoney != null) {
             logs = logs.copy(

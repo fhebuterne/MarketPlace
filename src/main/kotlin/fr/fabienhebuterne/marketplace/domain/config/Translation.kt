@@ -68,5 +68,6 @@ data class LogsTranslation(
         val prefix: String,
         val prefixHover: String,
         val type: MutableMap<LogType, String> = mutableMapOf(),
-        val message: MutableMap<LogType, String> = mutableMapOf()
+        val message: MutableMap<LogType, String> = mutableMapOf(),
+        val adminMessage: MutableMap<LogType, String> = mutableMapOf()
 )

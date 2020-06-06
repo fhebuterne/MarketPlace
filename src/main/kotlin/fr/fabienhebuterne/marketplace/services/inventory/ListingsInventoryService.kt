@@ -105,7 +105,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         }
 
         if (player.hasPermission("marketplace.listings.other.remove")) {
-            loreItem.addAll(tl.mailItemBottomLorePlayerAdmin)
+            loreItem.addAll(tl.listingItemBottomLorePlayerAdmin)
         }
 
         itemMeta.lore = loreItem

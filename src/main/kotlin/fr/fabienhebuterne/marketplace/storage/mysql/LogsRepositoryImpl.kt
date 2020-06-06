@@ -8,6 +8,8 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
 import fr.fabienhebuterne.marketplace.storage.LogsRepository
+import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.adminPseudo
+import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.adminUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.createdAt
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.fromLocation
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.id
@@ -35,6 +37,8 @@ object LogsTable : UUIDTable("marketplace_logs") {
     val playerPseudo = LogsTable.varchar("player_pseudo", 16)
     val sellerUuid = LogsTable.varchar("seller_uuid", 36).nullable()
     val sellerPseudo = LogsTable.varchar("seller_pseudo", 16).nullable()
+    val adminUuid = LogsTable.varchar("admin_uuid", 36).nullable()
+    val adminPseudo = LogsTable.varchar("admin_pseudo", 16).nullable()
     val itemStack = LogsTable.text("item_stack")
     val quantity = LogsTable.integer("quantity")
     val price = LogsTable.long("price").nullable()
@@ -56,6 +60,8 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
                 playerPseudo = row[playerPseudo],
                 sellerUuid = row[sellerUuid]?.let { UUID.fromString(row[sellerUuid]) },
                 sellerPseudo = row[sellerPseudo],
+                adminUuid = row[adminUuid]?.let { UUID.fromString(row[adminUuid]) },
+                adminPseudo = row[adminPseudo],
                 itemStack = itemStack,
                 quantity = row[quantity],
                 price = row[price],
@@ -77,7 +83,9 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         entity.id?.let { insertTo[id] = EntityID(it, LogsTable) }
         entity.price?.let { insertTo[price] = it }
         entity.sellerUuid?.let { insertTo[sellerUuid] = it.toString() }
-        entity.sellerPseudo?.let {  insertTo[sellerPseudo] = it }
+        entity.sellerPseudo?.let { insertTo[sellerPseudo] = it }
+        entity.adminUuid?.let { insertTo[adminUuid] = it.toString() }
+        entity.adminPseudo?.let { insertTo[adminPseudo] = it }
 
         insertTo[playerUuid] = entity.playerUuid.toString()
         insertTo[playerPseudo] = entity.playerPseudo

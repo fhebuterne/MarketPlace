@@ -136,6 +136,10 @@
       "EXPIRED": "§aThe §6{{quantity}}x{{itemStack}} §aof §6{{playerPseudo}} §ahad expired",
       "CANCEL": "§6{{playerPseudo}} §acanceled the sale of §6{{quantity}}x{{itemStack}}",
       "GET": "§6{{playerPseudo}} §acollected §6{{quantity}}x{{itemStack}} §afrom his inbox"
+    },
+    "adminMessage": {
+      "CANCEL": "§6{{adminPseudo}} §acanceled the sale of {{playerPseudo}} for §6{{quantity}}x{{itemStack}}",
+      "GET": "§6{{adminPseudo}} §acollected §6{{quantity}}x{{itemStack}} §afrom player inbox {{playerPseudo}}"
     }
   }
 }

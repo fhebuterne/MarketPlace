@@ -37,11 +37,11 @@ class ExpirationService(
                     }
 
                     logsService.createFrom(
-                            Bukkit.getOfflinePlayer(it.sellerUuid),
-                            it,
-                            it.quantity,
-                            null,
-                            LogType.EXPIRED,
+                            player = Bukkit.getOfflinePlayer(it.sellerUuid),
+                            paginated = it,
+                            quantity = it.quantity,
+                            needingMoney = null,
+                            logType = LogType.EXPIRED,
                             fromLocation = Location.LISTING_INVENTORY,
                             toLocation = Location.MAIL_INVENTORY
                     )
@@ -74,11 +74,11 @@ class ExpirationService(
                     }
 
                     logsService.createFrom(
-                            Bukkit.getOfflinePlayer(it.playerUuid).player,
-                            it,
-                            it.quantity,
-                            null,
-                            LogType.EXPIRED,
+                            player = Bukkit.getOfflinePlayer(it.playerUuid).player,
+                            paginated = it,
+                            quantity = it.quantity,
+                            needingMoney = null,
+                            logType = LogType.EXPIRED,
                             fromLocation = Location.MAIL_INVENTORY,
                             toLocation = Location.NONE
                     )
