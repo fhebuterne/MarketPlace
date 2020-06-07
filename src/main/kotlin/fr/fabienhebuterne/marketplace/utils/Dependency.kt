@@ -10,19 +10,14 @@ import java.io.InputStream
 import java.lang.reflect.Method
 import java.net.URL
 import java.net.URLClassLoader
-import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 
 class Dependency(var instance: JavaPlugin) {
 
     private var classLoader: URLClassLoader? = null
-    private val urlMaven = "https://mvnrepository.com/artifact/{{group}}/{{name}}/{{version}}"
 
     fun downloadDependencies() {
         Paths.get(instance.dataFolder.path, "libs").toFile().mkdir()
@@ -30,26 +25,7 @@ class Dependency(var instance: JavaPlugin) {
         DependencyEnum.values()
                 .filterNot { Paths.get(instance.dataFolder.path, "libs", it.nameDependency + "-" + it.version + ".jar").toFile().exists() }
                 .forEach {
-                    val urlMavenDownload = urlMaven.replace("{{group}}", it.group.replace("{}", "."))
-                            .replace("{{name}}", it.nameDependency)
-                            .replace("{{version}}", it.version)
-
-                    val urlConnection: URLConnection
-                    val url = URL(urlMavenDownload)
-                    urlConnection = url.openConnection()
-                    urlConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36")
-                    val sc = Scanner(urlConnection.getInputStream())
-                    val sb = StringBuffer()
-                    while (sc.hasNext()) {
-                        sb.append(sc.next())
-                    }
-                    val result = sb.toString()
-
-                    val pattern: Pattern = Pattern.compile("https://(repo1\\.maven\\.org|dl\\.bintray\\.com).*/${it.nameDependency}-${it.version}\\.jar", Pattern.CASE_INSENSITIVE)
-                    val urlMatcher: Matcher = pattern.matcher(result)
-                    urlMatcher.find()
-                    val jarDownloadUrl = urlMatcher.group(0)
-                    val inputStream: InputStream = URL(jarDownloadUrl).openStream()
+                    val inputStream: InputStream = URL(it.constructDownloadUrl()).openStream()
 
                     Bukkit.getLogger().info("Download ${it.nameDependency + "-" + it.version} dependency...")
 
@@ -69,7 +45,7 @@ class Dependency(var instance: JavaPlugin) {
 
         DependencyEnum.values()
                 .filterNot { Paths.get(instance.dataFolder.path, "libs", it.nameDependency + "-" + it.version + "-relocated.jar").toFile().exists() }
-                .map {
+                .forEach {
                     val relocator = JarRelocator(
                             File(instance.dataFolder.toString() + "/libs/${it.nameDependency}-${it.version}.jar"),
                             File(instance.dataFolder.toString() + "/libs/${it.nameDependency}-${it.version}-relocated.jar"),
@@ -82,8 +58,6 @@ class Dependency(var instance: JavaPlugin) {
                     } catch (e: IOException) {
                         throw RuntimeException("Unable to relocate", e)
                     }
-
-                    File(instance.dataFolder.toString() + "/libs/${it.nameDependency}-${it.version}-relocated.jar")
                 }
 
 
@@ -91,7 +65,7 @@ class Dependency(var instance: JavaPlugin) {
             val method: Method = URLClassLoader::class.java.getDeclaredMethod("addURL", URL::class.java)
             method.isAccessible = true
             DependencyEnum.values().forEach {
-                method.invoke(this.classLoader, Paths.get(instance.dataFolder.path, "libs", it.nameDependency + "-" + it.version + "-relocated.jar").toUri().toURL())
+                method.invoke(instance.javaClass.classLoader, Paths.get(instance.dataFolder.path, "libs", it.nameDependency + "-" + it.version + "-relocated.jar").toUri().toURL())
             }
         } catch (e: Exception) {
             throw RuntimeException("Unexpected exception", e)

@@ -50,8 +50,9 @@ class MarketPlace : JavaPlugin() {
     @ImplicitReflectionSerializer
     override fun onEnable() {
         instance = this
-        Dependency(this).downloadDependencies()
-        Dependency(this).loadDependencies()
+        val dependency = Dependency(this)
+        dependency.downloadDependencies()
+        dependency.loadDependencies()
 
         if (!setupEconomy()) {
             this.logger.severe("Disabled due to no Economy plugin found!")
