@@ -25,13 +25,14 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
 
     abstract fun setBaseBottomLore(itemStack: ItemStack, paginated: T, player: Player): ItemStack
 
-    fun searchItemstack(instance: JavaPlugin, event: AsyncPlayerChatEvent) {
+    fun searchItemstack(instance: JavaPlugin, event: AsyncPlayerChatEvent, showAll: Boolean) {
         event.isCancelled = true
         playersWaitingSearch.remove(event.player.uniqueId)
         val paginated = paginationService.getPaginated(pagination = Pagination(
                 searchKeyword = event.message,
                 currentPlayer = event.player.uniqueId,
-                viewPlayer = event.player.uniqueId
+                viewPlayer = event.player.uniqueId,
+                showAll = showAll
         ))
         val initInventory = initInventory(instance, paginated, event.player)
         event.player.openInventory(initInventory)

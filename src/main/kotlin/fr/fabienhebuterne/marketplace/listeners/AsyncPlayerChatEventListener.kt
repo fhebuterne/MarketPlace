@@ -50,11 +50,11 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
 
         // Do a custom search
         if (listingsInventoryService.playersWaitingSearch.contains(event.player.uniqueId)) {
-            listingsInventoryService.searchItemstack(marketPlace, event)
+            listingsInventoryService.searchItemstack(marketPlace, event, true)
         }
 
         if (mailsInventoryService.playersWaitingSearch.contains(event.player.uniqueId)) {
-            mailsInventoryService.searchItemstack(marketPlace, event)
+            mailsInventoryService.searchItemstack(marketPlace, event, false)
         }
     }
 

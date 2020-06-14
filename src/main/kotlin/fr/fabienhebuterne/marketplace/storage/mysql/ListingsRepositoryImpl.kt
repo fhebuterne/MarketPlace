@@ -99,20 +99,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
 
     override fun findAll(uuid: UUID?, from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Listings> {
         return transaction(marketPlaceDb) {
-            // TODO : Find better solution refactoring with extraction ?
-            val selectBase = if (uuid == null) {
-                ListingsTable.selectAll()
-            } else {
-                if (searchKeyword == null) {
-                    ListingsTable.select {
-                        sellerUuid eq uuid.toString()
-                    }
-                } else {
-                    ListingsTable.select {
-                        sellerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
-                    }
-                }
-            }
+            val selectBase = buildSelect(uuid, searchKeyword)
 
             when {
                 from != null && to != null -> {
@@ -192,6 +179,28 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
             when (searchKeyword == null) {
                 true -> ListingsTable.selectAll().count().toInt()
                 false -> ListingsTable.select { itemStack like "%$searchKeyword%" }.count().toInt()
+            }
+        }
+    }
+
+    private fun buildSelect(uuid: UUID?, searchKeyword: String?): Query {
+        return if (uuid == null) {
+            if (searchKeyword == null) {
+                ListingsTable.selectAll()
+            } else {
+                ListingsTable.select {
+                    itemStack like "%$searchKeyword%"
+                }
+            }
+        } else {
+            if (searchKeyword == null) {
+                ListingsTable.select {
+                    sellerUuid eq uuid.toString()
+                }
+            } else {
+                ListingsTable.select {
+                    sellerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
+                }
             }
         }
     }
