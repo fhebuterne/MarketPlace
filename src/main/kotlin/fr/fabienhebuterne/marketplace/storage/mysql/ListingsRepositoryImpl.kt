@@ -176,10 +176,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
 
     override fun countAll(uuid: UUID?, searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
-            when (searchKeyword == null) {
-                true -> ListingsTable.selectAll().count().toInt()
-                false -> ListingsTable.select { itemStack like "%$searchKeyword%" }.count().toInt()
-            }
+            buildSelect(uuid, searchKeyword).count().toInt()
         }
     }
 

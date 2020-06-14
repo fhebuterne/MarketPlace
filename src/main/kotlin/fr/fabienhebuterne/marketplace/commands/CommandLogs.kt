@@ -17,6 +17,8 @@ import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
@@ -39,7 +41,13 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
         val logsPaginated = logsService.getPaginated(
                 from = 0,
                 to = 10,
-                pagination = Pagination(currentPage = currentPage, resultPerPage = 10, currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
+                pagination = Pagination(
+                        currentPage = currentPage,
+                        resultPerPage = 10,
+                        currentPlayer = player.uniqueId,
+                        viewPlayer = player.uniqueId,
+                        showAll = true
+                )
         )
         currentPage = logsPaginated.currentPage
 
@@ -85,10 +93,10 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
 
     private fun formatLogMessage(player: Player, logs: Logs) {
         val prefix = TextComponent(tl.logs.prefix.replace("{{logType}}", tl.logs.type[logs.logType].orEmpty()))
-
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
         val prefixHover = tl.logs.prefixHover.replace("{{fromLocation}}", logs.fromLocation.toString())
                 .replace("{{toLocation}}", logs.toLocation.toString())
-                .replace("{{createdAt}}", logs.auditData.createdAt.toString())
+                .replace("{{createdAt}}", simpleDateFormat.format(Date(logs.auditData.createdAt)))
 
         prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(prefixHover).create())
 

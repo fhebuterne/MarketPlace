@@ -2,6 +2,8 @@ package fr.fabienhebuterne.marketplace.storage.mysql
 
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Filter
+import fr.fabienhebuterne.marketplace.domain.base.FilterName
+import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
@@ -97,11 +99,41 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
         return insertTo
     }
 
+    private fun filterDomainToStorage(filter: Filter): Pair<Column<*>, SortOrder> {
+        val filterNameConverted = when (filter.filterName) {
+            FilterName.PRICE -> price
+            else -> createdAt
+        }
+
+        val filterTypeConverted = when (filter.filterType) {
+            FilterType.ASC -> SortOrder.ASC
+            FilterType.DESC -> SortOrder.DESC
+        }
+
+        return Pair(filterNameConverted, filterTypeConverted)
+    }
+
     override fun findAll(uuid: UUID?, from: Int?, to: Int?, searchKeyword: String?, filter: Filter): List<Logs> {
         return transaction(marketPlaceDb) {
-            when (from != null && to != null) {
-                true -> LogsTable.selectAll().limit(to, from.toLong()).map { fromRow(it) }
-                false -> LogsTable.selectAll().map { fromRow(it) }
+            val selectBase = buildSelect(uuid, searchKeyword)
+
+            when {
+                from != null && to != null -> {
+                    selectBase
+                            .limit(to, from.toLong())
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                from == null && to == null -> {
+                    selectBase
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
+                else -> {
+                    selectBase
+                            .orderBy(filterDomainToStorage(filter))
+                            .map { fromRow(it) }
+                }
             }
         }
     }
@@ -135,9 +167,29 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
 
     override fun countAll(uuid: UUID?, searchKeyword: String?): Int {
         return transaction(marketPlaceDb) {
-            when (searchKeyword == null) {
-                true -> LogsTable.selectAll().count().toInt()
-                false -> LogsTable.select { itemStack like "%$searchKeyword%" }.count().toInt()
+            buildSelect(uuid, searchKeyword).count().toInt()
+        }
+    }
+
+    // TODO : Common method
+    private fun buildSelect(uuid: UUID?, searchKeyword: String?): Query {
+        return if (uuid == null) {
+            if (searchKeyword == null) {
+                LogsTable.selectAll()
+            } else {
+                LogsTable.select {
+                    itemStack like "%$searchKeyword%"
+                }
+            }
+        } else {
+            if (searchKeyword == null) {
+                LogsTable.select {
+                    sellerUuid eq uuid.toString()
+                }
+            } else {
+                LogsTable.select {
+                    sellerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
+                }
             }
         }
     }

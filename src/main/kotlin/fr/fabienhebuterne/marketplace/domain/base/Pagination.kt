@@ -19,6 +19,12 @@ data class Pagination<T : Paginated>(
         val viewPlayer: UUID
 ) {
     fun maxPage(): Int {
-        return ceil((total.toDouble() / resultPerPage.toDouble())).toInt()
+        val maxPage = ceil((total.toDouble() / resultPerPage.toDouble())).toInt()
+
+        return if (maxPage == 0) {
+            1
+        } else {
+            maxPage
+        }
     }
 }
