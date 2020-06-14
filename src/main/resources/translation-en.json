@@ -1,6 +1,7 @@
 {
   "errors": {
     "numberNotValid": "§8[§6MarketPlace§8] §6§l{0} §cis not a valid number.",
+    "numberTooBig": "§8[§6MarketPlace§8] §6§l{0} §cis a too big number.",
     "handEmpty": "§8[§6MarketPlace§8] §cYou need to have item in your hand.",
     "notEnoughMoney": "§8[§6MarketPlace§8] §cNot enough money to do this action.",
     "quantityNotAvailable": "§8[§6MarketPlace§8] §cThe requested quantity is no longer available.",
@@ -131,7 +132,7 @@
       "GET": "Get"
     },
     "message": {
-      "BUY": "§6{{playerPseudo}} §abought §6${{quantity}}x${{itemStack}} §afor {{price}}$ at §6{{sellerPseudo}}",
+      "BUY": "§6{{playerPseudo}} §abought §6{{quantity}}x{{itemStack}} §afor {{price}}$ at §6{{sellerPseudo}}",
       "SELL": "§6{{playerPseudo}} §asold §6{{quantity}}x{{itemStack}} §afor {{price}}$",
       "EXPIRED": "§aThe §6{{quantity}}x{{itemStack}} §aof §6{{playerPseudo}} §ahad expired",
       "CANCEL": "§6{{playerPseudo}} §acanceled the sale of §6{{quantity}}x{{itemStack}}",

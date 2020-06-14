@@ -18,6 +18,16 @@ fun doubleIsValid(number: String): Boolean {
             && BigDecimal.valueOf(number.toDouble()).scale() <= conf.maxDecimalMoney
 }
 
+fun intIsValid(number: String): Boolean {
+    try {
+        number.toInt()
+    } catch (e: NumberFormatException) {
+        return false
+    }
+
+    return number.toInt() > 0 && number.toInt() < Integer.MAX_VALUE
+}
+
 fun convertDoubleToReadeableString(double: Double): String {
     val df = DecimalFormat("#")
     df.maximumFractionDigits = 2

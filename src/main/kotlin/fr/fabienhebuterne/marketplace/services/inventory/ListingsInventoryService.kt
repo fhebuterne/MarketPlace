@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.tl
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -80,7 +81,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         loreItem.addAll(tl.listingItemBottomLorePlayer.toMutableList())
         loreItem.replaceAll {
             it.replace("{{sellerPseudo}}", paginated.sellerPseudo)
-                    .replace("{{price}}", paginated.price.toString())
+                    .replace("{{price}}", convertDoubleToReadeableString(paginated.price))
                     .replace("{{quantity}}", paginated.quantity.toString())
         }
 

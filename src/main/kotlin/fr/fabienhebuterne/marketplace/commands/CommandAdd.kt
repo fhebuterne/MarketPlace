@@ -46,6 +46,10 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
             throw BadArgumentException(player, MessageFormat.format(tl.errors.numberNotValid, args[1]))
         }
 
+        if (argsMoneyCheck.toDouble() > instance.configService.getSerialization().maxMoneyToSellItem) {
+            throw BadArgumentException(player, MessageFormat.format(tl.errors.numberTooBig, args[1]))
+        }
+
         val money = argsMoneyCheck.toDouble()
         val currentItemStack = player.itemInHand
         val currentItemStackOne = currentItemStack.clone()

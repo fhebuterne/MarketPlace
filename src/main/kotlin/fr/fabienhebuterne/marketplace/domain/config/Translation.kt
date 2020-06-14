@@ -32,6 +32,7 @@ data class Translation(
 @Serializable
 data class Errors(
         val numberNotValid: String,
+        val numberTooBig: String,
         val handEmpty: String,
         val notEnoughMoney: String,
         val quantityNotAvailable: String,
