@@ -11,7 +11,7 @@ import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryServic
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.tl
-import fr.fabienhebuterne.marketplace.utils.longIsValid
+import fr.fabienhebuterne.marketplace.utils.doubleIsValid
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.command.Command
@@ -41,13 +41,13 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
             throw BadArgumentException(player, tl.commandAddUsage)
         }
 
-        if (!longIsValid(args[1])) {
+        val argsMoneyCheck = args[1].replace(",", ".")
+        if (!doubleIsValid(argsMoneyCheck)) {
             throw BadArgumentException(player, MessageFormat.format(tl.errors.numberNotValid, args[1]))
         }
 
-        val money = args[1].toLong()
+        val money = argsMoneyCheck.toDouble()
         val currentItemStack = player.itemInHand
-
         val currentItemStackOne = currentItemStack.clone()
         currentItemStackOne.amount = 1
 
@@ -61,7 +61,7 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
                 auditData = AuditData(
                         System.currentTimeMillis(),
                         System.currentTimeMillis(),
-                        System.currentTimeMillis() + (instance.config.getSerialization().expiration.playerToListings * 1000)
+                        System.currentTimeMillis() + (instance.configService.getSerialization().expiration.playerToListings * 1000)
                 )
         )
 

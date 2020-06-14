@@ -20,7 +20,7 @@ class ExpirationService(
             val findAllListings = listingsService.findAll()
             findAllListings.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
-                    marketPlace.config.getSerialization().expiration.listingsToMailsNotifCommand.forEach { command ->
+                    marketPlace.configService.getSerialization().expiration.listingsToMailsNotifCommand.forEach { command ->
                         val commandReplace = command.replace("{{playerPseudo}}", it.sellerPseudo)
                                 .replace("{{playerUUID}}", it.sellerUuid.toString())
                                 .replace("{{quantity}}", it.quantity.toString())
@@ -58,7 +58,7 @@ class ExpirationService(
             val findAllMails = mailsService.findAll()
             findAllMails.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
-                    marketPlace.config.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
+                    marketPlace.configService.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
                         val commandReplace = command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name)
                                 .replace("{{playerUUID}}", it.playerUuid.toString())
                                 .replace("{{quantity}}", it.quantity.toString())

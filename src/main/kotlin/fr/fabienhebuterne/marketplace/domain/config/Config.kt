@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Config(
         val database: Database,
-        val expiration: Expiration
+        val expiration: Expiration,
+        val maxDecimalMoney: Int
 )
 
 @Serializable

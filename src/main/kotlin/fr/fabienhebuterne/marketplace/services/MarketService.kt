@@ -63,7 +63,7 @@ class MarketService(private val marketPlace: MarketPlace,
             return
         }
 
-        val needingMoney = listingsDatabase.price * quantity.toDouble()
+        val needingMoney = listingsDatabase.price * quantity
 
         takeMoneyBuyer(player, needingMoney)
         giveMoneySeller(player, needingMoney)
@@ -89,7 +89,7 @@ class MarketService(private val marketPlace: MarketPlace,
                             auditData = AuditData(
                                     createdAt = System.currentTimeMillis(),
                                     updatedAt = System.currentTimeMillis(),
-                                    expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
+                                    expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
                             )
                     )
             )
@@ -103,7 +103,7 @@ class MarketService(private val marketPlace: MarketPlace,
                 player = player,
                 paginated = listingsDatabase,
                 quantity = quantity,
-                needingMoney = needingMoney.toLong(),
+                needingMoney = needingMoney,
                 logType = LogType.BUY,
                 fromLocation = Location.LISTING_INVENTORY,
                 toLocation = Location.MAIL_INVENTORY

@@ -20,7 +20,7 @@ class MailsService(private val marketPlace: MarketPlace, private val mailsReposi
                     auditData = AuditData(
                             createdAt = System.currentTimeMillis(),
                             updatedAt = System.currentTimeMillis(),
-                            expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
+                            expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
                     )
             )
             mailsRepository.create(mailCreation)
@@ -29,7 +29,7 @@ class MailsService(private val marketPlace: MarketPlace, private val mailsReposi
                     quantity = mails.quantity + listings.quantity,
                     auditData = mails.auditData.copy(
                             updatedAt = System.currentTimeMillis(),
-                            expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
+                            expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
                     )
             )
             mailsRepository.update(mailUpdate)

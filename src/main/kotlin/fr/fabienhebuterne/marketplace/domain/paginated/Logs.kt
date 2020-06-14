@@ -14,7 +14,7 @@ data class Logs(
         val adminPseudo: String? = null,
         val itemStack: ItemStack? = null,
         val quantity: Int = 1,
-        val price: Long? = null,
+        val price: Double? = null,
         val logType: LogType,
         val fromLocation: Location,
         val toLocation: Location,

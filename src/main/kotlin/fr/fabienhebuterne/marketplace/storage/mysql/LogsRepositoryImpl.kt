@@ -41,7 +41,7 @@ object LogsTable : UUIDTable("marketplace_logs") {
     val adminPseudo = LogsTable.varchar("admin_pseudo", 16).nullable()
     val itemStack = LogsTable.text("item_stack")
     val quantity = LogsTable.integer("quantity")
-    val price = LogsTable.long("price").nullable()
+    val price = LogsTable.double("price").nullable()
     val logType = LogsTable.enumerationByName("log_type", 100, LogType::class)
     val fromLocation = LogsTable.enumerationByName("from_location", 100, Location::class)
     val toLocation = LogsTable.enumerationByName("to_location", 100, Location::class)

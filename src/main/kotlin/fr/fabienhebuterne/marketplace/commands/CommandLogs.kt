@@ -7,7 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.tl
-import fr.fabienhebuterne.marketplace.utils.longIsValid
+import fr.fabienhebuterne.marketplace.utils.doubleIsValid
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
@@ -30,7 +30,7 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
             return
         }
 
-        var currentPage = if (args.size == 2 && longIsValid(args[1]) && args[1].toInt() != 0) {
+        var currentPage = if (args.size == 2 && doubleIsValid(args[1]) && args[1].toInt() != 0) {
             args[1].toInt()
         } else {
             1

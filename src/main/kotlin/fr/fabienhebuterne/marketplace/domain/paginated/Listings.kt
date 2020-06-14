@@ -10,7 +10,7 @@ data class Listings(
         val sellerPseudo: String,
         val itemStack: ItemStack,
         val quantity: Int = 1,
-        val price: Long,
+        val price: Double,
         val world: String,
         val auditData: AuditData
 ) : Paginated

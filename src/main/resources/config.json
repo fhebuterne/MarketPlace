@@ -15,5 +15,6 @@
     "mailsToDeleteNotifCommand": [
       "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has expired from mailbox and has been deleted."
     ]
-  }
+  },
+  "maxDecimalMoney": 2
 }

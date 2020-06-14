@@ -7,7 +7,7 @@ import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.tl
-import fr.fabienhebuterne.marketplace.utils.longIsValid
+import fr.fabienhebuterne.marketplace.utils.doubleIsValid
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
@@ -40,7 +40,7 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
             if (event.message.contains("cancel")) {
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)
                 event.player.sendMessage(tl.cancelBuying)
-            } else if (!longIsValid(event.message)) {
+            } else if (!doubleIsValid(event.message)) {
                 throw BadArgumentException(event.player, MessageFormat.format(tl.errors.numberNotValid, event.message))
             } else {
                 marketService.buyItem(event.player, rawSlot, event.message.toInt(), true)

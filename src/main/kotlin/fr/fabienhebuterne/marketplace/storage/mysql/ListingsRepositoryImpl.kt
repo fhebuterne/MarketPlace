@@ -33,7 +33,7 @@ object ListingsTable : UUIDTable("marketplace_listings") {
     val sellerPseudo = ListingsTable.varchar("seller_pseudo", 16)
     val itemStack = ListingsTable.text("item_stack")
     val quantity = ListingsTable.integer("quantity")
-    val price = ListingsTable.long("price")
+    val price = ListingsTable.double("price")
     val world = ListingsTable.varchar("world", 200)
     val createdAt = ListingsTable.long("created_at")
     val updatedAt = ListingsTable.long("updated_at")
@@ -139,7 +139,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         TODO("Not yet implemented")
     }
 
-    override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Long): Listings? {
+    override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Double): Listings? {
         val itemStackString = json.stringify(ItemStackSerializer, itemStack)
 
         return transaction(marketPlaceDb) {

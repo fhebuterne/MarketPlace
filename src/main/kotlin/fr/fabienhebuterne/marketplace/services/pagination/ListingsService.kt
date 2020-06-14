@@ -6,6 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.tl
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -16,7 +17,7 @@ class ListingsService(private val marketPlace: MarketPlace, listingsRepository: 
                 quantity = findExistingListings.quantity + currentItemStack.amount,
                 auditData = findExistingListings.auditData.copy(
                         updatedAt = System.currentTimeMillis(),
-                        expiredAt = System.currentTimeMillis() + (marketPlace.config.getSerialization().expiration.listingsToMails * 1000)
+                        expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
                 )
         )
         update(updatedListings)
@@ -54,7 +55,7 @@ class ListingsService(private val marketPlace: MarketPlace, listingsRepository: 
 
         val listingsCreatedMessage = tl.listingCreated.replace("{{quantity}}", listings.quantity.toString())
                 .replace("{{item}}", listings.itemStack.type.toString())
-                .replace("{{unitPrice}}", listings.price.toString())
+                .replace("{{unitPrice}}", convertDoubleToReadeableString(listings.price))
 
         player.sendMessage(listingsCreatedMessage)
         player.itemInHand = ItemStack(Material.AIR)

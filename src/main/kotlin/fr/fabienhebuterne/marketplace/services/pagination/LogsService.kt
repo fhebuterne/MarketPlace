@@ -13,7 +13,7 @@ class LogsService(private val logsRepository: LogsRepository) : PaginationServic
             adminPlayer: Player? = null,
             paginated: Paginated,
             quantity: Int,
-            needingMoney: Long?,
+            needingMoney: Double?,
             logType: LogType,
             fromLocation: Location,
             toLocation: Location

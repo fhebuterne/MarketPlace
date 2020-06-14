@@ -1,15 +1,27 @@
 package fr.fabienhebuterne.marketplace.utils
 
+import fr.fabienhebuterne.marketplace.conf
 import org.joda.time.Interval
 import org.joda.time.Period
+import java.math.BigDecimal
+import java.text.DecimalFormat
 
-fun longIsValid(number: String): Boolean {
+fun doubleIsValid(number: String): Boolean {
     try {
-        number.toLong()
+        number.toDouble()
     } catch (e: NumberFormatException) {
         return false
     }
-    return true
+
+    return number.toDouble() > 0
+            && number.toDouble() < Double.MAX_VALUE
+            && BigDecimal.valueOf(number.toDouble()).scale() <= conf.maxDecimalMoney
+}
+
+fun convertDoubleToReadeableString(double: Double): String {
+    val df = DecimalFormat("#")
+    df.maximumFractionDigits = 2
+    return df.format(double)
 }
 
 fun formatInterval(currentTimestamp: Long): String? {

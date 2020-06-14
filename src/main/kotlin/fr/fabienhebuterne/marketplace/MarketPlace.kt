@@ -34,6 +34,7 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 lateinit var tl: Translation
+lateinit var conf: Config
 
 class MarketPlace : JavaPlugin() {
     companion object {
@@ -43,7 +44,7 @@ class MarketPlace : JavaPlugin() {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
     private var econ: Economy? = null
     lateinit var translation: ConfigService<Translation>
-    lateinit var config: ConfigService<Config>
+    lateinit var configService: ConfigService<Config>
     lateinit var kodein: Kodein
     lateinit var instance: MarketPlace
 
@@ -62,9 +63,9 @@ class MarketPlace : JavaPlugin() {
 
         // TODO : Add method to check missing key/value in current file (compare with resource jar file)
 
-        config = ConfigService(this, "config", Config::class)
-        config.createAndLoadConfig(false)
-        val configParsed = config.getSerialization()
+        configService = ConfigService(this, "config", Config::class)
+        configService.createAndLoadConfig(false)
+        conf = configService.getSerialization()
 
         translation = ConfigService(this, "translation-fr", Translation::class)
         translation.createAndLoadConfig(true)
@@ -73,10 +74,10 @@ class MarketPlace : JavaPlugin() {
         callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
 
         val database = Database.connect(
-                url = "jdbc:mysql://${configParsed.database.hostname}:${configParsed.database.port}/${configParsed.database.database}?useSSL=false&characterEncoding=UTF-8",
+                url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&characterEncoding=UTF-8",
                 driver = "com.mysql.cj.jdbc.Driver",
-                user = configParsed.database.username,
-                password = configParsed.database.password
+                user = conf.database.username,
+                password = conf.database.password
         )
 
         transaction {
