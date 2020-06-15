@@ -91,7 +91,12 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
                 t.replace("{{currentPage}}", pagination.currentPage.toString())
                         .replace("{{maxPage}}", pagination.maxPage().toString())
                         .replace("{{total}}", pagination.total.toString())
-                        .replace("{{filter}}", "${pagination.filter.filterName} - ${pagination.filter.filterType}")
+            }
+
+            if (it == InventoryLoreEnum.FILTER) {
+                val inventoryFilterEnum = InventoryFilterEnum.valueOf("${pagination.filter.filterName}_${pagination.filter.filterType}")
+                it.displayName = inventoryFilterEnum.itemTranslation.displayName
+                it.lore = inventoryFilterEnum.itemTranslation.lore
             }
 
             val loreUpdated = it.lore.toMutableList()
@@ -99,6 +104,7 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
 
             val itemMeta = it.itemStack.itemMeta
             itemMeta.lore = loreUpdated
+            itemMeta.displayName = it.displayName
             it.itemStack.itemMeta = itemMeta
 
             if (it.inventoryType == null || it.inventoryType == inventoryType) {

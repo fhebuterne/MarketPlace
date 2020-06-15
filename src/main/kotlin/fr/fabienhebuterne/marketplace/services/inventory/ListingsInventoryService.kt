@@ -69,7 +69,6 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         return itemStack
     }
 
-    // TODO : Add step lore to confirm
     override fun setBaseBottomLore(itemStack: ItemStack, paginated: Listings, player: Player): ItemStack {
         val itemMeta = itemStack.itemMeta
         val loreItem = if (itemMeta.hasLore()) {

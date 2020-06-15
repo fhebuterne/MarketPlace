@@ -37,6 +37,38 @@
       ]
     }
   },
+  "inventoryFilterEnum": {
+    "createdAt": {
+      "ASC": {
+        "displayName": "§cDate de création - Croissant",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cDate de création - Décroissant",
+        "lore": []
+      }
+    },
+    "expiredAt": {
+      "ASC": {
+        "displayName": "§cDate d''expiration - Croissant",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cDate d''expiration - Décroissant",
+        "lore": []
+      }
+    },
+    "price": {
+      "ASC": {
+        "displayName": "§cPrix - Croissant",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cPrix - Décroissant",
+        "lore": []
+      }
+    }
+  },
   "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aMerci d'entrer la quantité (max disponible: {{maxQuantity}}) que vous souhaitez avoir.",
   "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aSi vous voulez annuler, écrivez '§6§lcancel§a' dans le chat.",
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",

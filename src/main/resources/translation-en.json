@@ -37,6 +37,38 @@
       ]
     }
   },
+  "inventoryFilterEnum": {
+    "createdAt": {
+      "ASC": {
+        "displayName": "§cCreation date - ASC",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cCreation date - DESC",
+        "lore": []
+      }
+    },
+    "expiredAt": {
+      "ASC": {
+        "displayName": "§cExpiration date - ASC",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cExpiration date - DESC",
+        "lore": []
+      }
+    },
+    "price": {
+      "ASC": {
+        "displayName": "§cPrice - ASC",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cPrice - DESC",
+        "lore": []
+      }
+    }
+  },
   "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{maxQuantity}}) you want to get.",
   "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aIf you want to cancel, write '§6§lcancel§a' in chat.",
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",

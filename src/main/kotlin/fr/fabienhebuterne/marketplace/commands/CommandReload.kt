@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.commands
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.conf
+import fr.fabienhebuterne.marketplace.domain.reloadFilterTranslation
 import fr.fabienhebuterne.marketplace.domain.reloadTranslation
 import fr.fabienhebuterne.marketplace.tl
 import kotlinx.serialization.ImplicitReflectionSerializer
@@ -36,6 +37,7 @@ class CommandReload(kodein: Kodein) : CallCommand<MarketPlace>("reload") {
         tl = instance.translation.getSerialization()
         conf = instance.configService.getSerialization()
         reloadTranslation()
+        reloadFilterTranslation()
 
         player.sendMessage(tl.commandReloadFinish)
         MarketPlace.isReload = false

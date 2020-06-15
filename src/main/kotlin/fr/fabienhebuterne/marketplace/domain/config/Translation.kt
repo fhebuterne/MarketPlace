@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class Translation(
         val errors: Errors,
         val inventoryEnum: InventoryEnum,
+        val inventoryFilterEnum: InventoryFilterEnumTranslation,
         val clickMiddleListingInventoryOne: String,
         val clickMiddleListingInventoryTwo: String,
         val commandAddUsage: String,
@@ -48,6 +49,19 @@ data class InventoryEnum(
         val mails: Item,
         val previousPage: Item,
         val nextPage: Item
+)
+
+@Serializable
+data class InventoryFilterEnumTranslation(
+        val createdAt: InventoryFilterTypeEnumTranslation,
+        val expiredAt: InventoryFilterTypeEnumTranslation,
+        val price: InventoryFilterTypeEnumTranslation
+)
+
+@Serializable
+data class InventoryFilterTypeEnumTranslation(
+        val ASC: Item,
+        val DESC: Item
 )
 
 @Serializable
