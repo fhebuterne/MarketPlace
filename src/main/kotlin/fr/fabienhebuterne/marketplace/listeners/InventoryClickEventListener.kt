@@ -38,6 +38,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
     private fun execute(event: InventoryClickEvent) {
         val player: Player = event.view.player as Player
 
+        // TODO : Find better solution to check inventory (not using title) maybe extend Inventory class ?
         if (event.view.title.contains("MarketPlace")) {
             event.isCancelled = true
         }

@@ -7,4 +7,5 @@ import java.util.*
 interface ListingsRepository : PaginationRepository<Listings> {
     fun find(sellerUuid: UUID, itemStack: ItemStack, price: Double): Listings?
     fun findByUUID(sellerUuid: UUID): List<Listings>
+    fun findUUIDBySellerPseudo(sellerPseudo: String): UUID?
 }

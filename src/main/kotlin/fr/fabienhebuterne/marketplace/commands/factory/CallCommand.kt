@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.commands.factory
 
 import fr.fabienhebuterne.marketplace.commands.factory.exceptions.CommandNotAvailableException
+import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -18,7 +19,7 @@ abstract class CallCommand<T : JavaPlugin>(override val name: String) : ICallCom
                      cmd: Command,
                      args: Array<String>) {
         if (!player.hasPermission(permission)) {
-            player.sendMessage("§cVous n'avez pas la permission d'utiliser cette commande !")
+            player.sendMessage(tl.errors.missingPermission)
             return
         }
         runFromPlayer(server, player, commandLabel, cmd, args)

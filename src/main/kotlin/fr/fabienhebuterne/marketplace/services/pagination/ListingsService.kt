@@ -10,8 +10,9 @@ import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
-class ListingsService(private val marketPlace: MarketPlace, listingsRepository: ListingsRepository, private val logsService: LogsService) : PaginationService<Listings>(listingsRepository) {
+class ListingsService(private val marketPlace: MarketPlace, private val listingsRepository: ListingsRepository, private val logsService: LogsService) : PaginationService<Listings>(listingsRepository) {
     fun updateListings(findExistingListings: Listings, currentItemStack: ItemStack, player: Player) {
         val updatedListings = findExistingListings.copy(
                 quantity = findExistingListings.quantity + currentItemStack.amount,
@@ -60,4 +61,7 @@ class ListingsService(private val marketPlace: MarketPlace, listingsRepository: 
         player.sendMessage(listingsCreatedMessage)
         player.itemInHand = ItemStack(Material.AIR)
     }
+
+    fun findUUIDBySellerPseudo(sellerPseudo: String): UUID? = listingsRepository.findUUIDBySellerPseudo(sellerPseudo)
+
 }

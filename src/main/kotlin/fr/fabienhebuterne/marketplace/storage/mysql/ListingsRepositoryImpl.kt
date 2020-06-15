@@ -146,6 +146,14 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
         }
     }
 
+    override fun findUUIDBySellerPseudo(sellerPseudo: String): UUID? {
+        return transaction(marketPlaceDb) {
+            ListingsTable.select {
+                ListingsTable.sellerPseudo eq sellerPseudo
+            }.limit(1).map { fromRow(it) }.firstOrNull()?.sellerUuid
+        }
+    }
+
     override fun create(entity: Listings): Listings {
         transaction(marketPlaceDb) {
             ListingsTable.insert { fromEntity(it, entity) }

@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.commands
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -31,11 +32,29 @@ class CommandListings(kodein: Kodein) : CallCommand<MarketPlace>("listings") {
         }
 
         marketService.playersWaitingDefinedQuantity.remove(player.uniqueId)
-        val listingsPaginated = listingsService.getPaginated(pagination = Pagination(
+
+        var pagination = Pagination<Listings>(
                 showAll = true,
                 currentPlayer = player.uniqueId,
                 viewPlayer = player.uniqueId
-        ))
+        )
+
+        if (args.size > 1) {
+            if (!player.hasPermission("marketplace.listings.other")) {
+                player.sendMessage(tl.errors.missingPermission)
+                return
+            }
+
+            val uuid = listingsService.findUUIDBySellerPseudo(args[1])
+            if (uuid == null) {
+                player.sendMessage(tl.errors.playerNotFound)
+                return
+            }
+
+            pagination = pagination.copy(showAll = false, currentPlayer = uuid)
+        }
+
+        val listingsPaginated = listingsService.getPaginated(pagination = pagination)
         val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
         player.openInventory(initListingsInventory)
     }

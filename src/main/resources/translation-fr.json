@@ -7,7 +7,9 @@
     "quantityNotAvailable": "§8[§6MarketPlace§8] §cLa quantité demandée n'est pas disponible.",
     "itemNotExist": "§8[§6MarketPlace§8] §cL'article demandé n'existe pas.",
     "inventoryFull": "§8[§6MarketPlace§8] §cL'inventaire est plein.",
-    "reloadNotAvailable": "§8[§6MarketPlace§8] §cLe plugin n'est pas disponible, merci de patienter..."
+    "reloadNotAvailable": "§8[§6MarketPlace§8] §cLe plugin n'est pas disponible, merci de patienter...",
+    "missingPermission": "§8[§6MarketPlace§8] §cVous n''avez pas la permission de faire ceci.",
+    "playerNotFound": "§8[§6MarketPlace§8] §cLe joueur est introuvable."
   },
   "inventoryEnum": {
     "search": {
@@ -139,8 +141,8 @@
   "commandHelp": [
     "§8-----------------<§6§lMarketPlace§8>-----------------",
     "§6/mp add <prix>: §aMettre l'item en main en vente, le prix est unitaire.",
-    "§6/mp listings: §aOuvrir la liste des articles en vente.",
-    "§6/mp mails: §aOuvrir la boîte de réception.",
+    "§6/mp listings [player]: §aOuvrir la liste des articles en vente.",
+    "§6/mp mails [player]: §aOuvrir la boîte de réception.",
     "§6/mp logs: §aAfficher les logs.",
     "§6/mp reload: §aRecharger le plugin.",
     "§8-------------------------------------------------"

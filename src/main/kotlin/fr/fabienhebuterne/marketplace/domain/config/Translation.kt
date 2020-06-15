@@ -39,7 +39,9 @@ data class Errors(
         val quantityNotAvailable: String,
         val itemNotExist: String,
         val inventoryFull: String,
-        val reloadNotAvailable: String
+        val reloadNotAvailable: String,
+        val missingPermission: String,
+        val playerNotFound: String
 )
 
 @Serializable
