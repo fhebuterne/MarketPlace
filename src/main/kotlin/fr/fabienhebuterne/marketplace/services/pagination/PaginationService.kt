@@ -18,7 +18,7 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
             if (it.currentPage < it.maxPage()) {
                 it.copy(currentPage = currentPage?.plus(1) ?: 1)
             } else {
-                it.copy(currentPage = 1)
+                it.copy(currentPage = it.maxPage())
             }
         } ?: Pagination(currentPage = 1, currentPlayer = uuid, viewPlayer = uuid)
 

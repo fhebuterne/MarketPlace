@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Config(
         val database: Database,
         val expiration: Expiration,
+        val sellerItemNotifCommand: List<String>,
         val maxDecimalMoney: Int,
         val maxMoneyToSellItem: Double
 )

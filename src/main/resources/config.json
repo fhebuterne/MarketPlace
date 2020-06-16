@@ -16,6 +16,9 @@
       "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has expired from mailbox and has been deleted."
     ]
   },
+  "sellerItemNotifCommand": [
+    "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has been sell for {{totalPrice}}."
+  ],
   "maxDecimalMoney": 2,
   "maxMoneyToSellItem": 1000000000000
 }

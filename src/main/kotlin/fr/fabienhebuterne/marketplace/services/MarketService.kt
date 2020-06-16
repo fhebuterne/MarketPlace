@@ -9,12 +9,14 @@ import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
+import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.tl
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -31,9 +33,10 @@ data class WaitingDefinedQuantity(
 class MarketService(private val marketPlace: MarketPlace,
                     private val listingsService: ListingsService,
                     private val listingsRepository: ListingsRepository,
+                    private val listingsInventoryService: ListingsInventoryService,
                     private val mailsService: MailsService,
                     private val mailsRepository: MailsRepository,
-                    private val listingsInventoryService: ListingsInventoryService,
+                    private val mailsInventoryService: MailsInventoryService,
                     private val logsService: LogsService) {
 
     val playersWaitingCustomQuantity: MutableMap<UUID, Int> = mutableMapOf()
@@ -109,7 +112,22 @@ class MarketService(private val marketPlace: MarketPlace,
                 toLocation = Location.MAIL_INVENTORY
         )
 
-        // TODO : Send notif to seller when item is buyed (executed command with config)
+
+        marketPlace.configService.getSerialization().sellerItemNotifCommand.forEach { command ->
+            val commandReplace = command.replace("{{playerPseudo}}", listingsDatabase.sellerPseudo)
+                    .replace("{{playerUUID}}", listingsDatabase.sellerUuid.toString())
+                    .replace("{{quantity}}", quantity.toString())
+                    .replace("{{itemStack}}", listingsDatabase.itemStack.type.toString())
+                    .replace("{{totalPrice}}", needingMoney.toString())
+
+            if (Bukkit.isPrimaryThread()) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
+            } else {
+                Bukkit.getScheduler().runTaskLater(marketPlace, {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
+                }, 20)
+            }
+        }
 
         val itemBuyMessage = tl.itemBuy.replace("{{quantity}}", quantity.toString())
                 .replace("{{item}}", listingsDatabase.itemStack.type.toString())
@@ -224,8 +242,15 @@ class MarketService(private val marketPlace: MarketPlace,
 
         if (event.click == ClickType.MIDDLE) {
             playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
-            player.sendMessage(tl.clickMiddleListingInventoryOne.replace("{{maxQuantity}}", listings.quantity.toString()))
-            player.sendMessage(tl.clickMiddleListingInventoryTwo)
+            tl.clickMiddleListingInventory
+                    .map {
+                        it.replace("{{maxQuantity}}", listings.quantity.toString())
+                                .replace("{{price}}", convertDoubleToReadeableString(listings.price))
+                                .replace("{{itemStack}}", listings.itemStack.type.toString())
+                    }
+                    .forEach {
+                        player.sendMessage(it)
+                    }
             player.closeInventory()
         }
     }
@@ -346,6 +371,7 @@ class MarketService(private val marketPlace: MarketPlace,
             mailsRepository.update(mail.copy(quantity = mail.quantity - amountItemStack))
         }
 
-        player.closeInventory()
+        val refreshInventory = mailsService.getPaginated(pagination = paginationMails)
+        player.openInventory(mailsInventoryService.initInventory(marketPlace, refreshInventory, player))
     }
 }

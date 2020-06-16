@@ -71,8 +71,11 @@
       }
     }
   },
-  "clickMiddleListingInventoryOne": "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{maxQuantity}}) you want to get.",
-  "clickMiddleListingInventoryTwo": "§8[§6MarketPlace§8] §aIf you want to cancel, write '§6§lcancel§a' in chat.",
+  "clickMiddleListingInventory": [
+    "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{maxQuantity}}) you want to get.",
+    "§8[§6MarketPlace§8] §aItem : §6{{itemStack}} §aUnit price : §6{{price}}$",
+    "§8[§6MarketPlace§8] §8[§6MarketPlace§8] §aIf you want to cancel, write '§6§lcancel§a' in chat."
+  ],
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
   "commandReloadStart": "§8[§6MarketPlace§8] §aPlugin reload in progress...",
   "commandReloadFinish": "§8[§6MarketPlace§8] §aPlugin reload ended...",
@@ -84,7 +87,7 @@
   "searchWaiting": "§8[§6MarketPlace§8] §aPlease enter a type of item (ex: DIRT) or a keyword associated with the name / lore of the item...",
   "listingItemBottomLoreSeller": [
     "",
-    "§6Unit price: §e{{price}}",
+    "§6Unit price: §e{{price}}$",
     "§6Total available: §e{{quantity}} article(s)",
     "%expiration%§6Expiration dans: §e{{expiration}}",
     "",
@@ -105,7 +108,7 @@
   "listingItemBottomLorePlayer": [
     "",
     "§6Seller: §e{{sellerPseudo}}",
-    "§6Unit price: §e{{price}}",
+    "§6Unit price: §e{{price}}$",
     "§6Total available: §e{{quantity}} items",
     "",
     "§6► Left click to buy 1 item",
