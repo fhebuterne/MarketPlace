@@ -32,11 +32,16 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
 
     override fun setBaseBottomLore(itemStack: ItemStack, paginated: Mails, player: Player): ItemStack {
         val itemMeta = itemStack.itemMeta
-
-        val loreItem = if (player.hasPermission("marketplace.mails.other.remove") && paginated.playerUuid != player.uniqueId) {
-            tl.mailItemBottomLorePlayerAdmin.toMutableList()
+        val loreItem = if (itemMeta.hasLore()) {
+            itemMeta.lore
         } else {
-            tl.mailItemBottomLorePlayer.toMutableList()
+            mutableListOf()
+        }
+
+        if (player.hasPermission("marketplace.mails.other.remove") && paginated.playerUuid != player.uniqueId) {
+            loreItem.addAll(tl.mailItemBottomLorePlayerAdmin.toMutableList())
+        } else {
+            loreItem.addAll(tl.mailItemBottomLorePlayer.toMutableList())
         }
 
         loreItem.replaceAll {
