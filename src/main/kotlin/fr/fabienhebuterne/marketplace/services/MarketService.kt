@@ -24,6 +24,7 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import java.util.stream.IntStream
 
 data class WaitingDefinedQuantity(
         val listings: Listings,
@@ -339,15 +340,17 @@ class MarketService(private val marketPlace: MarketPlace,
             return
         }
 
-        itemStack.amount = amountItemStack
-        player.inventory.addItem(itemStack)
+        IntStream.range(0, amountItemStack)
+                .forEach {
+                    player.inventory.addItem(itemStack)
+                }
 
         if (isAdmin) {
             logsService.createFrom(
                     player = Bukkit.getOfflinePlayer(mail.playerUuid),
                     adminPlayer = player,
                     paginated = mail,
-                    quantity = mail.quantity,
+                    quantity = amountItemStack,
                     needingMoney = null,
                     logType = LogType.GET,
                     fromLocation = Location.MAIL_INVENTORY,
@@ -357,7 +360,7 @@ class MarketService(private val marketPlace: MarketPlace,
             logsService.createFrom(
                     player = Bukkit.getOfflinePlayer(mail.playerUuid),
                     paginated = mail,
-                    quantity = mail.quantity,
+                    quantity = amountItemStack,
                     needingMoney = null,
                     logType = LogType.GET,
                     fromLocation = Location.MAIL_INVENTORY,
