@@ -1,6 +1,6 @@
 package fr.fabienhebuterne.marketplace.domain
 
-import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
+import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -13,17 +13,17 @@ const val LISTING_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh
 
 enum class InventoryLoreEnum(
         val rawSlot: Int,
-        val itemStack: ItemStack,
+        var itemStack: ItemStack,
         var displayName: String,
         var lore: List<String> = listOf(),
         val inventoryType: InventoryType? = null
 ) {
-    SEARCH(45, ItemStackReflection.getSkull(SEARCH_TEXTURE), tl.inventoryEnum.search.displayName, tl.inventoryEnum.search.lore),
-    LISTING(46, ItemStackReflection.getSkull(LISTING_TEXTURE), tl.inventoryEnum.listings.displayName, tl.inventoryEnum.listings.lore, inventoryType = InventoryType.MAILS),
-    MAIL(46, ItemStackReflection.getSkull(MAIL_TEXTURE), tl.inventoryEnum.mails.displayName, tl.inventoryEnum.mails.lore, inventoryType = InventoryType.LISTINGS),
+    SEARCH(45, ItemStack(Material.DIRT), tl.inventoryEnum.search.displayName, tl.inventoryEnum.search.lore),
+    LISTING(46, ItemStack(Material.DIRT), tl.inventoryEnum.listings.displayName, tl.inventoryEnum.listings.lore, inventoryType = InventoryType.MAILS),
+    MAIL(46, ItemStack(Material.DIRT), tl.inventoryEnum.mails.displayName, tl.inventoryEnum.mails.lore, inventoryType = InventoryType.LISTINGS),
     FILTER(49, ItemStack(Material.REDSTONE_COMPARATOR), "", listOf()),
-    PREVIOUS_PAGE(52, ItemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE), tl.inventoryEnum.previousPage.displayName, tl.inventoryEnum.previousPage.lore),
-    NEXT_PAGE(53, ItemStackReflection.getSkull(NEXT_PAGE_TEXTURE), tl.inventoryEnum.nextPage.displayName, tl.inventoryEnum.nextPage.lore);
+    PREVIOUS_PAGE(52, ItemStack(Material.DIRT), tl.inventoryEnum.previousPage.displayName, tl.inventoryEnum.previousPage.lore),
+    NEXT_PAGE(53, ItemStack(Material.DIRT), tl.inventoryEnum.nextPage.displayName, tl.inventoryEnum.nextPage.lore);
 
     init {
         val itemMeta = itemStack.itemMeta
@@ -49,4 +49,12 @@ fun reloadTranslation() {
     InventoryLoreEnum.PREVIOUS_PAGE.lore = tl.inventoryEnum.previousPage.lore
     InventoryLoreEnum.NEXT_PAGE.displayName = tl.inventoryEnum.nextPage.displayName
     InventoryLoreEnum.NEXT_PAGE.lore = tl.inventoryEnum.nextPage.lore
+}
+
+fun loadSkull(itemStackReflection: IItemStackReflection) {
+    InventoryLoreEnum.SEARCH.itemStack = itemStackReflection.getSkull(SEARCH_TEXTURE)
+    InventoryLoreEnum.LISTING.itemStack = itemStackReflection.getSkull(LISTING_TEXTURE)
+    InventoryLoreEnum.MAIL.itemStack = itemStackReflection.getSkull(MAIL_TEXTURE)
+    InventoryLoreEnum.PREVIOUS_PAGE.itemStack = itemStackReflection.getSkull(PREVIOUS_PAGE_TEXTURE)
+    InventoryLoreEnum.NEXT_PAGE.itemStack = itemStackReflection.getSkull(NEXT_PAGE_TEXTURE)
 }

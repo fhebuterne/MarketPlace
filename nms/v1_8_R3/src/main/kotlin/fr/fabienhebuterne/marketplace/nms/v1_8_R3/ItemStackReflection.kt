@@ -1,7 +1,8 @@
-package fr.fabienhebuterne.marketplace.nms
+package fr.fabienhebuterne.marketplace.nms.v1_8_R3
 
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import net.minecraft.server.v1_8_R3.MojangsonParser
 import net.minecraft.server.v1_8_R3.NBTTagCompound
 import org.bukkit.Material
@@ -11,21 +12,21 @@ import org.bukkit.inventory.meta.SkullMeta
 import java.lang.reflect.Field
 import java.util.*
 
-object ItemStackReflection {
+object ItemStackReflection : IItemStackReflection {
 
-    fun serializeItemStack(itemStack: ItemStack): String {
+    override fun serializeItemStack(itemStack: ItemStack): String {
         val nbtTagSerialized = NBTTagCompound()
         val itemStackNMS = CraftItemStack.asNMSCopy(itemStack)
         return itemStackNMS.save(nbtTagSerialized).toString()
     }
 
-    fun deserializeItemStack(itemStackString: String): ItemStack {
+    override fun deserializeItemStack(itemStackString: String): ItemStack {
         val nbtTagDeserialized = MojangsonParser.parse(itemStackString)
         val itemStackNMS = net.minecraft.server.v1_8_R3.ItemStack.createStack(nbtTagDeserialized)
         return CraftItemStack.asBukkitCopy(itemStackNMS)
     }
 
-    fun getSkull(textureEncoded: String): ItemStack {
+    override fun getSkull(textureEncoded: String): ItemStack {
         val head = ItemStack(Material.SKULL_ITEM, 1, 3);
         val headMeta = head.itemMeta as SkullMeta
         val profile = GameProfile(UUID.randomUUID(), null)

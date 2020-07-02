@@ -4,9 +4,12 @@ import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.domain.config.Translation
+import fr.fabienhebuterne.marketplace.domain.loadSkull
 import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
+import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
+import fr.fabienhebuterne.marketplace.nms.v1_8_R3.ItemStackReflection
 import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
@@ -21,6 +24,7 @@ import fr.fabienhebuterne.marketplace.storage.mysql.*
 import fr.fabienhebuterne.marketplace.utils.Dependency
 import kotlinx.serialization.ImplicitReflectionSerializer
 import net.milkbowl.vault.economy.Economy
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.RegisteredServiceProvider
@@ -85,6 +89,7 @@ class MarketPlace : JavaPlugin() {
         }
 
         kodein = Kodein {
+            bind<IItemStackReflection>() with singleton { initItemStackNms() ?: throw Exception() }
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(database) }
@@ -97,15 +102,29 @@ class MarketPlace : JavaPlugin() {
             bind<ExpirationService>() with singleton { ExpirationService(instance, instance(), instance(), instance()) }
         }
 
+        val itemStackReflection: IItemStackReflection by kodein.instance()
+        loadSkull(itemStackReflection)
+
         // TODO : Create factory to init listeners
         server.pluginManager.registerEvents(InventoryClickEventListener(this, kodein), this)
         server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this, kodein), this)
         server.pluginManager.registerEvents(PlayerJoinEventListener(ListingsRepositoryImpl(database), MailsRepositoryImpl(database)), this)
 
         // Start tasks to check items expired
-        val expirationService: ExpirationService by kodein.instance<ExpirationService>()
+        val expirationService: ExpirationService by kodein.instance()
         expirationService.startTaskExpirationListingsToMails()
         expirationService.startTaskExpirationMailsToDelete()
+    }
+
+    private fun initItemStackNms(): IItemStackReflection? {
+        val clazzVersion = Bukkit.getServer().javaClass.getPackage().name
+        println("version : $clazzVersion")
+
+        if (clazzVersion.contains("v1_8_R3")) {
+            return ItemStackReflection
+        }
+
+        return null
     }
 
     override fun onDisable() {}

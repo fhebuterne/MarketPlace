@@ -1,6 +1,6 @@
 package fr.fabienhebuterne.marketplace.json
 
-import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
+import fr.fabienhebuterne.marketplace.nms.v1_8_R3.ItemStackReflection
 import kotlinx.serialization.*
 import kotlinx.serialization.modules.serializersModuleOf
 import org.bukkit.inventory.ItemStack

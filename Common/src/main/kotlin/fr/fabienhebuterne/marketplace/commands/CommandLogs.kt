@@ -4,7 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
-import fr.fabienhebuterne.marketplace.nms.ItemStackReflection
+import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.intIsValid
@@ -24,6 +24,7 @@ import java.util.*
 class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
 
     private val logsService: LogsService by kodein.instance<LogsService>()
+    private val itemStackReflection: IItemStackReflection by kodein.instance<IItemStackReflection>()
 
     override fun runFromPlayer(server: Server, player: Player, commandLabel: String, cmd: Command, args: Array<String>) {
         // TODO : Put this in common code (callCommand)
@@ -101,7 +102,7 @@ class CommandLogs(kodein: Kodein) : CallCommand<MarketPlace>("logs") {
         prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(prefixHover).create())
 
         val msg = TextComponent("")
-        msg.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, ComponentBuilder(logs.itemStack?.let { ItemStackReflection.serializeItemStack(it) }).create())
+        msg.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, ComponentBuilder(logs.itemStack?.let { itemStackReflection.serializeItemStack(it) }).create())
         TextComponent.fromLegacyText(getMessageLogType(logs)).forEach {
             msg.addExtra(it)
         }
