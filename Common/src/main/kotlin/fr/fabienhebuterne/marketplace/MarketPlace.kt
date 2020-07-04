@@ -9,7 +9,6 @@ import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
-import fr.fabienhebuterne.marketplace.nms.v1_8_R3.ItemStackReflection
 import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
@@ -43,6 +42,7 @@ lateinit var conf: Config
 class MarketPlace : JavaPlugin() {
     companion object {
         var isReload: Boolean = false
+        lateinit var itemStackReflection: IItemStackReflection
     }
 
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<MarketPlace>
@@ -78,8 +78,8 @@ class MarketPlace : JavaPlugin() {
         callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
 
         val database = Database.connect(
-                url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&characterEncoding=UTF-8",
-                driver = "com.mysql.cj.jdbc.Driver",
+                url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC",
+                driver = "fr.fabienhebuterne.marketplace.libs.mysql.cj.jdbc.Driver",
                 user = conf.database.username,
                 password = conf.database.password
         )
@@ -103,6 +103,7 @@ class MarketPlace : JavaPlugin() {
         }
 
         val itemStackReflection: IItemStackReflection by kodein.instance()
+        MarketPlace.itemStackReflection = itemStackReflection
         loadSkull(itemStackReflection)
 
         // TODO : Create factory to init listeners
@@ -118,10 +119,17 @@ class MarketPlace : JavaPlugin() {
 
     private fun initItemStackNms(): IItemStackReflection? {
         val clazzVersion = Bukkit.getServer().javaClass.getPackage().name
-        println("version : $clazzVersion")
 
         if (clazzVersion.contains("v1_8_R3")) {
-            return ItemStackReflection
+            return fr.fabienhebuterne.marketplace.nms.v1_8_R3.ItemStackReflection
+        }
+
+        if (clazzVersion.contains("v1_9_R2")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_9_R2.ItemStackReflection
+        }
+
+        if (clazzVersion.contains("v1_10_R1")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_10_R1.ItemStackReflection
         }
 
         return null
