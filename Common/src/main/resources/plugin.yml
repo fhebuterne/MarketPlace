@@ -3,6 +3,7 @@ version: ${version}
 main: fr.fabienhebuterne.marketplace.MarketPlace
 author: fabien91
 depend: [Vault]
+api-version: 1.13
 
 commands:
   marketplace:

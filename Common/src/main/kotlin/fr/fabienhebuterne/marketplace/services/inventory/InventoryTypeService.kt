@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.services.inventory
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.InventoryFilterEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryType
@@ -78,8 +79,17 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
         }
     }
 
-    open fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>, inventoryType: InventoryType) {
-        val grayStainedGlassPane = ItemStack(Material.STAINED_GLASS_PANE, 1, 7)
+    open fun setBottomInventoryLine(instance: JavaPlugin, inventory: Inventory, pagination: Pagination<out Paginated>, inventoryType: InventoryType) {
+        val marketPlace = instance as MarketPlace
+        val emptyItemStack = marketPlace.configService.getSerialization().inventoryLoreMaterial.empty
+
+        val grayStainedGlassPane = if (emptyItemStack.contains(":")) {
+            val material = Material.valueOf(emptyItemStack.split(":")[0])
+            val data = emptyItemStack.split(":")[1].toShort()
+            ItemStack(material, 1, data)
+        } else {
+            ItemStack(Material.valueOf(emptyItemStack))
+        }
 
         inventory.setItem(47, grayStainedGlassPane)
         inventory.setItem(48, grayStainedGlassPane)

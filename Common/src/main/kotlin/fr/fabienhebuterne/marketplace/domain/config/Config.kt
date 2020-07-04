@@ -8,7 +8,14 @@ data class Config(
         val expiration: Expiration,
         val sellerItemNotifCommand: List<String>,
         val maxDecimalMoney: Int,
-        val maxMoneyToSellItem: Double
+        val maxMoneyToSellItem: Double,
+        val inventoryLoreMaterial: InventoryLoreMaterial
+)
+
+@Serializable
+data class InventoryLoreMaterial(
+        val empty: String,
+        val filter: String
 )
 
 @Serializable

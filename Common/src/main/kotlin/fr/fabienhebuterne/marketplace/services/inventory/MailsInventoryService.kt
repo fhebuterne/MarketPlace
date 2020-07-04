@@ -25,7 +25,7 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
             inventory.setItem(index, itemStack)
         }
 
-        setBottomInventoryLine(inventory, pagination)
+        setBottomInventoryLine(instance, inventory, pagination)
 
         return inventory
     }
@@ -63,8 +63,8 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         return itemStack
     }
 
-    private fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
-        super.setBottomInventoryLine(inventory, pagination, InventoryType.MAILS)
+    private fun setBottomInventoryLine(instance: JavaPlugin, inventory: Inventory, pagination: Pagination<out Paginated>) {
+        super.setBottomInventoryLine(instance, inventory, pagination, InventoryType.MAILS)
     }
 
     fun clickOnFilter(instance: JavaPlugin, event: InventoryClickEvent, player: Player) {

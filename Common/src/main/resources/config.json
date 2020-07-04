@@ -20,5 +20,9 @@
     "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has been sell for {{totalPrice}}."
   ],
   "maxDecimalMoney": 2,
-  "maxMoneyToSellItem": 1000000000000
+  "maxMoneyToSellItem": 1000000000000,
+  "inventoryLoreMaterial": {
+    "empty": "GRAY_STAINED_GLASS_PANE",
+    "filter": "COMPARATOR"
+  }
 }

@@ -35,7 +35,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
             inventory.setItem(index, itemStack)
         }
 
-        setBottomInventoryLine(inventory, pagination)
+        setBottomInventoryLine(instance, inventory, pagination)
 
         return inventory
     }
@@ -163,8 +163,8 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         player.closeInventory()
     }
 
-    private fun setBottomInventoryLine(inventory: Inventory, pagination: Pagination<out Paginated>) {
-        super.setBottomInventoryLine(inventory, pagination, LISTINGS)
+    private fun setBottomInventoryLine(instance: JavaPlugin, inventory: Inventory, pagination: Pagination<out Paginated>) {
+        super.setBottomInventoryLine(instance, inventory, pagination, LISTINGS)
     }
 
     fun clickOnFilter(instance: JavaPlugin, event: InventoryClickEvent, player: Player) {

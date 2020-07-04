@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.domain
 
+import fr.fabienhebuterne.marketplace.conf
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Material
@@ -21,7 +22,7 @@ enum class InventoryLoreEnum(
     SEARCH(45, ItemStack(Material.DIRT), tl.inventoryEnum.search.displayName, tl.inventoryEnum.search.lore),
     LISTING(46, ItemStack(Material.DIRT), tl.inventoryEnum.listings.displayName, tl.inventoryEnum.listings.lore, inventoryType = InventoryType.MAILS),
     MAIL(46, ItemStack(Material.DIRT), tl.inventoryEnum.mails.displayName, tl.inventoryEnum.mails.lore, inventoryType = InventoryType.LISTINGS),
-    FILTER(49, ItemStack(Material.REDSTONE_COMPARATOR), "", listOf()),
+    FILTER(49, ItemStack(Material.valueOf(conf.inventoryLoreMaterial.filter)), "", listOf()),
     PREVIOUS_PAGE(52, ItemStack(Material.DIRT), tl.inventoryEnum.previousPage.displayName, tl.inventoryEnum.previousPage.lore),
     NEXT_PAGE(53, ItemStack(Material.DIRT), tl.inventoryEnum.nextPage.displayName, tl.inventoryEnum.nextPage.lore);
 

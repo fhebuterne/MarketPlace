@@ -132,6 +132,18 @@ class MarketPlace : JavaPlugin() {
             return fr.fabienhebuterne.marketplace.nms.v1_10_R1.ItemStackReflection
         }
 
+        if (clazzVersion.contains("v1_11_R1")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_11_R1.ItemStackReflection
+        }
+
+        if (clazzVersion.contains("v1_12_R1")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_12_R1.ItemStackReflection
+        }
+
+        if (clazzVersion.contains("v1_13_R2")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_13_R2.ItemStackReflection
+        }
+
         return null
     }
 
