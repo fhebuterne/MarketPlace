@@ -5,6 +5,10 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+repositories {
+    maven("https://libraries.minecraft.net")
+}
+
 dependencies {
     // Tech Stack dependency
     compileOnly("org.kodein.di", "kodein-di-generic-jvm", "6.5.3")
@@ -28,6 +32,7 @@ dependencies {
     // Plugin dependency
     compileOnly(files("../../tmp/spigot-1.12.2.jar"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.mojang:datafixerupper:1.0.20")
 
     "implementation"(project(":nms:Interfaces"))
 }

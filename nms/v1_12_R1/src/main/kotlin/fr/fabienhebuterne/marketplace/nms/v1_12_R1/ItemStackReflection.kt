@@ -3,6 +3,8 @@ package fr.fabienhebuterne.marketplace.nms.v1_12_R1
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
+import net.minecraft.server.v1_12_R1.DataConverterManager
+import net.minecraft.server.v1_12_R1.DataConverterTypes
 import net.minecraft.server.v1_12_R1.MojangsonParser
 import net.minecraft.server.v1_12_R1.NBTTagCompound
 import org.bukkit.Material
@@ -20,9 +22,17 @@ object ItemStackReflection : IItemStackReflection {
         return itemStackNMS.save(nbtTagSerialized).toString()
     }
 
+    // TODO FHE : Check if it work
     override fun deserializeItemStack(itemStackString: String): ItemStack {
-        val nbtTagDeserialized = MojangsonParser.parse(itemStackString)
-        val itemStackNMS = net.minecraft.server.v1_12_R1.ItemStack(nbtTagDeserialized)
+        val updatedJson = itemStackString
+                .replace("[0:", "[")
+                .replace(Regex(",\\d*:"), ",")
+                .replace("\\n", "\\\\n")
+
+        val nbtTagDeserialized = MojangsonParser.parse(updatedJson)
+                ?: throw Exception("Item stack corrupted...")
+
+        val itemStackNMS = net.minecraft.server.v1_12_R1.ItemStack(updateToLatestMinecraft(nbtTagDeserialized))
         return CraftItemStack.asBukkitCopy(itemStackNMS)
     }
 
@@ -41,6 +51,10 @@ object ItemStackReflection : IItemStackReflection {
         }
         head.itemMeta = headMeta;
         return head
+    }
+
+    private fun updateToLatestMinecraft(item: NBTTagCompound): NBTTagCompound? {
+        return DataConverterManager(1343).a(DataConverterTypes.ITEM_INSTANCE, item)
     }
 
 }

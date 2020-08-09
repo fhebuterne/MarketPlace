@@ -78,8 +78,4 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
             player.openInventory(confirmationAddNewItemInventory)
         }
     }
-
-
-
-
 }
