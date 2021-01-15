@@ -120,28 +120,20 @@ class MarketPlace : JavaPlugin() {
     private fun initItemStackNms(): IItemStackReflection? {
         val clazzVersion = Bukkit.getServer().javaClass.getPackage().name
 
-        if (clazzVersion.contains("v1_8_R3")) {
-            return fr.fabienhebuterne.marketplace.nms.v1_8_R3.ItemStackReflection
-        }
-
-        if (clazzVersion.contains("v1_9_R2")) {
-            return fr.fabienhebuterne.marketplace.nms.v1_9_R2.ItemStackReflection
-        }
-
-        if (clazzVersion.contains("v1_10_R1")) {
-            return fr.fabienhebuterne.marketplace.nms.v1_10_R1.ItemStackReflection
-        }
-
-        if (clazzVersion.contains("v1_11_R1")) {
-            return fr.fabienhebuterne.marketplace.nms.v1_11_R1.ItemStackReflection
-        }
-
         if (clazzVersion.contains("v1_12_R1")) {
             return fr.fabienhebuterne.marketplace.nms.v1_12_R1.ItemStackReflection
         }
 
         if (clazzVersion.contains("v1_13_R2")) {
             return fr.fabienhebuterne.marketplace.nms.v1_13_R2.ItemStackReflection
+        }
+
+        if (clazzVersion.contains("v1_14_R1")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_14_R1.ItemStackReflection
+        }
+
+        if (clazzVersion.contains("v1_15_R1")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_15_R1.ItemStackReflection
         }
 
         return null

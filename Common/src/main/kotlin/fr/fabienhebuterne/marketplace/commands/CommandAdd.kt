@@ -33,7 +33,7 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
             return
         }
 
-        if (player.itemInHand.type == Material.AIR) {
+        if (player.inventory.itemInMainHand.type == Material.AIR) {
             throw HandEmptyException(player)
         }
 
@@ -51,7 +51,7 @@ class CommandAdd(kodein: Kodein) : CallCommand<MarketPlace>("add") {
         }
 
         val money = argsMoneyCheck.toDouble()
-        val currentItemStack = player.itemInHand
+        val currentItemStack = player.inventory.itemInMainHand
         val currentItemStackOne = currentItemStack.clone()
         currentItemStackOne.amount = 1
 
