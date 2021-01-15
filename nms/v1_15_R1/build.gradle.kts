@@ -26,18 +26,10 @@ dependencies {
     testCompileOnly("org.junit.jupiter:junit-jupiter-api:5.6.0")
 
     // Plugin dependency
-    compileOnly(files("../tmp/spigot-1.12.2.jar"))
+    compileOnly(files("../../tmp/spigot-1.15.2.jar"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
-    implementation(project(":nms:Interfaces"))
-    implementation(project(":nms:v1_12_R1"))
-    implementation(project(":nms:v1_13_R2"))
-    implementation(project(":nms:v1_14_R1"))
-    implementation(project(":nms:v1_15_R1"))
-}
-
-tasks.test {
-    useJUnitPlatform()
+    "implementation"(project(":nms:Interfaces"))
 }
 
 tasks.compileKotlin {
@@ -50,36 +42,4 @@ tasks.compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
-
-tasks.processResources {
-    filesMatching("**/**.yml") {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        expand(project.properties)
-    }
-}
-
-tasks.jar {
-    archiveFileName.set("MarketPlace-${archiveVersion.getOrElse("unknown")}-minimal.jar")
-}
-
-tasks.shadowJar {
-    minimize()
-
-    archiveFileName.set("MarketPlace-${archiveVersion.getOrElse("unknown")}.jar")
-
-    destinationDirectory.set(file(System.getProperty("outputDir") ?: "$rootDir/build/"))
-
-    dependencies {
-        exclude(dependency("org.jetbrains.exposed:*"))
-        exclude(dependency("org.jetbrains.kotlinx:*"))
-        exclude(dependency("com.mysql:*"))
-    }
-
-    relocate("com.mysql", "fr.fabienhebuterne.marketplace.libs.mysql")
-    relocate("org.jetbrains.kotlinx", "fr.fabienhebuterne.marketplace.libs.kotlinx")
-}
-
-tasks.build {
-    dependsOn("shadowJar")
 }

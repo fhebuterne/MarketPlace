@@ -26,6 +26,7 @@ class CommandMails(kodein: Kodein) : CallCommand<MarketPlace>("mails") {
         }
 
         val mailsPaginated = if (args.size == 2 && player.hasPermission("marketplace.mails.other")) {
+            // TODO : Get UUID from DB with pseudo and use it here to remove depreciated method
             if (Bukkit.getOfflinePlayer(args[1]) == null) {
                 return
             }

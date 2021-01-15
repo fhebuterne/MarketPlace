@@ -124,9 +124,9 @@ class MarketService(private val marketPlace: MarketPlace,
             if (Bukkit.isPrimaryThread()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
             } else {
-                Bukkit.getScheduler().runTaskLater(marketPlace, {
+                Bukkit.getScheduler().runTaskLater(marketPlace, Runnable {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-                }, 20)
+                }, 20L)
             }
         }
 
@@ -155,7 +155,7 @@ class MarketService(private val marketPlace: MarketPlace,
 
     fun clickOnListingsInventory(event: InventoryClickEvent, player: Player) {
         if (event.rawSlot in 0..44) {
-            if (event.currentItem.type == Material.AIR) {
+            if (event.currentItem == null || event.currentItem?.type == Material.AIR) {
                 return
             }
 
@@ -279,11 +279,11 @@ class MarketService(private val marketPlace: MarketPlace,
         } else {
             val itemStack: ItemStack = listingsInventoryService.setBaseBottomLore(listings.itemStack.clone(), listings, player)
             val itemMeta = itemStack.itemMeta
-            val lore = itemMeta.lore
+            val lore = itemMeta?.lore
 
-            lore.addAll(translationLore)
+            lore?.addAll(translationLore)
 
-            itemMeta.lore = lore
+            itemMeta?.lore = lore
             itemStack.itemMeta = itemMeta
             event.currentItem = itemStack
 
@@ -293,7 +293,7 @@ class MarketService(private val marketPlace: MarketPlace,
 
     fun clickOnMailsInventory(event: InventoryClickEvent, player: Player) {
         if (event.rawSlot in 0..44) {
-            if (event.currentItem.type == Material.AIR) {
+            if (event.currentItem == null || event.currentItem?.type == Material.AIR) {
                 return
             }
 

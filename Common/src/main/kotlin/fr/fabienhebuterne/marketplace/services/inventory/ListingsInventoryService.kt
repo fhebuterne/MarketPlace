@@ -42,16 +42,16 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
     private fun setSellerBottomLore(itemStack: ItemStack, paginated: Listings): ItemStack {
         val itemMeta = itemStack.itemMeta
-        val loreItem = if (itemMeta.hasLore()) {
-            itemMeta.lore
-        } else {
-            mutableListOf()
+        var loreItem: MutableList<String> = mutableListOf()
+
+        if (itemMeta?.hasLore() == true) {
+            loreItem = itemMeta.lore?.toMutableList() ?: mutableListOf()
         }
 
         loreItem.addAll(tl.listingItemBottomLoreSeller.toMutableList())
         loreItem.replaceAll {
             it.replace("{{price}}", paginated.price.toString())
-                    .replace("{{quantity}}", paginated.quantity.toString())
+                .replace("{{quantity}}", paginated.quantity.toString())
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
@@ -64,24 +64,24 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
             it.replace("%expiration%", "")
         }
 
-        itemMeta.lore = loreItem
+        itemMeta?.lore = loreItem
         itemStack.itemMeta = itemMeta
         return itemStack
     }
 
     override fun setBaseBottomLore(itemStack: ItemStack, paginated: Listings, player: Player): ItemStack {
         val itemMeta = itemStack.itemMeta
-        val loreItem = if (itemMeta.hasLore()) {
-            itemMeta.lore
-        } else {
-            mutableListOf()
+        var loreItem: MutableList<String> = mutableListOf()
+
+        if (itemMeta?.hasLore() == true) {
+            loreItem = itemMeta.lore?.toMutableList() ?: mutableListOf()
         }
 
         loreItem.addAll(tl.listingItemBottomLorePlayer.toMutableList())
         loreItem.replaceAll {
             it.replace("{{sellerPseudo}}", paginated.sellerPseudo)
-                    .replace("{{price}}", convertDoubleToReadeableString(paginated.price))
-                    .replace("{{quantity}}", paginated.quantity.toString())
+                .replace("{{price}}", convertDoubleToReadeableString(paginated.price))
+                .replace("{{quantity}}", paginated.quantity.toString())
         }
 
         if (paginated.quantity < 2) {
@@ -108,7 +108,7 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
             loreItem.addAll(tl.listingItemBottomLorePlayerAdmin)
         }
 
-        itemMeta.lore = loreItem
+        itemMeta?.lore = loreItem
         itemStack.itemMeta = itemMeta
         return itemStack
     }
@@ -119,13 +119,13 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
         val validItem = ItemStack(Material.STAINED_GLASS_PANE, 1, 5)
         val validItemMeta = validItem.itemMeta
-        validItemMeta.displayName = "§aValider"
+        validItemMeta?.setDisplayName("§aValider")
         validItem.itemMeta = validItemMeta
         inventory.setItem(2, validItem)
 
         val cancelItem = ItemStack(Material.STAINED_GLASS_PANE, 1, 14)
         val cancelItemMeta = cancelItem.itemMeta
-        cancelItemMeta.displayName = "§cAnnuler"
+        cancelItemMeta?.setDisplayName("§cAnnuler")
         cancelItem.itemMeta = cancelItemMeta
         inventory.setItem(6, cancelItem)
         return inventory

@@ -5,7 +5,6 @@ import com.mojang.authlib.properties.Property
 import com.mojang.datafixers.Dynamic
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import net.minecraft.server.v1_13_R2.*
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
@@ -16,7 +15,8 @@ import java.util.*
 
 object ItemStackReflection : IItemStackReflection {
 
-    private const val DATA_MC_V1_12_R1 = 1343
+    private const val DATA_VERSION_V1_12_R1 = 1343
+    private const val DATA_VERSION_V1_13_R2 = 1631
 
     override fun serializeItemStack(itemStack: ItemStack): String {
         val nbtTagSerialized = NBTTagCompound()
@@ -27,7 +27,7 @@ object ItemStackReflection : IItemStackReflection {
     override fun deserializeItemStack(itemStackString: String): ItemStack {
         val nbtTagDeserialized = MojangsonParser.parse(itemStackString)
         val itemStackNMS = net.minecraft.server.v1_13_R2.ItemStack.a(
-                updateToLatestMinecraft(nbtTagDeserialized, DATA_MC_V1_12_R1)
+            updateToLatestMinecraft(nbtTagDeserialized)
         )
         return CraftItemStack.asBukkitCopy(itemStackNMS)
     }
@@ -49,14 +49,13 @@ object ItemStackReflection : IItemStackReflection {
         return head
     }
 
-    private fun updateToLatestMinecraft(item: NBTTagCompound, oldVersion: Int): NBTTagCompound? {
-        val newVersion: Int = Bukkit.getUnsafe().dataVersion
+    private fun updateToLatestMinecraft(item: NBTTagCompound): NBTTagCompound? {
         val input: Dynamic<NBTBase> = Dynamic(DynamicOpsNBT.a, item)
         val result: Dynamic<NBTBase> = DataConverterRegistry.a().update(
-                DataConverterTypes.ITEM_STACK,
-                input,
-                oldVersion,
-                newVersion
+            DataConverterTypes.ITEM_STACK,
+            input,
+            DATA_VERSION_V1_12_R1,
+            DATA_VERSION_V1_13_R2
         )
         return result.value as NBTTagCompound
     }

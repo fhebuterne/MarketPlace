@@ -16,21 +16,21 @@ class ExpirationService(
 ) {
 
     fun startTaskExpirationListingsToMails() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(marketPlace, {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(marketPlace, Runnable {
             val findAllListings = listingsService.findAll()
             findAllListings.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     marketPlace.configService.getSerialization().expiration.listingsToMailsNotifCommand.forEach { command ->
                         val commandReplace = command.replace("{{playerPseudo}}", it.sellerPseudo)
-                                .replace("{{playerUUID}}", it.sellerUuid.toString())
-                                .replace("{{quantity}}", it.quantity.toString())
-                                .replace("{{itemStack}}", it.itemStack.type.toString())
-                                .replace("{{price}}", it.price.toString())
+                            .replace("{{playerUUID}}", it.sellerUuid.toString())
+                            .replace("{{quantity}}", it.quantity.toString())
+                            .replace("{{itemStack}}", it.itemStack.type.toString())
+                            .replace("{{price}}", it.price.toString())
 
                         if (Bukkit.isPrimaryThread()) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
                         } else {
-                            Bukkit.getScheduler().runTaskLater(marketPlace, {
+                            Bukkit.getScheduler().runTaskLater(marketPlace, Runnable {
                                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
                             }, 20)
                         }
@@ -54,12 +54,13 @@ class ExpirationService(
     }
 
     fun startTaskExpirationMailsToDelete() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(marketPlace, {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(marketPlace, Runnable {
             val findAllMails = mailsService.findAll()
             findAllMails.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     marketPlace.configService.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
-                        val commandReplace = command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name)
+                        val commandReplace =
+                            command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name)
                                 .replace("{{playerUUID}}", it.playerUuid.toString())
                                 .replace("{{quantity}}", it.quantity.toString())
                                 .replace("{{itemStack}}", it.itemStack.type.toString())
@@ -67,20 +68,20 @@ class ExpirationService(
                         if (Bukkit.isPrimaryThread()) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
                         } else {
-                            Bukkit.getScheduler().runTaskLater(marketPlace, {
+                            Bukkit.getScheduler().runTaskLater(marketPlace, Runnable {
                                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
                             }, 20)
                         }
                     }
 
                     logsService.createFrom(
-                            player = Bukkit.getOfflinePlayer(it.playerUuid).player,
-                            paginated = it,
-                            quantity = it.quantity,
-                            needingMoney = null,
-                            logType = LogType.EXPIRED,
-                            fromLocation = Location.MAIL_INVENTORY,
-                            toLocation = Location.NONE
+                        player = Bukkit.getOfflinePlayer(it.playerUuid).player!!,
+                        paginated = it,
+                        quantity = it.quantity,
+                        needingMoney = null,
+                        logType = LogType.EXPIRED,
+                        fromLocation = Location.MAIL_INVENTORY,
+                        toLocation = Location.NONE
                     )
 
                     it.id?.let { id -> mailsService.delete(id) }
