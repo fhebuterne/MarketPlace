@@ -83,7 +83,12 @@ tasks.jar {
 tasks.shadowJar {
     minimize()
 
-    archiveFileName.set("MarketPlace-${archiveVersion.getOrElse("unknown")}.jar")
+    if (buildVersion == null) {
+        archiveFileName.set("MarketPlace-${archiveVersion.getOrElse("unknown")}.jar")
+    } else {
+        // For ci/cd
+        archiveFileName.set("MarketPlace.jar")
+    }
 
     destinationDirectory.set(file(System.getProperty("outputDir") ?: "$rootDir/build/"))
 
