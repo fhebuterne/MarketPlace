@@ -7,8 +7,8 @@ fi
 
 mkdir buildtools && cd ./buildtools || exit
 
-curl https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -O BuildTools.jar
+curl https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 
 java -jar BuildTools.jar --rev "$1" --output-dir ../tmp
 
-rm -rf buildtools
+rm -rf ../buildtools

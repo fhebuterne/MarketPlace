@@ -34,3 +34,5 @@ jobs:
         run: ./gradlew clean build -PbuildVersion=1.14.4
       - name: Build with Gradle - Compile plugin with 1.15.2
         run: ./gradlew clean build -PbuildVersion=1.15.2
+      - name: Build with Gradle - Compile plugin with 1.16.5
+        run: ./gradlew clean build -PbuildVersion=1.16.5

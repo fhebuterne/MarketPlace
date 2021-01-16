@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":nms:v1_13_R2"))
     implementation(project(":nms:v1_14_R1"))
     implementation(project(":nms:v1_15_R1"))
+    implementation(project(":nms:v1_16_R3"))
 }
 
 tasks.test {
