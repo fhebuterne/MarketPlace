@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.commands.CommandListings
+import fr.fabienhebuterne.marketplace.conf
 import fr.fabienhebuterne.marketplace.domain.InventoryType.LISTINGS
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
@@ -9,8 +10,8 @@ import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import fr.fabienhebuterne.marketplace.utils.formatInterval
+import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
@@ -19,7 +20,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-class ListingsInventoryService(private val listingsService: ListingsService) : InventoryTypeService<Listings>(listingsService) {
+class ListingsInventoryService(private val listingsService: ListingsService) :
+    InventoryTypeService<Listings>(listingsService) {
     private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 
     override fun initInventory(instance: JavaPlugin, pagination: Pagination<Listings>, player: Player): Inventory {
@@ -100,8 +102,8 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
 
         loreItem.replaceAll {
             it.replace("%middle%", "")
-                    .replace("%right%", "")
-                    .replace("%expiration%", "")
+                .replace("%right%", "")
+                .replace("%expiration%", "")
         }
 
         if (player.hasPermission("marketplace.listings.other.remove")) {
@@ -117,13 +119,13 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         playersConfirmation[player.uniqueId] = listings
         val inventory = Bukkit.createInventory(player, 9, "MarketPlace - Vente - Confirmation")
 
-        val validItem = ItemStack(Material.STAINED_GLASS_PANE, 1, 5)
+        val validItem = parseMaterialConfig(conf.inventoryValidItem)
         val validItemMeta = validItem.itemMeta
         validItemMeta?.setDisplayName("§aValider")
         validItem.itemMeta = validItemMeta
         inventory.setItem(2, validItem)
 
-        val cancelItem = ItemStack(Material.STAINED_GLASS_PANE, 1, 14)
+        val cancelItem = parseMaterialConfig(conf.inventoryCancelItem)
         val cancelItemMeta = cancelItem.itemMeta
         cancelItemMeta?.setDisplayName("§cAnnuler")
         cancelItem.itemMeta = cancelItemMeta
@@ -163,7 +165,11 @@ class ListingsInventoryService(private val listingsService: ListingsService) : I
         player.closeInventory()
     }
 
-    private fun setBottomInventoryLine(instance: JavaPlugin, inventory: Inventory, pagination: Pagination<out Paginated>) {
+    private fun setBottomInventoryLine(
+        instance: JavaPlugin,
+        inventory: Inventory,
+        pagination: Pagination<out Paginated>
+    ) {
         super.setBottomInventoryLine(instance, inventory, pagination, LISTINGS)
     }
 

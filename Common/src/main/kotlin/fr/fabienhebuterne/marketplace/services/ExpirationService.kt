@@ -60,7 +60,7 @@ class ExpirationService(
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     marketPlace.configService.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
                         val commandReplace =
-                            command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name)
+                            command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name ?: "")
                                 .replace("{{playerUUID}}", it.playerUuid.toString())
                                 .replace("{{quantity}}", it.quantity.toString())
                                 .replace("{{itemStack}}", it.itemStack.type.toString())

@@ -32,33 +32,33 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
 
     override fun setBaseBottomLore(itemStack: ItemStack, paginated: Mails, player: Player): ItemStack {
         val itemMeta = itemStack.itemMeta
-        val loreItem = if (itemMeta.hasLore()) {
+        val loreItem = if (itemMeta?.hasLore() == true) {
             itemMeta.lore
         } else {
             mutableListOf()
         }
 
         if (player.hasPermission("marketplace.mails.other.remove") && paginated.playerUuid != player.uniqueId) {
-            loreItem.addAll(tl.mailItemBottomLorePlayerAdmin.toMutableList())
+            loreItem?.addAll(tl.mailItemBottomLorePlayerAdmin.toMutableList())
         } else {
-            loreItem.addAll(tl.mailItemBottomLorePlayer.toMutableList())
+            loreItem?.addAll(tl.mailItemBottomLorePlayer.toMutableList())
         }
 
-        loreItem.replaceAll {
+        loreItem?.replaceAll {
             it.replace("{{quantity}}", paginated.quantity.toString())
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { interval ->
-                loreItem.replaceAll { it.replace("{{expiration}}", interval) }
+                loreItem?.replaceAll { it.replace("{{expiration}}", interval) }
             }
-        } ?: loreItem.removeIf { it.contains("%expiration%") }
+        } ?: loreItem?.removeIf { it.contains("%expiration%") }
 
-        loreItem.replaceAll {
+        loreItem?.replaceAll {
             it.replace("%expiration%", "")
         }
 
-        itemMeta.lore = loreItem
+        itemMeta?.lore = loreItem
         itemStack.itemMeta = itemMeta
         return itemStack
     }

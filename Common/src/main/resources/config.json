@@ -24,5 +24,7 @@
   "inventoryLoreMaterial": {
     "empty": "GRAY_STAINED_GLASS_PANE",
     "filter": "COMPARATOR"
-  }
+  },
+  "inventoryValidItem": "GREEN_STAINED_GLASS_PANE",
+  "inventoryCancelItem": "RED_STAINED_GLASS_PANE"
 }

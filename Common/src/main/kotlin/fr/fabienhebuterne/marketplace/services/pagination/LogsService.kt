@@ -19,15 +19,15 @@ class LogsService(private val logsRepository: LogsRepository) : PaginationServic
             toLocation: Location
     ) {
         var logs = Logs(
-                playerUuid = player.uniqueId,
-                playerPseudo = player.name,
-                quantity = quantity,
-                logType = logType,
-                fromLocation = fromLocation,
-                toLocation = toLocation,
-                auditData = AuditData(
-                        createdAt = System.currentTimeMillis()
-                )
+            playerUuid = player.uniqueId,
+            playerPseudo = player.name ?: "???",
+            quantity = quantity,
+            logType = logType,
+            fromLocation = fromLocation,
+            toLocation = toLocation,
+            auditData = AuditData(
+                createdAt = System.currentTimeMillis()
+            )
         )
 
         if (adminPlayer != null) {

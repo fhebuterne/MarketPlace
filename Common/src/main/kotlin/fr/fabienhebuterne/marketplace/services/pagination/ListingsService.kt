@@ -43,7 +43,7 @@ class ListingsService(
             .replace("{{quantityTotal}}", updatedListings.quantity.toString())
 
         player.sendMessage(listingUpdated)
-        player.inventory.itemInMainHand = ItemStack(Material.AIR)
+        player.inventory.setItemInMainHand(ItemStack(Material.AIR))
     }
 
     fun create(player: Player, listings: Listings) {
@@ -64,7 +64,7 @@ class ListingsService(
             .replace("{{unitPrice}}", convertDoubleToReadeableString(listings.price))
 
         player.sendMessage(listingsCreatedMessage)
-        player.inventory.itemInMainHand = ItemStack(Material.AIR)
+        player.inventory.setItemInMainHand(ItemStack(Material.AIR))
     }
 
     fun findUUIDBySellerPseudo(sellerPseudo: String): UUID? = listingsRepository.findUUIDBySellerPseudo(sellerPseudo)
