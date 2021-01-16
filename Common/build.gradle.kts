@@ -1,9 +1,13 @@
+import kotlin.system.exitProcess
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm")
     id("com.github.johnrengelman.shadow")
     kotlin("plugin.serialization")
 }
+
+val buildVersion: String? by project
 
 dependencies {
     // Tech Stack dependency
@@ -26,7 +30,19 @@ dependencies {
     testCompileOnly("org.junit.jupiter:junit-jupiter-api:5.6.0")
 
     // Plugin dependency
-    compileOnly(files("../tmp/spigot-1.12.2.jar"))
+    if (buildVersion == null) {
+        println("build common module with spigot 1.12.2")
+        compileOnly(files("../tmp/spigot-1.12.2.jar"))
+    } else {
+        println("build common module with spigot $buildVersion")
+
+        if (File("$rootDir/tmp/spigot-$buildVersion.jar").exists()) {
+            compileOnly(files("../tmp/spigot-$buildVersion.jar"))
+        } else {
+            println("file spigot-$buildVersion doesn't exist cancel build")
+            exitProcess(1)
+        }
+    }
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     implementation(project(":nms:Interfaces"))
