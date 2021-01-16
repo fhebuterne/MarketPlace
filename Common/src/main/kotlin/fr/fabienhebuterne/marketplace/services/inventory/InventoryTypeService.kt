@@ -9,7 +9,7 @@ import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
 import fr.fabienhebuterne.marketplace.tl
-import org.bukkit.Material
+import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
@@ -82,29 +82,23 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
     open fun setBottomInventoryLine(instance: JavaPlugin, inventory: Inventory, pagination: Pagination<out Paginated>, inventoryType: InventoryType) {
         val marketPlace = instance as MarketPlace
         val emptyItemStack = marketPlace.configService.getSerialization().inventoryLoreMaterial.empty
+        val emptySlot = parseMaterialConfig(emptyItemStack)
 
-        val grayStainedGlassPane = if (emptyItemStack.contains(":")) {
-            val material = Material.valueOf(emptyItemStack.split(":")[0])
-            val data = emptyItemStack.split(":")[1].toShort()
-            ItemStack(material, 1, data)
-        } else {
-            ItemStack(Material.valueOf(emptyItemStack))
-        }
-
-        inventory.setItem(47, grayStainedGlassPane)
-        inventory.setItem(48, grayStainedGlassPane)
-        inventory.setItem(50, grayStainedGlassPane)
-        inventory.setItem(51, grayStainedGlassPane)
+        inventory.setItem(47, emptySlot)
+        inventory.setItem(48, emptySlot)
+        inventory.setItem(50, emptySlot)
+        inventory.setItem(51, emptySlot)
 
         InventoryLoreEnum.values().forEach {
             val replace: (t: String) -> String = { t ->
                 t.replace("{{currentPage}}", pagination.currentPage.toString())
-                        .replace("{{maxPage}}", pagination.maxPage().toString())
-                        .replace("{{total}}", pagination.total.toString())
+                    .replace("{{maxPage}}", pagination.maxPage().toString())
+                    .replace("{{total}}", pagination.total.toString())
             }
 
             if (it == InventoryLoreEnum.FILTER) {
-                val inventoryFilterEnum = InventoryFilterEnum.valueOf("${pagination.filter.filterName}_${pagination.filter.filterType}")
+                val inventoryFilterEnum =
+                    InventoryFilterEnum.valueOf("${pagination.filter.filterName}_${pagination.filter.filterType}")
                 it.displayName = inventoryFilterEnum.itemTranslation.displayName
                 it.lore = inventoryFilterEnum.itemTranslation.lore
             }
@@ -113,8 +107,8 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
             loreUpdated.replaceAll(replace)
 
             val itemMeta = it.itemStack.itemMeta
-            itemMeta.lore = loreUpdated
-            itemMeta.displayName = it.displayName
+            itemMeta?.lore = loreUpdated
+            itemMeta?.setDisplayName(it.displayName)
             it.itemStack.itemMeta = itemMeta
 
             if (it.inventoryType == null || it.inventoryType == inventoryType) {

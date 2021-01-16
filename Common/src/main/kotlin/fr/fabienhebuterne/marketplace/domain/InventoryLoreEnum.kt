@@ -28,8 +28,8 @@ enum class InventoryLoreEnum(
 
     init {
         val itemMeta = itemStack.itemMeta
-        itemMeta.displayName = displayName
-        itemMeta.lore = lore
+        itemMeta?.setDisplayName(displayName)
+        itemMeta?.lore = lore
         itemStack.itemMeta = itemMeta
     }
 }
