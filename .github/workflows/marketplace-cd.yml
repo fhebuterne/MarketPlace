@@ -33,6 +33,9 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+      - name: Get the tag version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Upload Release Jar
         id: upload-release-jar
         uses: actions/upload-release-asset@v1
@@ -41,5 +44,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/MarketPlace.jar
-          asset_name: MarketPlace-${{ github.ref }}.jar
+          asset_name: MarketPlace-${{ steps.get_version.outputs.VERSION }}.jar
           asset_content_type: application/java-archive
