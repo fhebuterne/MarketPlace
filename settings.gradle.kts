@@ -1,6 +1,8 @@
 rootProject.name = "MarketPlace"
 include(
-    "Common",
+    "loader",
+    "loader-utils",
+    "common",
     "nms:Interfaces",
     "nms:v1_12_R1",
     "nms:v1_13_R2",

@@ -1,0 +1,30 @@
+{
+  "database": {
+    "hostname": "localhost",
+    "database": "minecraft",
+    "port": 3306,
+    "username": "minecraft",
+    "password": ""
+  },
+  "expiration": {
+    "playerToListings": 604800,
+    "listingsToMails": 604800,
+    "listingsToMailsNotifCommand": [
+      "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has expired from listings and its in your mailbox."
+    ],
+    "mailsToDeleteNotifCommand": [
+      "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has expired from mailbox and has been deleted."
+    ]
+  },
+  "sellerItemNotifCommand": [
+    "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has been sell for {{totalPrice}}."
+  ],
+  "maxDecimalMoney": 2,
+  "maxMoneyToSellItem": 1000000000000,
+  "inventoryLoreMaterial": {
+    "empty": "GRAY_STAINED_GLASS_PANE",
+    "filter": "COMPARATOR"
+  },
+  "inventoryValidItem": "GREEN_STAINED_GLASS_PANE",
+  "inventoryCancelItem": "RED_STAINED_GLASS_PANE"
+}

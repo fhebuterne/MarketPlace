@@ -1,0 +1,12 @@
+name: ${rootProject.name}
+version: ${version}
+main: fr.fabienhebuterne.marketplace.MarketPlaceLoader
+author: fabien91
+depend: [ Vault ]
+api-version: 1.13
+
+commands:
+  marketplace:
+    usage: /marketplace
+    description: Base command
+    aliases: [ mp, market ]

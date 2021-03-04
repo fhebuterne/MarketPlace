@@ -1,0 +1,183 @@
+{
+  "errors": {
+    "numberNotValid": "§8[§6MarketPlace§8] §6§l{0} §cn''est pas un nombre valide.",
+    "numberTooBig": "§8[§6MarketPlace§8] §6§l{0} §cest un nombre trop élevé.",
+    "handEmpty": "§8[§6MarketPlace§8] §cVous devez avoir un item en main.",
+    "notEnoughMoney": "§8[§6MarketPlace§8] §cVous n'avez pas assez d'argent pour faire cette action.",
+    "quantityNotAvailable": "§8[§6MarketPlace§8] §cLa quantité demandée n'est pas disponible.",
+    "itemNotExist": "§8[§6MarketPlace§8] §cL'article demandé n'existe pas.",
+    "inventoryFull": "§8[§6MarketPlace§8] §cL'inventaire est plein.",
+    "reloadNotAvailable": "§8[§6MarketPlace§8] §cLe plugin n'est pas disponible, merci de patienter...",
+    "missingPermission": "§8[§6MarketPlace§8] §cVous n''avez pas la permission de faire ceci.",
+    "playerNotFound": "§8[§6MarketPlace§8] §cLe joueur est introuvable."
+  },
+  "inventoryEnum": {
+    "search": {
+      "displayName": "§cRecherche...",
+      "lore": []
+    },
+    "listings": {
+      "displayName": "§6Achats",
+      "lore": []
+    },
+    "mails": {
+      "displayName": "§6Boite de réception",
+      "lore": []
+    },
+    "previousPage": {
+      "displayName": "§cPage précédente",
+      "lore": [
+        "§cPage : {{currentPage}}/{{maxPage}}",
+        "§cTotal disponible : {{total}}"
+      ]
+    },
+    "nextPage": {
+      "displayName": "§cPage suivante",
+      "lore": [
+        "§cPage : {{currentPage}}/{{maxPage}}",
+        "§cTotal disponible : {{total}}"
+      ]
+    }
+  },
+  "inventoryFilterEnum": {
+    "createdAt": {
+      "ASC": {
+        "displayName": "§cDate de création - Croissant",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cDate de création - Décroissant",
+        "lore": []
+      }
+    },
+    "expiredAt": {
+      "ASC": {
+        "displayName": "§cDate d''expiration - Croissant",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cDate d''expiration - Décroissant",
+        "lore": []
+      }
+    },
+    "price": {
+      "ASC": {
+        "displayName": "§cPrix - Croissant",
+        "lore": []
+      },
+      "DESC": {
+        "displayName": "§cPrix - Décroissant",
+        "lore": []
+      }
+    }
+  },
+  "clickMiddleListingInventory": [
+    "§8[§6MarketPlace§8] §aMerci d'entrer la quantité (max disponible: {{maxQuantity}}) que vous souhaitez avoir.",
+    "§8[§6MarketPlace§8] §aItem : §6{{itemStack}} §aPrix unitaire : §6{{price}}$",
+    "§8[§6MarketPlace§8] §aSi vous voulez annuler, écrivez '§6§lcancel§a' dans le chat."
+  ],
+  "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
+  "commandReloadStart": "§8[§6MarketPlace§8] §aRedémarrage du plugin en cours...",
+  "commandReloadFinish": "§8[§6MarketPlace§8] §aRedémarrage du plugin terminé...",
+  "listingCreated": "§8[§6MarketPlace§8] §aVous venez de mettre en vente {{quantity}}x{{item}} pour {{unitPrice}}$.",
+  "listingUpdated": "§8[§6MarketPlace§8] §aVous venez d'ajouter {{quantityAdded}} à l'item {{item}}, vous avez désormais au total {{quantityTotal}} items en vente.",
+  "itemBuy": "§8[§6MarketPlace§8] §aVous venez d'acheter {{quantity}}x{{item}} pour {{price}}$.",
+  "cancelBuying": "§8[§6MarketPlace§8] §aVous venez d'annuler votre achat.",
+  "cancelSelling": "§8[§6MarketPlace§8] §aVous venez d'annuler votre vente.",
+  "searchWaiting": "§8[§6MarketPlace§8] §aVeuillez saisir un type d'item (ex: DIRT) ou un mot clef associé au nom / lore de l'item...",
+  "listingItemBottomLoreSeller": [
+    "",
+    "§6Prix unité: §e{{price}}$",
+    "§6Total disponible: §e{{quantity}} article(s)",
+    "%expiration%§6Expiration dans: §e{{expiration}}",
+    "",
+    "§c► Vous ne pouvez pas acheter vos articles",
+    "§6► Shift + Clique gauche pour retirer vos articles",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmationLeftClick": [
+    "",
+    "§6► Clique gauche pour confirmer votre achat d'un article",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmationRightClick": [
+    "",
+    "§6► Clique droit pour confirmer votre achat de 64 articles",
+    ""
+  ],
+  "listingItemBottomLorePlayer": [
+    "",
+    "§6Vendeur: §e{{sellerPseudo}}",
+    "§6Prix unité: §e{{price}}$",
+    "§6Total disponible: §e{{quantity}} article(s)",
+    "",
+    "§6► Clique gauche pour acheter 1 article",
+    "%middle%§6► Clique molette pour acheter une quantité personnalisée d'articles",
+    "%right%§6► Clique droit pour acheter 64 articles",
+    "",
+    "%expiration%§6Expiration dans {{expiration}}",
+    "%expiration%"
+  ],
+  "listingItemBottomLorePlayerAdmin": [
+    "",
+    "§c► Shift + Clique droit pour transférer les articles dans la boite de réception du joueur",
+    ""
+  ],
+  "mailItemBottomLorePlayer": [
+    "",
+    "§6Total disponible: §e{{quantity}} items",
+    "",
+    "§6► Clique gauche pour récuperer les articles dans votre inventaire",
+    "",
+    "%expiration%§6Expiration dans {{expiration}}",
+    "%expiration%"
+  ],
+  "mailItemBottomLorePlayerAdmin": [
+    "",
+    "§6Total disponible: §e{{quantity}} items",
+    "",
+    "§c► Shift + Clique droit pour récuperer les articles dans votre inventaire",
+    "",
+    "%expiration%§6Expiration dans {{expiration}}",
+    "%expiration%"
+  ],
+  "commandHelp": [
+    "§8-----------------<§6§lMarketPlace§8>-----------------",
+    "§6/mp add <prix>: §aMettre l'item en main en vente, le prix est unitaire.",
+    "§6/mp listings [player]: §aOuvrir la liste des articles en vente.",
+    "§6/mp mails [player]: §aOuvrir la boîte de réception.",
+    "§6/mp logs: §aAfficher les logs.",
+    "§6/mp reload: §aRecharger le plugin.",
+    "§8-------------------------------------------------"
+  ],
+  "logs": {
+    "header": "§8---------------<§6§lMarketPlace§8>---------------",
+    "footer": "§8-----%previousPage%§8---------<§6§lPage {{currentPage}}/{{maxPage}}§8>---------%nextPage%§8-----",
+    "previousPageExist": "§8[§6§l<§8]",
+    "previousPageNotExist": "§8---",
+    "nextPageExist": "§8[§6§l>§8]",
+    "nextPageNotExist": "§8---",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "prefix": "§8[§6{{logType}}§8] ",
+    "prefixHover": "{{fromLocation}} -> {{toLocation}}\nDate : {{createdAt}}",
+    "type": {
+      "BUY": "Achat",
+      "SELL": "Vente",
+      "EXPIRED": "Expiration",
+      "CANCEL": "Annulation",
+      "GET": "Obtention"
+    },
+    "message": {
+      "BUY": "§6{{playerPseudo}} §aa acheté §6{{quantity}}x{{itemStack}} §apour {{price}}$ à §6{{sellerPseudo}}",
+      "SELL": "§6{{playerPseudo}} §aa vendu §6{{quantity}}x{{itemStack}} §apour {{price}}$",
+      "EXPIRED": "§aLes §6{{quantity}}x{{itemStack}} §ade §6{{playerPseudo}} §aont expirées",
+      "CANCEL": "§6{{playerPseudo}} §aa annulé la vente de §6{{quantity}}x{{itemStack}}",
+      "GET": "§6{{playerPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade sa boite de réception"
+    },
+    "adminMessage": {
+      "CANCEL": "§6{{adminPseudo}} §aa annulé la vente du joueur {{playerPseudo}} pour §6{{quantity}}x{{itemStack}}",
+      "GET": "§6{{adminPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade la boite de réception du joueur {{playerPseudo}}"
+    }
+  }
+}
