@@ -4,7 +4,12 @@ import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.domain.config.Translation
+import fr.fabienhebuterne.marketplace.domain.loadInventoryFilterTranslation
+import fr.fabienhebuterne.marketplace.domain.loadInventoryLoreTranslation
+import fr.fabienhebuterne.marketplace.domain.loadMaterialFilterConfig
 import fr.fabienhebuterne.marketplace.domain.loadSkull
+import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
+import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
 import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
@@ -38,21 +43,20 @@ import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 
-lateinit var tl: Translation
-lateinit var conf: Config
-
 class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
     companion object {
-        var isReload: Boolean = false
         lateinit var itemStackReflection: IItemStackReflection
     }
 
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
     private var econ: Economy? = null
     lateinit var translation: ConfigService<Translation>
+    lateinit var tl: Translation
     lateinit var configService: ConfigService<Config>
+    lateinit var conf: Config
     lateinit var kodein: DI
     lateinit var instance: MarketPlace
+    var isReload: Boolean = false
     var customClassloaderAppender = CustomClassloaderAppender(javaClass.classLoader)
 
     init {
@@ -79,6 +83,12 @@ class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
         translation = ConfigService(this.instance, "translation-fr", Translation::class)
         translation.createAndLoadConfig(true)
         tl = translation.getSerialization()
+
+        loadInventoryLoreTranslation(tl.inventoryEnum)
+        loadInventoryFilterTranslation(tl.inventoryFilterEnum)
+        loadEmptyHandExceptionTranslation(tl.errors.handEmpty)
+        loadNotEnoughMoneyExceptionTranslation(tl.errors.notEnoughMoney)
+        loadMaterialFilterConfig(conf.inventoryLoreMaterial.filter)
 
         callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
 
@@ -124,8 +134,8 @@ class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
             bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance, instance()) }
             bind<LogsService>() with singleton { LogsService(instance()) }
-            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance()) }
-            bind<MailsInventoryService>() with singleton { MailsInventoryService(instance()) }
+            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance, instance()) }
+            bind<MailsInventoryService>() with singleton { MailsInventoryService(instance, instance()) }
             bind<MarketService>() with singleton {
                 MarketService(
                     instance,

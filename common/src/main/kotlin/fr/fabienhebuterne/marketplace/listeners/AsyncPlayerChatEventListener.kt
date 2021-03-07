@@ -6,7 +6,6 @@ import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
-import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.intIsValid
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -39,9 +38,9 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
             event.isCancelled = true
             if (event.message.contains("cancel")) {
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)
-                event.player.sendMessage(tl.cancelBuying)
+                event.player.sendMessage(marketPlace.tl.cancelBuying)
             } else if (!intIsValid(event.message)) {
-                throw BadArgumentException(event.player, MessageFormat.format(tl.errors.numberNotValid, event.message))
+                throw BadArgumentException(event.player, MessageFormat.format(marketPlace.tl.errors.numberNotValid, event.message))
             } else {
                 marketService.buyItem(event.player, rawSlot, event.message.toInt(), true)
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)
@@ -50,11 +49,11 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
 
         // Do a custom search
         if (listingsInventoryService.playersWaitingSearch.contains(event.player.uniqueId)) {
-            listingsInventoryService.searchItemstack(marketPlace, event, true)
+            listingsInventoryService.searchItemstack(event, true)
         }
 
         if (mailsInventoryService.playersWaitingSearch.contains(event.player.uniqueId)) {
-            mailsInventoryService.searchItemstack(marketPlace, event, false)
+            mailsInventoryService.searchItemstack(event, false)
         }
     }
 

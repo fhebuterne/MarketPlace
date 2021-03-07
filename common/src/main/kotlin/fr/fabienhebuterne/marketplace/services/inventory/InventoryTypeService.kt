@@ -8,7 +8,6 @@ import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
-import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -17,77 +16,79 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-abstract class InventoryTypeService<T : Paginated>(private val paginationService: PaginationService<T>) {
+abstract class InventoryTypeService<T : Paginated>(
+        private val instance: MarketPlace,
+        private val paginationService: PaginationService<T>
+) {
 
     val playersWaitingSearch: MutableList<UUID> = mutableListOf()
 
-    abstract fun initInventory(instance: MarketPlace, pagination: Pagination<T>, player: Player): Inventory
+    abstract fun initInventory(pagination: Pagination<T>, player: Player): Inventory
 
     abstract fun setBaseBottomLore(itemStack: ItemStack, paginated: T, player: Player): ItemStack
 
-    fun searchItemstack(instance: MarketPlace, event: AsyncPlayerChatEvent, showAll: Boolean) {
+    fun searchItemstack(event: AsyncPlayerChatEvent, showAll: Boolean) {
         event.isCancelled = true
         playersWaitingSearch.remove(event.player.uniqueId)
         val paginated = paginationService.getPaginated(
-            pagination = Pagination(
-                searchKeyword = event.message,
-                currentPlayer = event.player.uniqueId,
-                viewPlayer = event.player.uniqueId,
-                showAll = showAll
-            )
+                pagination = Pagination(
+                        searchKeyword = event.message,
+                        currentPlayer = event.player.uniqueId,
+                        viewPlayer = event.player.uniqueId,
+                        showAll = showAll
+                )
         )
-        val initInventory = initInventory(instance, paginated, event.player)
+        val initInventory = initInventory(paginated, event.player)
         event.player.openInventory(initInventory)
     }
 
     fun clickOnSearch(event: InventoryClickEvent, player: Player) {
         if (event.rawSlot == InventoryLoreEnum.SEARCH.rawSlot) {
             playersWaitingSearch.add(player.uniqueId)
-            player.sendMessage(tl.searchWaiting)
+            player.sendMessage(instance.tl.searchWaiting)
             player.closeInventory()
         }
     }
 
-    fun clickOnSwitchPage(instance: MarketPlace, event: InventoryClickEvent, player: Player) {
+    fun clickOnSwitchPage(event: InventoryClickEvent, player: Player) {
         if (event.rawSlot == InventoryLoreEnum.PREVIOUS_PAGE.rawSlot) {
             val previousPage = paginationService.previousPage(player.uniqueId)
-            val initInventory = initInventory(instance, previousPage, player)
+            val initInventory = initInventory(previousPage, player)
             player.openInventory(initInventory)
         }
 
         if (event.rawSlot == InventoryLoreEnum.NEXT_PAGE.rawSlot) {
             val nextPage = paginationService.nextPage(player.uniqueId)
-            val initInventory = initInventory(instance, nextPage, player)
+            val initInventory = initInventory(nextPage, player)
             player.openInventory(initInventory)
         }
     }
 
-    fun clickOnFilter(instance: MarketPlace, event: InventoryClickEvent, player: Player, inventoryType: InventoryType) {
+    fun clickOnFilter(event: InventoryClickEvent, player: Player, inventoryType: InventoryType) {
         if (event.rawSlot == InventoryLoreEnum.FILTER.rawSlot) {
             var pagination = paginationService.playersView[player.uniqueId]
-                ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
+                    ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
 
             val findByNameAndType =
-                InventoryFilterEnum.findByNameAndType(pagination.filter.filterName, pagination.filter.filterType)
+                    InventoryFilterEnum.findByNameAndType(pagination.filter.filterName, pagination.filter.filterType)
             val nextFilter = InventoryFilterEnum.next(findByNameAndType.order, inventoryType)
             pagination = pagination.copy(
-                filter = Filter(
-                    filterName = nextFilter.filterName,
-                    filterType = nextFilter.filterType
-                )
+                    filter = Filter(
+                            filterName = nextFilter.filterName,
+                            filterType = nextFilter.filterType
+                    )
             )
 
             val nextPage = paginationService.getPaginated(pagination = pagination)
-            val initInventory = initInventory(instance, nextPage, player)
+            val initInventory = initInventory(nextPage, player)
             player.openInventory(initInventory)
         }
     }
 
     open fun setBottomInventoryLine(
-        instance: MarketPlace,
-        inventory: Inventory,
-        pagination: Pagination<out Paginated>,
-        inventoryType: InventoryType
+            inventory: Inventory,
+            pagination: Pagination<out Paginated>,
+            inventoryType: InventoryType
     ) {
         val emptyItemStack = instance.configService.getSerialization().inventoryLoreMaterial.empty
         val emptySlot = parseMaterialConfig(emptyItemStack)
@@ -100,23 +101,22 @@ abstract class InventoryTypeService<T : Paginated>(private val paginationService
         InventoryLoreEnum.values().forEach {
             val replace: (t: String) -> String = { t ->
                 t.replace("{{currentPage}}", pagination.currentPage.toString())
-                    .replace("{{maxPage}}", pagination.maxPage().toString())
-                    .replace("{{total}}", pagination.total.toString())
+                        .replace("{{maxPage}}", pagination.maxPage().toString())
+                        .replace("{{total}}", pagination.total.toString())
             }
 
             if (it == InventoryLoreEnum.FILTER) {
                 val inventoryFilterEnum =
                     InventoryFilterEnum.valueOf("${pagination.filter.filterName}_${pagination.filter.filterType}")
-                it.displayName = inventoryFilterEnum.itemTranslation.displayName
-                it.lore = inventoryFilterEnum.itemTranslation.lore
+                it.item = inventoryFilterEnum.itemTranslation
             }
 
-            val loreUpdated = it.lore.toMutableList()
+            val loreUpdated = it.item.lore.toMutableList()
             loreUpdated.replaceAll(replace)
 
             val itemMeta = it.itemStack.itemMeta
             itemMeta?.lore = loreUpdated
-            itemMeta?.setDisplayName(it.displayName)
+            itemMeta?.setDisplayName(it.item.displayName)
             it.itemStack.itemMeta = itemMeta
 
             if (it.inventoryType == null || it.inventoryType == inventoryType) {

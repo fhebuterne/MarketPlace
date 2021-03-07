@@ -1,16 +1,14 @@
 package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
-import fr.fabienhebuterne.marketplace.MarketPlace.Companion.isReload
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
-import fr.fabienhebuterne.marketplace.exceptions.HandEmptyException
+import fr.fabienhebuterne.marketplace.exceptions.EmptyHandException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.doubleIsValid
 import org.bukkit.Material
 import org.bukkit.Server
@@ -34,26 +32,26 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
         args: Array<String>
     ) {
         // TODO : Put this in common code (callCommand)
-        if (isReload) {
-            player.sendMessage(tl.errors.reloadNotAvailable)
+        if (instance.isReload) {
+            player.sendMessage(instance.tl.errors.reloadNotAvailable)
             return
         }
 
         if (player.inventory.itemInMainHand.type == Material.AIR) {
-            throw HandEmptyException(player)
+            throw EmptyHandException(player)
         }
 
         if (args.size <= 1) {
-            throw BadArgumentException(player, tl.commandAddUsage)
+            throw BadArgumentException(player, instance.tl.commandAddUsage)
         }
 
         val argsMoneyCheck = args[1].replace(",", ".")
-        if (!doubleIsValid(argsMoneyCheck)) {
-            throw BadArgumentException(player, MessageFormat.format(tl.errors.numberNotValid, args[1]))
+        if (!doubleIsValid(argsMoneyCheck, instance.conf.maxDecimalMoney)) {
+            throw BadArgumentException(player, MessageFormat.format(instance.tl.errors.numberNotValid, args[1]))
         }
 
         if (argsMoneyCheck.toDouble() > instance.configService.getSerialization().maxMoneyToSellItem) {
-            throw BadArgumentException(player, MessageFormat.format(tl.errors.numberTooBig, args[1]))
+            throw BadArgumentException(player, MessageFormat.format(instance.tl.errors.numberTooBig, args[1]))
         }
 
         val money = argsMoneyCheck.toDouble()

@@ -60,24 +60,24 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
 
     // TODO : Refactoring common code between listings and mails
     private fun clickOnBottomLineListings(event: InventoryClickEvent, player: Player) {
-        listingsInventoryService.clickOnSwitchPage(marketPlace, event, player)
+        listingsInventoryService.clickOnSwitchPage(event, player)
         listingsInventoryService.clickOnSearch(event, player)
-        listingsInventoryService.clickOnFilter(marketPlace, event, player)
+        listingsInventoryService.clickOnFilter(event, player)
 
         if (event.rawSlot == InventoryLoreEnum.MAIL.rawSlot) {
             val inventoryPaginated = mailsService.getPaginated(pagination = Pagination(
                     currentPlayer = player.uniqueId,
                     viewPlayer = player.uniqueId
             ))
-            val mailsInventory = mailsInventoryService.initInventory(marketPlace, inventoryPaginated, player)
+            val mailsInventory = mailsInventoryService.initInventory(inventoryPaginated, player)
             player.openInventory(mailsInventory)
         }
     }
 
     private fun clickOnBottomLineMails(event: InventoryClickEvent, player: Player) {
-        mailsInventoryService.clickOnSwitchPage(marketPlace, event, player)
+        mailsInventoryService.clickOnSwitchPage(event, player)
         mailsInventoryService.clickOnSearch(event, player)
-        mailsInventoryService.clickOnFilter(marketPlace, event, player)
+        mailsInventoryService.clickOnFilter(event, player)
 
         if (event.rawSlot == InventoryLoreEnum.LISTING.rawSlot) {
             val inventoryPaginated = listingsService.getPaginated(pagination = Pagination(
@@ -85,7 +85,7 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
                     currentPlayer = player.uniqueId,
                     viewPlayer = player.uniqueId
             ))
-            val listingsInventory = listingsInventoryService.initInventory(marketPlace, inventoryPaginated, player)
+            val listingsInventory = listingsInventoryService.initInventory(inventoryPaginated, player)
             player.openInventory(listingsInventory)
         }
     }

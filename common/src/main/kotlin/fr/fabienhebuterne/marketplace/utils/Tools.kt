@@ -1,6 +1,5 @@
 package fr.fabienhebuterne.marketplace.utils
 
-import fr.fabienhebuterne.marketplace.conf
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.joda.time.Interval
@@ -8,7 +7,7 @@ import org.joda.time.Period
 import java.math.BigDecimal
 import java.text.DecimalFormat
 
-fun doubleIsValid(number: String): Boolean {
+fun doubleIsValid(number: String, maxDecimalMoney: Int): Boolean {
     try {
         number.toDouble()
     } catch (e: NumberFormatException) {
@@ -17,7 +16,7 @@ fun doubleIsValid(number: String): Boolean {
 
     return number.toDouble() > 0
             && number.toDouble() < Double.MAX_VALUE
-            && BigDecimal.valueOf(number.toDouble()).scale() <= conf.maxDecimalMoney
+            && BigDecimal.valueOf(number.toDouble()).scale() <= maxDecimalMoney
 }
 
 fun intIsValid(number: String): Boolean {

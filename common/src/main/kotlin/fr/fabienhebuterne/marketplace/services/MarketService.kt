@@ -15,7 +15,6 @@ import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
-import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -49,7 +48,7 @@ class MarketService(private val marketPlace: MarketPlace,
 
         if (listings.quantity < quantity) {
             if (showMessage) {
-                player.sendMessage(tl.errors.quantityNotAvailable)
+                player.sendMessage(marketPlace.tl.errors.quantityNotAvailable)
             }
             return
         }
@@ -58,12 +57,12 @@ class MarketService(private val marketPlace: MarketPlace,
 
         // TODO : custom exception
         if (listingsDatabase == null) {
-            player.sendMessage(tl.errors.itemNotExist)
+            player.sendMessage(marketPlace.tl.errors.itemNotExist)
             return
         }
 
         if (listingsDatabase.quantity < quantity) {
-            player.sendMessage(tl.errors.quantityNotAvailable)
+            player.sendMessage(marketPlace.tl.errors.quantityNotAvailable)
             return
         }
 
@@ -130,13 +129,13 @@ class MarketService(private val marketPlace: MarketPlace,
             }
         }
 
-        val itemBuyMessage = tl.itemBuy.replace("{{quantity}}", quantity.toString())
+        val itemBuyMessage = marketPlace.tl.itemBuy.replace("{{quantity}}", quantity.toString())
                 .replace("{{item}}", listingsDatabase.itemStack.type.toString())
                 .replace("{{price}}", needingMoney.toString())
 
         player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
-        player.openInventory(listingsInventoryService.initInventory(marketPlace, refreshInventory, player))
+        player.openInventory(listingsInventoryService.initInventory(refreshInventory, player))
     }
 
     private fun giveMoneySeller(player: Player, money: Double) {
@@ -187,7 +186,7 @@ class MarketService(private val marketPlace: MarketPlace,
 
         forwardListingsToMails(listings, player, event, isAdmin)
 
-        val initInventory = listingsInventoryService.initInventory(marketPlace, listingsService.playersView[player.uniqueId]
+        val initInventory = listingsInventoryService.initInventory(listingsService.playersView[player.uniqueId]
                 ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player)
         player.openInventory(initInventory)
     }
@@ -197,7 +196,7 @@ class MarketService(private val marketPlace: MarketPlace,
 
         if (listingsFind == null) {
             // TODO : throw exception here
-            player.sendMessage(tl.errors.itemNotExist)
+            player.sendMessage(marketPlace.tl.errors.itemNotExist)
             return
         }
 
@@ -237,13 +236,13 @@ class MarketService(private val marketPlace: MarketPlace,
     }
 
     private fun clickToBuyItem(event: InventoryClickEvent, player: Player, listings: Listings) {
-        confirmationBuyItem(event, player, listings, ClickType.LEFT, 1, tl.listingItemBottomLoreSellerConfirmationLeftClick)
+        confirmationBuyItem(event, player, listings, ClickType.LEFT, 1, marketPlace.tl.listingItemBottomLoreSellerConfirmationLeftClick)
 
-        confirmationBuyItem(event, player, listings, ClickType.RIGHT, 64, tl.listingItemBottomLoreSellerConfirmationRightClick)
+        confirmationBuyItem(event, player, listings, ClickType.RIGHT, 64, marketPlace.tl.listingItemBottomLoreSellerConfirmationRightClick)
 
         if (event.click == ClickType.MIDDLE) {
             playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
-            tl.clickMiddleListingInventory
+            marketPlace.tl.clickMiddleListingInventory
                     .map {
                         it.replace("{{maxQuantity}}", listings.quantity.toString())
                                 .replace("{{price}}", convertDoubleToReadeableString(listings.price))
@@ -331,7 +330,7 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         if (slotInventoryAvailable == 0 && itemPresentSlotAvailable == 0) {
-            player.sendMessage(tl.errors.inventoryFull)
+            player.sendMessage(marketPlace.tl.errors.inventoryFull)
             return
         }
 
@@ -375,6 +374,6 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         val refreshInventory = mailsService.getPaginated(pagination = paginationMails)
-        player.openInventory(mailsInventoryService.initInventory(marketPlace, refreshInventory, player))
+        player.openInventory(mailsInventoryService.initInventory(refreshInventory, player))
     }
 }

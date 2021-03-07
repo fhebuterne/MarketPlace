@@ -2,10 +2,11 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
-import fr.fabienhebuterne.marketplace.conf
-import fr.fabienhebuterne.marketplace.domain.reloadFilterTranslation
-import fr.fabienhebuterne.marketplace.domain.reloadTranslation
-import fr.fabienhebuterne.marketplace.tl
+import fr.fabienhebuterne.marketplace.domain.loadInventoryFilterTranslation
+import fr.fabienhebuterne.marketplace.domain.loadInventoryLoreTranslation
+import fr.fabienhebuterne.marketplace.domain.loadMaterialFilterConfig
+import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
+import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
 import kotlinx.serialization.UnsafeSerializationApi
 import org.bukkit.Bukkit
 import org.bukkit.Server
@@ -24,14 +25,14 @@ class CommandReload(kodein: DI) : CallCommand<MarketPlace>("reload") {
         args: Array<String>
     ) {
         // TODO : Put this in common code (callCommand)
-        if (MarketPlace.isReload) {
-            player.sendMessage(tl.errors.reloadNotAvailable)
+        if (instance.isReload) {
+            player.sendMessage(instance.tl.errors.reloadNotAvailable)
             return
         }
 
-        MarketPlace.isReload = true
+        instance.isReload = true
 
-        player.sendMessage(tl.commandReloadStart)
+        player.sendMessage(instance.tl.commandReloadStart)
         Bukkit.getOnlinePlayers().forEach {
             if (it.openInventory.title.contains("MarketPlace")) {
                 it.closeInventory()
@@ -40,13 +41,16 @@ class CommandReload(kodein: DI) : CallCommand<MarketPlace>("reload") {
 
         instance.configService.loadConfig()
         instance.translation.loadConfig()
-        tl = instance.translation.getSerialization()
-        conf = instance.configService.getSerialization()
-        reloadTranslation()
-        reloadFilterTranslation()
+        instance.tl = instance.translation.getSerialization()
+        instance.conf = instance.configService.getSerialization()
+        loadInventoryLoreTranslation(instance.tl.inventoryEnum)
+        loadInventoryFilterTranslation(instance.tl.inventoryFilterEnum)
+        loadEmptyHandExceptionTranslation(instance.tl.errors.handEmpty)
+        loadNotEnoughMoneyExceptionTranslation(instance.tl.errors.notEnoughMoney)
+        loadMaterialFilterConfig(instance.conf.inventoryLoreMaterial.filter)
 
-        player.sendMessage(tl.commandReloadFinish)
-        MarketPlace.isReload = false
+        player.sendMessage(instance.tl.commandReloadFinish)
+        instance.isReload = false
     }
 
 }

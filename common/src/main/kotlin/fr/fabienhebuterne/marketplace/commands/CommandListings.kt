@@ -7,7 +7,6 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
-import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -32,8 +31,8 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
         args: Array<String>
     ) {
         // TODO : Put this in common code (callCommand)
-        if (MarketPlace.isReload) {
-            player.sendMessage(tl.errors.reloadNotAvailable)
+        if (instance.isReload) {
+            player.sendMessage(instance.tl.errors.reloadNotAvailable)
             return
         }
 
@@ -47,13 +46,13 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
 
         if (args.size > 1) {
             if (!player.hasPermission("marketplace.listings.other")) {
-                player.sendMessage(tl.errors.missingPermission)
+                player.sendMessage(instance.tl.errors.missingPermission)
                 return
             }
 
             val uuid = listingsService.findUUIDBySellerPseudo(args[1])
             if (uuid == null) {
-                player.sendMessage(tl.errors.playerNotFound)
+                player.sendMessage(instance.tl.errors.playerNotFound)
                 return
             }
 
@@ -61,7 +60,7 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
         }
 
         val listingsPaginated = listingsService.getPaginated(pagination = pagination)
-        val initListingsInventory = listingsInventoryService.initInventory(instance, listingsPaginated, player)
+        val initListingsInventory = listingsInventoryService.initInventory(listingsPaginated, player)
         player.openInventory(initListingsInventory)
     }
 

@@ -2,7 +2,6 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
-import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -18,12 +17,12 @@ class CommandHelp(kodein: DI) : CallCommand<MarketPlace>("help") {
         args: Array<String>
     ) {
         // TODO : Put this in common code (callCommand)
-        if (MarketPlace.isReload) {
-            player.sendMessage(tl.errors.reloadNotAvailable)
+        if (instance.isReload) {
+            player.sendMessage(instance.tl.errors.reloadNotAvailable)
             return
         }
 
-        tl.commandHelp.forEach {
+        instance.tl.commandHelp.forEach {
             player.sendMessage(it)
         }
     }

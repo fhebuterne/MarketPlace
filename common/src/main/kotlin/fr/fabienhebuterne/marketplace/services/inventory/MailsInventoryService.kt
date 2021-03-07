@@ -7,7 +7,6 @@ import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
-import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -15,8 +14,8 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<Mails>(mailsService) {
-    override fun initInventory(instance: MarketPlace, pagination: Pagination<Mails>, player: Player): Inventory {
+class MailsInventoryService(private val instance: MarketPlace, mailsService: MailsService) : InventoryTypeService<Mails>(instance, mailsService) {
+    override fun initInventory(pagination: Pagination<Mails>, player: Player): Inventory {
         val currentPlayerName = Bukkit.getOfflinePlayer(pagination.currentPlayer).name
         val inventory = instance.loader.server.createInventory(
             player,
@@ -29,7 +28,7 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
             inventory.setItem(index, itemStack)
         }
 
-        setBottomInventoryLine(instance, inventory, pagination)
+        setBottomInventoryLine(inventory, pagination)
 
         return inventory
     }
@@ -43,9 +42,9 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
         }
 
         if (player.hasPermission("marketplace.mails.other.remove") && paginated.playerUuid != player.uniqueId) {
-            loreItem?.addAll(tl.mailItemBottomLorePlayerAdmin.toMutableList())
+            loreItem?.addAll(instance.tl.mailItemBottomLorePlayerAdmin.toMutableList())
         } else {
-            loreItem?.addAll(tl.mailItemBottomLorePlayer.toMutableList())
+            loreItem?.addAll(instance.tl.mailItemBottomLorePlayer.toMutableList())
         }
 
         loreItem?.replaceAll {
@@ -68,14 +67,13 @@ class MailsInventoryService(mailsService: MailsService) : InventoryTypeService<M
     }
 
     private fun setBottomInventoryLine(
-        instance: MarketPlace,
         inventory: Inventory,
         pagination: Pagination<out Paginated>
     ) {
-        super.setBottomInventoryLine(instance, inventory, pagination, InventoryType.MAILS)
+        super.setBottomInventoryLine(inventory, pagination, InventoryType.MAILS)
     }
 
-    fun clickOnFilter(instance: MarketPlace, event: InventoryClickEvent, player: Player) {
-        super.clickOnFilter(instance, event, player, InventoryType.MAILS)
+    fun clickOnFilter(event: InventoryClickEvent, player: Player) {
+        super.clickOnFilter(event, player, InventoryType.MAILS)
     }
 }

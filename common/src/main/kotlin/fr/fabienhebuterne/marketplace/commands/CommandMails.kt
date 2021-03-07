@@ -5,7 +5,6 @@ import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
-import fr.fabienhebuterne.marketplace.tl
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.command.Command
@@ -26,8 +25,8 @@ class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
         args: Array<String>
     ) {
         // TODO : Put this in common code (callCommand)
-        if (MarketPlace.isReload) {
-            player.sendMessage(tl.errors.reloadNotAvailable)
+        if (instance.isReload) {
+            player.sendMessage(instance.tl.errors.reloadNotAvailable)
             return
         }
 
@@ -42,7 +41,7 @@ class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
             mailsService.getPaginated(pagination = Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId))
         }
 
-        val initListingsInventory = mailsInventoryService.initInventory(instance, mailsPaginated, player)
+        val initListingsInventory = mailsInventoryService.initInventory(mailsPaginated, player)
         player.openInventory(initListingsInventory)
     }
 

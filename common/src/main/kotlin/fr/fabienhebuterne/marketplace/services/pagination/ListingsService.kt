@@ -5,7 +5,6 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import fr.fabienhebuterne.marketplace.tl
 import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -38,7 +37,7 @@ class ListingsService(
             toLocation = Location.LISTING_INVENTORY
         )
 
-        val listingUpdated = tl.listingUpdated.replace("{{quantityAdded}}", currentItemStack.amount.toString())
+        val listingUpdated = marketPlace.tl.listingUpdated.replace("{{quantityAdded}}", currentItemStack.amount.toString())
             .replace("{{item}}", findExistingListings.itemStack.type.toString())
             .replace("{{quantityTotal}}", updatedListings.quantity.toString())
 
@@ -59,7 +58,7 @@ class ListingsService(
             toLocation = Location.LISTING_INVENTORY
         )
 
-        val listingsCreatedMessage = tl.listingCreated.replace("{{quantity}}", listings.quantity.toString())
+        val listingsCreatedMessage = marketPlace.tl.listingCreated.replace("{{quantity}}", listings.quantity.toString())
             .replace("{{item}}", listings.itemStack.type.toString())
             .replace("{{unitPrice}}", convertDoubleToReadeableString(listings.price))
 
