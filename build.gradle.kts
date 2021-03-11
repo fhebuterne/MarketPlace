@@ -1,8 +1,8 @@
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "5.2.0"
-    kotlin("jvm") version "1.4.31"
-    kotlin("plugin.serialization") version "1.4.31"
+    id("com.github.johnrengelman.shadow") version Versions.shadowJar
+    kotlin("jvm") version Versions.kotlinJvm
+    kotlin("plugin.serialization") version Versions.kotlinSerialization
 }
 
 allprojects {
@@ -19,15 +19,14 @@ allprojects {
         jcenter()
     }
 
+    defaultDependencies()
+
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.31")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-        testImplementation("io.mockk:mockk:1.10.6")
-        testImplementation("io.strikt:strikt-core:0.28.1")
-
-        testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinReflect}")
+        testImplementation("io.mockk:mockk:${Versions.mockk}")
+        testImplementation("io.strikt:strikt-core:${Versions.strikt}")
+        testImplementation("org.junit.jupiter:junit-jupiter:${Versions.junit}")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     }
 
     tasks.test {

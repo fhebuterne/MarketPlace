@@ -1,0 +1,16 @@
+object Versions {
+    const val kotlinJvm = "1.4.31"
+    const val kotlinSerialization = "1.4.31"
+    const val kotlinReflect = "1.4.31"
+    const val kotlinx = "1.0-M1-1.4.0-rc"
+    const val kodein = "7.3.1"
+    const val mockk = "1.10.6"
+    const val strikt = "0.28.1"
+    const val junit = "5.6.0"
+    const val shadowJar = "5.2.0"
+    const val exposed = "0.23.1"
+    const val mysqlDriver = "8.0.19"
+    const val vault = "1.7"
+    const val jarRelocator = "1.3"
+    const val jodaTime = "2.10.6"
+}
