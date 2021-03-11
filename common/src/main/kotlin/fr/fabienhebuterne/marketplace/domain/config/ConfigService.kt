@@ -12,13 +12,12 @@ class ConfigService<T : Any>(private val instance: MarketPlace,
                              private val fileName: String,
                              private val kClass: KClass<T>) {
 
-    private lateinit var file: File
+    private var file: File = File(instance.loader.dataFolder, "$fileName.json")
     private lateinit var obj: T
     private val json = Json { prettyPrint = true }
 
     @UnsafeSerializationApi
     fun createAndLoadConfig(copyFromRessource: Boolean) {
-        file = File(instance.loader.dataFolder, "$fileName.json")
         if (!file.exists()) {
             file.parentFile.mkdirs()
             if (copyFromRessource) {

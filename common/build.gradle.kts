@@ -1,4 +1,5 @@
 import kotlin.system.exitProcess
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java")
@@ -7,9 +8,14 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+configurations["testImplementation"].extendsFrom(configurations["compileOnly"])
+
 val buildVersion: String? by project
 
 dependencies {
+    testImplementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib-jdk8"))
+
     // Tech Stack dependency
     implementation("org.kodein.di", "kodein-di-jvm", "7.3.1")
     compileOnly("org.jetbrains.exposed", "exposed-core", "0.23.1")
@@ -67,4 +73,15 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn("shadowJar")
+}
+repositories {
+    mavenCentral()
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
 }
