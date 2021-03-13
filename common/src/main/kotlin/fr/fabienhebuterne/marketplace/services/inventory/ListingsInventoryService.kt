@@ -19,8 +19,8 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 class ListingsInventoryService(
-        private val instance: MarketPlace,
-        private val listingsService: ListingsService) :
+    private val instance: MarketPlace,
+    private val listingsService: ListingsService) :
     InventoryTypeService<Listings>(instance, listingsService) {
     private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 

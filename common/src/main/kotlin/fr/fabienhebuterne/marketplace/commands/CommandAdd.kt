@@ -31,12 +31,6 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
         cmd: Command,
         args: Array<String>
     ) {
-        // TODO : Put this in common code (callCommand)
-        if (instance.isReload) {
-            player.sendMessage(instance.tl.errors.reloadNotAvailable)
-            return
-        }
-
         if (player.inventory.itemInMainHand.type == Material.AIR) {
             throw EmptyHandException(player)
         }
@@ -50,7 +44,7 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
             throw BadArgumentException(player, MessageFormat.format(instance.tl.errors.numberNotValid, args[1]))
         }
 
-        if (argsMoneyCheck.toDouble() > instance.configService.getSerialization().maxMoneyToSellItem) {
+        if (argsMoneyCheck.toDouble() > instance.conf.maxMoneyToSellItem) {
             throw BadArgumentException(player, MessageFormat.format(instance.tl.errors.numberTooBig, args[1]))
         }
 
@@ -69,7 +63,7 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
                 auditData = AuditData(
                         System.currentTimeMillis(),
                         System.currentTimeMillis(),
-                        System.currentTimeMillis() + (instance.configService.getSerialization().expiration.playerToListings * 1000)
+                        System.currentTimeMillis() + (instance.conf.expiration.playerToListings * 1000)
                 )
         )
 

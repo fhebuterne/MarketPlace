@@ -7,9 +7,13 @@ import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.kodein.di.DI
+import org.kodein.di.instance
 
-class PlayerJoinEventListener(private val listingsRepository: ListingsRepository,
-                              private val mailsRepository: MailsRepository) : Listener {
+class PlayerJoinEventListener(kodein: DI) : Listener {
+
+    private val listingsRepository: ListingsRepository by kodein.instance()
+    private val mailsRepository: MailsRepository by kodein.instance()
 
     @EventHandler
     fun onPlayerJoinEvent(event: PlayerJoinEvent) {

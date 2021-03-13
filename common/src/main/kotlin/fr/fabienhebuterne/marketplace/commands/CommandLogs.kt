@@ -31,12 +31,6 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         cmd: Command,
         args: Array<String>
     ) {
-        // TODO : Put this in common code (callCommand)
-        if (instance.isReload) {
-            player.sendMessage(instance.tl.errors.reloadNotAvailable)
-            return
-        }
-
         var currentPage = if (args.size == 2 && intIsValid(args[1])) {
             args[1].toInt()
         } else {

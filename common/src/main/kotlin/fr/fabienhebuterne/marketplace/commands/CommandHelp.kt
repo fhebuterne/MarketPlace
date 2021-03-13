@@ -16,12 +16,6 @@ class CommandHelp(kodein: DI) : CallCommand<MarketPlace>("help") {
         cmd: Command,
         args: Array<String>
     ) {
-        // TODO : Put this in common code (callCommand)
-        if (instance.isReload) {
-            player.sendMessage(instance.tl.errors.reloadNotAvailable)
-            return
-        }
-
         instance.tl.commandHelp.forEach {
             player.sendMessage(it)
         }

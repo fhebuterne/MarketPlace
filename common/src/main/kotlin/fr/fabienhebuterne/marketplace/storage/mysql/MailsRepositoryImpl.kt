@@ -1,12 +1,13 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.FilterName
 import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
-import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
+import fr.fabienhebuterne.marketplace.json.itemStackModule
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.createdAt
 import fr.fabienhebuterne.marketplace.storage.mysql.MailsTable.expiredAt
@@ -35,11 +36,12 @@ object MailsTable : UUIDTable("marketplace_mails") {
     val expiredAt = MailsTable.long("expired_at")
 }
 
-class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository {
-    private val json = Json { serializersModule = ITEMSTACK_MODULE }
+class MailsRepositoryImpl(private val instance: MarketPlace,
+                          private val marketPlaceDb: Database) : MailsRepository {
+    private val json = Json { serializersModule = itemStackModule(instance) }
 
     override fun fromRow(row: ResultRow): Mails {
-        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer, row[itemStack])
+        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
 
         return Mails(
                 id = row[id].value,
@@ -56,7 +58,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     }
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Mails): UpdateBuilder<Number> {
-        val itemStackString = json.encodeToString(ItemStackSerializer, entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
 
         entity.id?.let { insertTo[id] = EntityID(it, MailsTable) }
         entity.auditData.updatedAt?.let { insertTo[updatedAt] = it }
@@ -115,7 +117,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     }
 
     override fun find(playerUuid: UUID, itemStack: ItemStack): Mails? {
-        val itemStackString = json.encodeToString(ItemStackSerializer, itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), itemStack)
 
         return transaction(marketPlaceDb) {
             MailsTable.select {
@@ -141,7 +143,7 @@ class MailsRepositoryImpl(private val marketPlaceDb: Database) : MailsRepository
     }
 
     override fun update(entity: Mails): Mails {
-        val itemStackString = json.encodeToString(ItemStackSerializer, entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
 
         transaction(marketPlaceDb) {
             MailsTable.update({

@@ -10,15 +10,15 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.serializersModuleOf
 import org.bukkit.inventory.ItemStack
 
-val ITEMSTACK_MODULE = serializersModuleOf(ItemStack::class, ItemStackSerializer)
+fun itemStackModule(instance: MarketPlace) = serializersModuleOf(ItemStack::class, ItemStackSerializer(instance))
 
-object ItemStackSerializer : KSerializer<ItemStack> {
+class ItemStackSerializer(val instance: MarketPlace) : KSerializer<ItemStack> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ItemStack", PrimitiveKind.STRING)
     override fun serialize(encoder: Encoder, value: ItemStack) {
-        encoder.encodeString(MarketPlace.itemStackReflection.serializeItemStack(value))
+        encoder.encodeString(instance.itemStackReflection.serializeItemStack(value))
     }
 
     override fun deserialize(decoder: Decoder): ItemStack {
-        return MarketPlace.itemStackReflection.deserializeItemStack(decoder.decodeString())
+        return instance.itemStackReflection.deserializeItemStack(decoder.decodeString())
     }
 }

@@ -17,8 +17,8 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 abstract class InventoryTypeService<T : Paginated>(
-        private val instance: MarketPlace,
-        private val paginationService: PaginationService<T>
+    private val instance: MarketPlace,
+    private val paginationService: PaginationService<T>
 ) {
 
     val playersWaitingSearch: MutableList<UUID> = mutableListOf()

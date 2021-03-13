@@ -1,12 +1,13 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.FilterName
 import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
-import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
+import fr.fabienhebuterne.marketplace.json.itemStackModule
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.createdAt
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.expiredAt
@@ -39,30 +40,33 @@ object ListingsTable : UUIDTable("marketplace_listings") {
     val expiredAt = ListingsTable.long("expired_at")
 }
 
-class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepository {
-    private val json = Json { serializersModule = ITEMSTACK_MODULE }
+class ListingsRepositoryImpl(
+    private val instance: MarketPlace,
+    private val marketPlaceDb: Database
+) : ListingsRepository {
+    private val json = Json { serializersModule = itemStackModule(instance) }
 
     override fun fromRow(row: ResultRow): Listings {
-        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer, row[itemStack])
+        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
 
         return Listings(
-                id = row[id].value,
-                sellerUuid = UUID.fromString(row[sellerUuid]),
-                sellerPseudo = row[sellerPseudo],
-                itemStack = itemStack,
-                quantity = row[quantity],
-                price = row[price],
-                world = row[world],
-                auditData = AuditData(
-                        createdAt = row[createdAt],
-                        updatedAt = row[updatedAt],
-                        expiredAt = row[expiredAt]
-                )
+            id = row[id].value,
+            sellerUuid = UUID.fromString(row[sellerUuid]),
+            sellerPseudo = row[sellerPseudo],
+            itemStack = itemStack,
+            quantity = row[quantity],
+            price = row[price],
+            world = row[world],
+            auditData = AuditData(
+                createdAt = row[createdAt],
+                updatedAt = row[updatedAt],
+                expiredAt = row[expiredAt]
+            )
         )
     }
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Listings): UpdateBuilder<Number> {
-        val itemStackString = json.encodeToString(ItemStackSerializer, entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
 
         entity.id?.let { insertTo[id] = EntityID(it, ListingsTable) }
         insertTo[sellerUuid] = entity.sellerUuid.toString()
@@ -103,19 +107,19 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
             when {
                 from != null && to != null -> {
                     selectBase
-                            .limit(to, from.toLong())
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
+                        .limit(to, from.toLong())
+                        .orderBy(filterDomainToStorage(filter))
+                        .map { fromRow(it) }
                 }
                 from == null && to == null -> {
                     selectBase
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
+                        .orderBy(filterDomainToStorage(filter))
+                        .map { fromRow(it) }
                 }
                 else -> {
                     selectBase
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
+                        .orderBy(filterDomainToStorage(filter))
+                        .map { fromRow(it) }
                 }
             }
         }
@@ -126,7 +130,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
     }
 
     override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Double): Listings? {
-        val itemStackString = json.encodeToString(ItemStackSerializer, itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), itemStack)
 
         return transaction(marketPlaceDb) {
             ListingsTable.select {
@@ -161,7 +165,7 @@ class ListingsRepositoryImpl(private val marketPlaceDb: Database) : ListingsRepo
     }
 
     override fun update(entity: Listings): Listings {
-        val itemStackString = json.encodeToString(ItemStackSerializer, entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
 
         transaction(marketPlaceDb) {
             ListingsTable.update({

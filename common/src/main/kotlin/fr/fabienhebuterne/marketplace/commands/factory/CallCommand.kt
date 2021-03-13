@@ -20,11 +20,15 @@ abstract class CallCommand<T : BootstrapLoader>(override val name: String) : ICa
             args: Array<String>
     ) {
         if (!player.hasPermission(permission)) {
-            // TODO : Put instance.tl.errors.missingPermission when domain and MarketPlace.kt will be splitted on multi-module
-            // Need to have Translation object on BootstrapLoader interface
-            player.sendMessage("§8[§6MarketPlace§8] §cYou don''t have permission to do this.")
+            player.sendMessage(instance.missingPermissionMessage)
             return
         }
+
+        if (instance.isReload) {
+            player.sendMessage(instance.reloadNotAvailableMessage)
+            return
+        }
+
         runFromPlayer(server, player, commandLabel, cmd, args)
     }
 
@@ -41,6 +45,11 @@ abstract class CallCommand<T : BootstrapLoader>(override val name: String) : ICa
                      commandLabel: String,
                      cmd: Command,
                      args: Array<String>) {
+        if (instance.isReload) {
+            commandSender.sendMessage(instance.reloadNotAvailableMessage)
+            return
+        }
+
         runFromOther(server, commandSender, commandLabel, cmd, args)
     }
 

@@ -6,7 +6,8 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 
-class MailsService(private val marketPlace: MarketPlace, private val mailsRepository: MailsRepository) : PaginationService<Mails>(mailsRepository) {
+class MailsService(private val marketPlace: MarketPlace,
+                   private val mailsRepository: MailsRepository) : PaginationService<Mails>(mailsRepository) {
 
     fun saveListingsToMail(listings: Listings) {
         val mails = mailsRepository.find(listings.sellerUuid, listings.itemStack)

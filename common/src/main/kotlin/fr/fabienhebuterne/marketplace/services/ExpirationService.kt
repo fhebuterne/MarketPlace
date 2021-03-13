@@ -9,10 +9,10 @@ import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import org.bukkit.Bukkit
 
 class ExpirationService(
-        private val marketPlace: MarketPlace,
-        private val listingsService: ListingsService,
-        private val mailsService: MailsService,
-        private val logsService: LogsService
+    private val marketPlace: MarketPlace,
+    private val listingsService: ListingsService,
+    private val mailsService: MailsService,
+    private val logsService: LogsService
 ) {
 
     fun startTaskExpirationListingsToMails() {

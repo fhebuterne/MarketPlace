@@ -43,11 +43,7 @@ import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 
-class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
-    companion object {
-        lateinit var itemStackReflection: IItemStackReflection
-    }
-
+class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
     private var econ: Economy? = null
     lateinit var translation: ConfigService<Translation>
@@ -56,7 +52,10 @@ class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
     lateinit var conf: Config
     lateinit var kodein: DI
     lateinit var instance: MarketPlace
-    var isReload: Boolean = false
+    lateinit var itemStackReflection: IItemStackReflection
+    override var isReload: Boolean = false
+    override lateinit var missingPermissionMessage: String
+    override lateinit var reloadNotAvailableMessage: String
     var customClassloaderAppender = CustomClassloaderAppender(javaClass.classLoader)
 
     init {
@@ -84,6 +83,9 @@ class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
         translation.createAndLoadConfig(true)
         tl = translation.getSerialization()
 
+        missingPermissionMessage = tl.errors.missingPermission
+        reloadNotAvailableMessage = tl.errors.reloadNotAvailable
+
         loadInventoryLoreTranslation(tl.inventoryEnum)
         loadInventoryFilterTranslation(tl.inventoryFilterEnum)
         loadEmptyHandExceptionTranslation(tl.errors.handEmpty)
@@ -105,19 +107,14 @@ class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
 
         initDependencyInjection(database)
 
-        val itemStackReflection: IItemStackReflection by kodein.instance()
-        MarketPlace.itemStackReflection = itemStackReflection
+        val itemStackReflec: IItemStackReflection by kodein.instance()
+        itemStackReflection = itemStackReflec
         loadSkull(itemStackReflection)
 
         // TODO : Create factory to init listeners
         loader.server.pluginManager.registerEvents(InventoryClickEventListener(this.instance, kodein), this.loader)
         loader.server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this.instance, kodein), this.loader)
-        loader.server.pluginManager.registerEvents(
-            PlayerJoinEventListener(
-                ListingsRepositoryImpl(database),
-                MailsRepositoryImpl(database)
-            ), this.loader
-        )
+        loader.server.pluginManager.registerEvents(PlayerJoinEventListener(kodein), this.loader)
 
         // Start tasks to check items expired
         val expirationService: ExpirationService by kodein.instance()
@@ -128,9 +125,9 @@ class MarketPlace(val loader: JavaPlugin) : BootstrapLoader {
     private fun initDependencyInjection(database: Database) {
         kodein = DI {
             bind<IItemStackReflection>() with singleton { initItemStackNms() ?: throw Exception() }
-            bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(database) }
-            bind<MailsRepository>() with singleton { MailsRepositoryImpl(database) }
-            bind<LogsRepository>() with singleton { LogsRepositoryImpl(database) }
+            bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(instance, database) }
+            bind<MailsRepository>() with singleton { MailsRepositoryImpl(instance, database) }
+            bind<LogsRepository>() with singleton { LogsRepositoryImpl(instance, database) }
             bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance, instance()) }
             bind<LogsService>() with singleton { LogsService(instance()) }

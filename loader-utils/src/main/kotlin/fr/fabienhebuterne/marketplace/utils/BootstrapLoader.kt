@@ -27,8 +27,14 @@ package fr.fabienhebuterne.marketplace.utils
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.JavaPlugin
 
 interface BootstrapLoader {
+    var loader: JavaPlugin
+    var isReload: Boolean
+    var missingPermissionMessage: String
+    var reloadNotAvailableMessage: String
+
     fun onLoad()
 
     fun onEnable()

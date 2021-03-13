@@ -24,12 +24,6 @@ class CommandReload(kodein: DI) : CallCommand<MarketPlace>("reload") {
         cmd: Command,
         args: Array<String>
     ) {
-        // TODO : Put this in common code (callCommand)
-        if (instance.isReload) {
-            player.sendMessage(instance.tl.errors.reloadNotAvailable)
-            return
-        }
-
         instance.isReload = true
 
         player.sendMessage(instance.tl.commandReloadStart)

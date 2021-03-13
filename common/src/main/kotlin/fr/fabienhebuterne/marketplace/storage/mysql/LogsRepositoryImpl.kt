@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.FilterName
@@ -7,8 +8,8 @@ import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
-import fr.fabienhebuterne.marketplace.json.ITEMSTACK_MODULE
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
+import fr.fabienhebuterne.marketplace.json.itemStackModule
 import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.adminPseudo
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.adminUuid
@@ -49,11 +50,12 @@ object LogsTable : UUIDTable("marketplace_logs") {
     val createdAt = LogsTable.long("created_at")
 }
 
-class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
-    private val json = Json { serializersModule = ITEMSTACK_MODULE }
+class LogsRepositoryImpl(private val instance: MarketPlace,
+                         private val marketPlaceDb: Database) : LogsRepository {
+    private val json = Json { serializersModule = itemStackModule(instance) }
 
     override fun fromRow(row: ResultRow): Logs {
-        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer, row[itemStack])
+        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
 
         return Logs(
                 id = row[id].value,
@@ -77,7 +79,7 @@ class LogsRepositoryImpl(private val marketPlaceDb: Database) : LogsRepository {
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Logs): UpdateBuilder<Number> {
         if (entity.itemStack != null) {
-            val itemStackString = json.encodeToString(ItemStackSerializer, entity.itemStack)
+            val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
             insertTo[itemStack] = itemStackString
         }
 

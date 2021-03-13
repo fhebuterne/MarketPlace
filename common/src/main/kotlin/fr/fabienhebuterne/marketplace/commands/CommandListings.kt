@@ -30,12 +30,6 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
         cmd: Command,
         args: Array<String>
     ) {
-        // TODO : Put this in common code (callCommand)
-        if (instance.isReload) {
-            player.sendMessage(instance.tl.errors.reloadNotAvailable)
-            return
-        }
-
         marketService.playersWaitingDefinedQuantity.remove(player.uniqueId)
 
         var pagination = Pagination<Listings>(

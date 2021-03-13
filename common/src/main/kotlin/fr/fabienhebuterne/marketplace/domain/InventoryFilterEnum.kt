@@ -53,6 +53,6 @@ fun loadInventoryFilterTranslation(inventoryFilterEnum: InventoryFilterEnumTrans
     InventoryFilterEnum.EXPIRED_AT_DESC.itemTranslation = inventoryFilterEnum.expiredAt.DESC
     InventoryFilterEnum.EXPIRED_AT_ASC.itemTranslation = inventoryFilterEnum.expiredAt.ASC
     InventoryFilterEnum.PRICE_DESC.itemTranslation = inventoryFilterEnum.price.DESC
-    InventoryFilterEnum.PRICE_DESC.itemTranslation = inventoryFilterEnum.price.ASC
+    InventoryFilterEnum.PRICE_ASC.itemTranslation = inventoryFilterEnum.price.ASC
 }
 
