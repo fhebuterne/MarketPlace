@@ -1,17 +1,19 @@
 package fr.fabienhebuterne.marketplace.services.pagination
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.*
 import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
-class LogsService(private val logsRepository: LogsRepository) : PaginationService<Logs>(logsRepository) {
+class LogsService(private val marketPlace: MarketPlace,
+                  private val logsRepository: LogsRepository) : PaginationService<Logs>(logsRepository) {
 
     fun createFrom(
             player: OfflinePlayer,
             adminPlayer: Player? = null,
-            paginated: Paginated,
+            paginated: Entity,
             quantity: Int,
             needingMoney: Double?,
             logType: LogType,
@@ -27,7 +29,9 @@ class LogsService(private val logsRepository: LogsRepository) : PaginationServic
             toLocation = toLocation,
             auditData = AuditData(
                 createdAt = System.currentTimeMillis()
-            )
+            ),
+            itemStack = paginated.itemStack,
+            version = marketPlace.itemStackReflection.getVersion()
         )
 
         if (adminPlayer != null) {
@@ -46,14 +50,7 @@ class LogsService(private val logsRepository: LogsRepository) : PaginationServic
         if (paginated is Listings) {
             logs = logs.copy(
                     sellerUuid = paginated.sellerUuid,
-                    sellerPseudo = paginated.sellerPseudo,
-                    itemStack = paginated.itemStack
-            )
-        }
-
-        if (paginated is Mails) {
-            logs = logs.copy(
-                    itemStack = paginated.itemStack
+                    sellerPseudo = paginated.sellerPseudo
             )
         }
 

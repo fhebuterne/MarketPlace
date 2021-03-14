@@ -100,7 +100,7 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(prefixHover).create())
 
         val msg = TextComponent("")
-        msg.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, ComponentBuilder(logs.itemStack?.let { itemStackReflection.serializeItemStack(it) }).create())
+        msg.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, ComponentBuilder(itemStackReflection.serializeItemStack(logs.itemStack)).create())
         TextComponent.fromLegacyText(getMessageLogType(logs)).forEach {
             msg.addExtra(it)
         }
@@ -115,14 +115,14 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
                     .replace("{{adminPseudo}}", logs.adminPseudo.orEmpty())
                     .replace("{{playerPseudo}}", logs.playerPseudo)
                     .replace("{{quantity}}", logs.quantity.toString())
-                    .replace("{{itemStack}}", logs.itemStack?.type?.name.orEmpty())
+                    .replace("{{itemStack}}", logs.itemStack.type?.name.orEmpty())
                     .replace("{{price}}", logs.price.toString())
                     .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
         } else {
             instance.tl.logs.message[logs.logType].orEmpty()
                     .replace("{{playerPseudo}}", logs.playerPseudo)
                     .replace("{{quantity}}", logs.quantity.toString())
-                    .replace("{{itemStack}}", logs.itemStack?.type?.name.orEmpty())
+                    .replace("{{itemStack}}", logs.itemStack.type?.name.orEmpty())
                     .replace("{{price}}", logs.price.toString())
                     .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
         }

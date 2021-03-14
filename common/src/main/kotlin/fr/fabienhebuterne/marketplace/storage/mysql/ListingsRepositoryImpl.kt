@@ -7,7 +7,6 @@ import fr.fabienhebuterne.marketplace.domain.base.FilterName
 import fr.fabienhebuterne.marketplace.domain.base.FilterType
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
-import fr.fabienhebuterne.marketplace.json.itemStackModule
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.createdAt
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.expiredAt
@@ -18,6 +17,7 @@ import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.quantity
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.sellerPseudo
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.sellerUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.updatedAt
+import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.version
 import fr.fabienhebuterne.marketplace.storage.mysql.ListingsTable.world
 import kotlinx.serialization.json.Json
 import org.bukkit.inventory.ItemStack
@@ -38,13 +38,14 @@ object ListingsTable : UUIDTable("marketplace_listings") {
     val createdAt = ListingsTable.long("created_at")
     val updatedAt = ListingsTable.long("updated_at")
     val expiredAt = ListingsTable.long("expired_at")
+    val version = ListingsTable.integer("version")
 }
 
 class ListingsRepositoryImpl(
     private val instance: MarketPlace,
     private val marketPlaceDb: Database
 ) : ListingsRepository {
-    private val json = Json { serializersModule = itemStackModule(instance) }
+    private val json = Json
 
     override fun fromRow(row: ResultRow): Listings {
         val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
@@ -61,12 +62,13 @@ class ListingsRepositoryImpl(
                 createdAt = row[createdAt],
                 updatedAt = row[updatedAt],
                 expiredAt = row[expiredAt]
-            )
+            ),
+            version = instance.itemStackReflection.getVersion()
         )
     }
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Listings): UpdateBuilder<Number> {
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance, entity.version), entity.itemStack)
 
         entity.id?.let { insertTo[id] = EntityID(it, ListingsTable) }
         insertTo[sellerUuid] = entity.sellerUuid.toString()
@@ -82,6 +84,7 @@ class ListingsRepositoryImpl(
         if (entity.auditData.expiredAt != null) {
             insertTo[expiredAt] = entity.auditData.expiredAt
         }
+        insertTo[version] = entity.version
         return insertTo
     }
 

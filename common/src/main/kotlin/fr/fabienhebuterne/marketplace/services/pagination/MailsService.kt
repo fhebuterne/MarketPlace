@@ -22,7 +22,8 @@ class MailsService(private val marketPlace: MarketPlace,
                             createdAt = System.currentTimeMillis(),
                             updatedAt = System.currentTimeMillis(),
                             expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
-                    )
+                    ),
+                    version = marketPlace.itemStackReflection.getVersion()
             )
             mailsRepository.create(mailCreation)
         } else {

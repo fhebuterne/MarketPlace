@@ -16,7 +16,7 @@ import java.util.*
 
 object ItemStackReflection : IItemStackReflection {
 
-    private const val DATA_VERSION = 1343
+    private const val DATA_VERSION_V1_12_R1 = 1343
 
     override fun serializeItemStack(itemStack: ItemStack): String {
         val nbtTagSerialized = NBTTagCompound()
@@ -24,7 +24,7 @@ object ItemStackReflection : IItemStackReflection {
         return itemStackNMS.save(nbtTagSerialized).toString()
     }
 
-    override fun deserializeItemStack(itemStackString: String): ItemStack {
+    override fun deserializeItemStack(itemStackString: String, currentItemVersion: Int?): ItemStack {
         val nbtTagDeserialized = MojangsonParser.parse(itemStackString)
         val itemStackNMS = net.minecraft.server.v1_12_R1.ItemStack(updateToLatestMinecraft(nbtTagDeserialized))
         return CraftItemStack.asBukkitCopy(itemStackNMS)
@@ -48,7 +48,9 @@ object ItemStackReflection : IItemStackReflection {
     }
 
     private fun updateToLatestMinecraft(item: NBTTagCompound): NBTTagCompound? {
-        return DataConverterManager(DATA_VERSION).a(DataConverterTypes.ITEM_INSTANCE, item)
+        return DataConverterManager(DATA_VERSION_V1_12_R1).a(DataConverterTypes.ITEM_INSTANCE, item)
     }
+
+    override fun getVersion(): Int = DATA_VERSION_V1_12_R1
 
 }

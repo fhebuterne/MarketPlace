@@ -26,18 +26,20 @@ import java.util.*
 import java.util.stream.IntStream
 
 data class WaitingDefinedQuantity(
-        val listings: Listings,
-        val clickType: ClickType
+    val listings: Listings,
+    val clickType: ClickType
 )
 
-class MarketService(private val marketPlace: MarketPlace,
-                    private val listingsService: ListingsService,
-                    private val listingsRepository: ListingsRepository,
-                    private val listingsInventoryService: ListingsInventoryService,
-                    private val mailsService: MailsService,
-                    private val mailsRepository: MailsRepository,
-                    private val mailsInventoryService: MailsInventoryService,
-                    private val logsService: LogsService) {
+class MarketService(
+    private val marketPlace: MarketPlace,
+    private val listingsService: ListingsService,
+    private val listingsRepository: ListingsRepository,
+    private val listingsInventoryService: ListingsInventoryService,
+    private val mailsService: MailsService,
+    private val mailsRepository: MailsRepository,
+    private val mailsInventoryService: MailsInventoryService,
+    private val logsService: LogsService
+) {
 
     val playersWaitingCustomQuantity: MutableMap<UUID, Int> = mutableMapOf()
     val playersWaitingDefinedQuantity: MutableMap<UUID, WaitingDefinedQuantity> = mutableMapOf()
@@ -84,41 +86,42 @@ class MarketService(private val marketPlace: MarketPlace,
 
         if (mailsDatabase == null) {
             mailsRepository.create(
-                    Mails(
-                            playerUuid = player.uniqueId,
-                            playerPseudo = player.name,
-                            itemStack = listings.itemStack,
-                            quantity = quantity,
-                            auditData = AuditData(
-                                    createdAt = System.currentTimeMillis(),
-                                    updatedAt = System.currentTimeMillis(),
-                                    expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
-                            )
-                    )
+                Mails(
+                    playerUuid = player.uniqueId,
+                    playerPseudo = player.name,
+                    itemStack = listings.itemStack,
+                    quantity = quantity,
+                    auditData = AuditData(
+                        createdAt = System.currentTimeMillis(),
+                        updatedAt = System.currentTimeMillis(),
+                        expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
+                    ),
+                    version = marketPlace.itemStackReflection.getVersion()
+                )
             )
         } else {
             mailsRepository.update(
-                    mailsDatabase.copy(quantity = mailsDatabase.quantity + quantity)
+                mailsDatabase.copy(quantity = mailsDatabase.quantity + quantity)
             )
         }
 
         logsService.createFrom(
-                player = player,
-                paginated = listingsDatabase,
-                quantity = quantity,
-                needingMoney = needingMoney,
-                logType = LogType.BUY,
-                fromLocation = Location.LISTING_INVENTORY,
-                toLocation = Location.MAIL_INVENTORY
+            player = player,
+            paginated = listingsDatabase,
+            quantity = quantity,
+            needingMoney = needingMoney,
+            logType = LogType.BUY,
+            fromLocation = Location.LISTING_INVENTORY,
+            toLocation = Location.MAIL_INVENTORY
         )
 
 
         marketPlace.configService.getSerialization().sellerItemNotifCommand.forEach { command ->
             val commandReplace = command.replace("{{playerPseudo}}", listingsDatabase.sellerPseudo)
-                    .replace("{{playerUUID}}", listingsDatabase.sellerUuid.toString())
-                    .replace("{{quantity}}", quantity.toString())
-                    .replace("{{itemStack}}", listingsDatabase.itemStack.type.toString())
-                    .replace("{{totalPrice}}", needingMoney.toString())
+                .replace("{{playerUUID}}", listingsDatabase.sellerUuid.toString())
+                .replace("{{quantity}}", quantity.toString())
+                .replace("{{itemStack}}", listingsDatabase.itemStack.type.toString())
+                .replace("{{totalPrice}}", needingMoney.toString())
 
             if (Bukkit.isPrimaryThread()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
@@ -130,8 +133,8 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         val itemBuyMessage = marketPlace.tl.itemBuy.replace("{{quantity}}", quantity.toString())
-                .replace("{{item}}", listingsDatabase.itemStack.type.toString())
-                .replace("{{price}}", needingMoney.toString())
+            .replace("{{item}}", listingsDatabase.itemStack.type.toString())
+            .replace("{{price}}", needingMoney.toString())
 
         player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
@@ -174,11 +177,11 @@ class MarketService(private val marketPlace: MarketPlace,
     }
 
     private fun clickToRemoveItem(
-            event: InventoryClickEvent,
-            player: Player,
-            listings: Listings,
-            isClickValid: Boolean,
-            isAdmin: Boolean = false
+        event: InventoryClickEvent,
+        player: Player,
+        listings: Listings,
+        isClickValid: Boolean,
+        isAdmin: Boolean = false
     ) {
         if (!isClickValid) {
             return
@@ -186,12 +189,19 @@ class MarketService(private val marketPlace: MarketPlace,
 
         forwardListingsToMails(listings, player, event, isAdmin)
 
-        val initInventory = listingsInventoryService.initInventory(listingsService.playersView[player.uniqueId]
-                ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player)
+        val initInventory = listingsInventoryService.initInventory(
+            listingsService.playersView[player.uniqueId]
+                ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player
+        )
         player.openInventory(initInventory)
     }
 
-    private fun forwardListingsToMails(listings: Listings, player: Player, event: InventoryClickEvent, isAdmin: Boolean) {
+    private fun forwardListingsToMails(
+        listings: Listings,
+        player: Player,
+        event: InventoryClickEvent,
+        isAdmin: Boolean
+    ) {
         val listingsFind = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (listingsFind == null) {
@@ -202,31 +212,31 @@ class MarketService(private val marketPlace: MarketPlace,
 
         if (!isAdmin) {
             logsService.createFrom(
-                    player = player,
-                    paginated = listings,
-                    quantity = listings.quantity,
-                    needingMoney = null,
-                    logType = LogType.CANCEL,
-                    fromLocation = Location.LISTING_INVENTORY,
-                    toLocation = Location.MAIL_INVENTORY
+                player = player,
+                paginated = listings,
+                quantity = listings.quantity,
+                needingMoney = null,
+                logType = LogType.CANCEL,
+                fromLocation = Location.LISTING_INVENTORY,
+                toLocation = Location.MAIL_INVENTORY
             )
         } else {
             logsService.createFrom(
-                    player = Bukkit.getOfflinePlayer(listings.sellerUuid),
-                    adminPlayer = player,
-                    paginated = listings,
-                    quantity = listings.quantity,
-                    needingMoney = null,
-                    logType = LogType.CANCEL,
-                    fromLocation = Location.LISTING_INVENTORY,
-                    toLocation = Location.MAIL_INVENTORY
+                player = Bukkit.getOfflinePlayer(listings.sellerUuid),
+                adminPlayer = player,
+                paginated = listings,
+                quantity = listings.quantity,
+                needingMoney = null,
+                logType = LogType.CANCEL,
+                fromLocation = Location.LISTING_INVENTORY,
+                toLocation = Location.MAIL_INVENTORY
             )
         }
 
         listingsService.playersView[player.uniqueId] = listingsService.playersView[player.uniqueId]?.let {
             val elementToRemove = it.results.filterIndexed { index, _ -> index == event.rawSlot }
             val copy = listingsService.playersView[player.uniqueId]?.copy(
-                    results = it.results.minus(elementToRemove)
+                results = it.results.minus(elementToRemove)
             )
             copy
         } ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
@@ -236,32 +246,46 @@ class MarketService(private val marketPlace: MarketPlace,
     }
 
     private fun clickToBuyItem(event: InventoryClickEvent, player: Player, listings: Listings) {
-        confirmationBuyItem(event, player, listings, ClickType.LEFT, 1, marketPlace.tl.listingItemBottomLoreSellerConfirmationLeftClick)
+        confirmationBuyItem(
+            event,
+            player,
+            listings,
+            ClickType.LEFT,
+            1,
+            marketPlace.tl.listingItemBottomLoreSellerConfirmationLeftClick
+        )
 
-        confirmationBuyItem(event, player, listings, ClickType.RIGHT, 64, marketPlace.tl.listingItemBottomLoreSellerConfirmationRightClick)
+        confirmationBuyItem(
+            event,
+            player,
+            listings,
+            ClickType.RIGHT,
+            64,
+            marketPlace.tl.listingItemBottomLoreSellerConfirmationRightClick
+        )
 
         if (event.click == ClickType.MIDDLE) {
             playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
             marketPlace.tl.clickMiddleListingInventory
-                    .map {
-                        it.replace("{{maxQuantity}}", listings.quantity.toString())
-                                .replace("{{price}}", convertDoubleToReadeableString(listings.price))
-                                .replace("{{itemStack}}", listings.itemStack.type.toString())
-                    }
-                    .forEach {
-                        player.sendMessage(it)
-                    }
+                .map {
+                    it.replace("{{maxQuantity}}", listings.quantity.toString())
+                        .replace("{{price}}", convertDoubleToReadeableString(listings.price))
+                        .replace("{{itemStack}}", listings.itemStack.type.toString())
+                }
+                .forEach {
+                    player.sendMessage(it)
+                }
             player.closeInventory()
         }
     }
 
     private fun confirmationBuyItem(
-            event: InventoryClickEvent,
-            player: Player,
-            listings: Listings,
-            clickType: ClickType,
-            quantity: Int,
-            translationLore: List<String>
+        event: InventoryClickEvent,
+        player: Player,
+        listings: Listings,
+        clickType: ClickType,
+        quantity: Int,
+        translationLore: List<String>
     ) {
         if (event.click != clickType) {
             return
@@ -272,11 +296,13 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         if (playersWaitingDefinedQuantity[player.uniqueId] != null
-                && playersWaitingDefinedQuantity[player.uniqueId] == WaitingDefinedQuantity(listings, clickType)) {
+            && playersWaitingDefinedQuantity[player.uniqueId] == WaitingDefinedQuantity(listings, clickType)
+        ) {
             playersWaitingDefinedQuantity.remove(player.uniqueId)
             buyItem(player, event.rawSlot, quantity)
         } else {
-            val itemStack: ItemStack = listingsInventoryService.setBaseBottomLore(listings.itemStack.clone(), listings, player)
+            val itemStack: ItemStack =
+                listingsInventoryService.setBaseBottomLore(listings.itemStack.clone(), listings, player)
             val itemMeta = itemStack.itemMeta
             val lore = itemMeta?.lore
 
@@ -311,14 +337,14 @@ class MarketService(private val marketPlace: MarketPlace,
         val mail = paginationMails?.results?.get(rawSlot) ?: return
 
         val slotInventoryAvailable = player.inventory.contents.clone()
-                .filter { it == null || it.type == Material.AIR }
-                .count()
+            .filter { it == null || it.type == Material.AIR }
+            .count()
 
         val itemPresentSlotAvailable: Int = player.inventory.contents.clone()
-                .filterNotNull()
-                .filter { it.isSimilar(mail.itemStack) }
-                .filter { it.amount < it.maxStackSize }
-                .sumBy { it.maxStackSize - it.amount }
+            .filterNotNull()
+            .filter { it.isSimilar(mail.itemStack) }
+            .filter { it.amount < it.maxStackSize }
+            .sumBy { it.maxStackSize - it.amount }
 
         val itemStack = mail.itemStack.clone()
         val maxQuantityInventoryAvailable = slotInventoryAvailable * itemStack.maxStackSize + itemPresentSlotAvailable
@@ -340,30 +366,30 @@ class MarketService(private val marketPlace: MarketPlace,
         }
 
         IntStream.range(0, amountItemStack)
-                .forEach {
-                    player.inventory.addItem(itemStack)
-                }
+            .forEach {
+                player.inventory.addItem(itemStack)
+            }
 
         if (isAdmin) {
             logsService.createFrom(
-                    player = Bukkit.getOfflinePlayer(mail.playerUuid),
-                    adminPlayer = player,
-                    paginated = mail,
-                    quantity = amountItemStack,
-                    needingMoney = null,
-                    logType = LogType.GET,
-                    fromLocation = Location.MAIL_INVENTORY,
-                    toLocation = Location.PLAYER_INVENTORY
+                player = Bukkit.getOfflinePlayer(mail.playerUuid),
+                adminPlayer = player,
+                paginated = mail,
+                quantity = amountItemStack,
+                needingMoney = null,
+                logType = LogType.GET,
+                fromLocation = Location.MAIL_INVENTORY,
+                toLocation = Location.PLAYER_INVENTORY
             )
         } else {
             logsService.createFrom(
-                    player = Bukkit.getOfflinePlayer(mail.playerUuid),
-                    paginated = mail,
-                    quantity = amountItemStack,
-                    needingMoney = null,
-                    logType = LogType.GET,
-                    fromLocation = Location.MAIL_INVENTORY,
-                    toLocation = Location.PLAYER_INVENTORY
+                player = Bukkit.getOfflinePlayer(mail.playerUuid),
+                paginated = mail,
+                quantity = amountItemStack,
+                needingMoney = null,
+                logType = LogType.GET,
+                fromLocation = Location.MAIL_INVENTORY,
+                toLocation = Location.PLAYER_INVENTORY
             )
         }
 

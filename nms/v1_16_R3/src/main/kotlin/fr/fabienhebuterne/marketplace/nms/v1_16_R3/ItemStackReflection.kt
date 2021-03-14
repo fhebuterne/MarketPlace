@@ -24,10 +24,10 @@ object ItemStackReflection : IItemStackReflection {
         return itemStackNMS.save(nbtTagSerialized).toString()
     }
 
-    override fun deserializeItemStack(itemStackString: String): ItemStack {
+    override fun deserializeItemStack(itemStackString: String, currentItemVersion: Int?): ItemStack {
         val nbtTagDeserialized = MojangsonParser.parse(itemStackString)
         val itemStackNMS = net.minecraft.server.v1_16_R3.ItemStack.a(
-            updateToLatestMinecraft(nbtTagDeserialized)
+            updateToLatestMinecraft(nbtTagDeserialized, currentItemVersion)
         )
         return CraftItemStack.asBukkitCopy(itemStackNMS)
     }
@@ -49,15 +49,18 @@ object ItemStackReflection : IItemStackReflection {
         return head
     }
 
-    private fun updateToLatestMinecraft(item: NBTTagCompound): NBTTagCompound? {
+    private fun updateToLatestMinecraft(item: NBTTagCompound, currentItemVersion: Int?): NBTTagCompound {
+        val itemVersion: Int = currentItemVersion ?: DATA_VERSION_V1_15_R1
         val input: Dynamic<NBTBase> = Dynamic(DynamicOpsNBT.a, item)
         val result: Dynamic<NBTBase> = DataConverterRegistry.a().update(
             DataConverterTypes.ITEM_STACK,
             input,
-            DATA_VERSION_V1_15_R1,
+            itemVersion,
             DATA_VERSION_V1_16_R3
         )
         return result.value as NBTTagCompound
     }
+
+    override fun getVersion(): Int = DATA_VERSION_V1_16_R3
 
 }

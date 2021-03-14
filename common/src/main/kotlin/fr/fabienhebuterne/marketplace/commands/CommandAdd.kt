@@ -64,7 +64,8 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
                         System.currentTimeMillis(),
                         System.currentTimeMillis(),
                         System.currentTimeMillis() + (instance.conf.expiration.playerToListings * 1000)
-                )
+                ),
+                version = instance.itemStackReflection.getVersion()
         )
 
         val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)

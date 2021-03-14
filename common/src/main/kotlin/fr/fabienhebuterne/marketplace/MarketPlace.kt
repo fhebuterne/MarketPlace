@@ -130,7 +130,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(instance, database) }
             bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance, instance()) }
-            bind<LogsService>() with singleton { LogsService(instance()) }
+            bind<LogsService>() with singleton { LogsService(instance, instance()) }
             bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance, instance()) }
             bind<MailsInventoryService>() with singleton { MailsInventoryService(instance, instance()) }
             bind<MarketService>() with singleton {

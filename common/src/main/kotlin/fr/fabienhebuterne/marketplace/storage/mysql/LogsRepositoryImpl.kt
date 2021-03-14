@@ -9,7 +9,6 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.json.ItemStackSerializer
-import fr.fabienhebuterne.marketplace.json.itemStackModule
 import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.adminPseudo
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.adminUuid
@@ -25,6 +24,7 @@ import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.quantity
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.sellerPseudo
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.sellerUuid
 import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.toLocation
+import fr.fabienhebuterne.marketplace.storage.mysql.LogsTable.version
 import kotlinx.serialization.json.Json
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.id.EntityID
@@ -48,11 +48,12 @@ object LogsTable : UUIDTable("marketplace_logs") {
     val fromLocation = LogsTable.enumerationByName("from_location", 100, Location::class)
     val toLocation = LogsTable.enumerationByName("to_location", 100, Location::class)
     val createdAt = LogsTable.long("created_at")
+    val version = LogsTable.integer("version")
 }
 
 class LogsRepositoryImpl(private val instance: MarketPlace,
                          private val marketPlaceDb: Database) : LogsRepository {
-    private val json = Json { serializersModule = itemStackModule(instance) }
+    private val json = Json
 
     override fun fromRow(row: ResultRow): Logs {
         val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
@@ -73,16 +74,12 @@ class LogsRepositoryImpl(private val instance: MarketPlace,
                 fromLocation = row[fromLocation],
                 auditData = AuditData(
                         createdAt = row[createdAt]
-                )
+                ),
+                version = instance.itemStackReflection.getVersion()
         )
     }
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Logs): UpdateBuilder<Number> {
-        if (entity.itemStack != null) {
-            val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
-            insertTo[itemStack] = itemStackString
-        }
-
         entity.id?.let { insertTo[id] = EntityID(it, LogsTable) }
         entity.price?.let { insertTo[price] = it }
         entity.sellerUuid?.let { insertTo[sellerUuid] = it.toString() }
@@ -90,6 +87,8 @@ class LogsRepositoryImpl(private val instance: MarketPlace,
         entity.adminUuid?.let { insertTo[adminUuid] = it.toString() }
         entity.adminPseudo?.let { insertTo[adminPseudo] = it }
 
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance, entity.version), entity.itemStack)
+        insertTo[itemStack] = itemStackString
         insertTo[playerUuid] = entity.playerUuid.toString()
         insertTo[playerPseudo] = entity.playerPseudo
         insertTo[quantity] = entity.quantity
@@ -97,6 +96,7 @@ class LogsRepositoryImpl(private val instance: MarketPlace,
         insertTo[toLocation] = entity.toLocation
         insertTo[fromLocation] = entity.fromLocation
         insertTo[createdAt] = entity.auditData.createdAt
+        insertTo[version] = entity.version
         return insertTo
     }
 

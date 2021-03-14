@@ -55,7 +55,8 @@ class MarketServiceTest : BaseTest() {
                             price = 10.0,
                             sellerPseudo = "Ergail",
                             sellerUuid = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f"),
-                            world = "world"
+                            world = "world",
+                            version = 1343
                         )
                     ),
                     currentPlayer = fabienUuid,

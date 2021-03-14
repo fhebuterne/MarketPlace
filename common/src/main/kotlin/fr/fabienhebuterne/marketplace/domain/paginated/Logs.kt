@@ -5,21 +5,22 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 data class Logs(
-        val id: UUID? = null,
-        val playerUuid: UUID,
-        val playerPseudo: String,
-        val sellerUuid: UUID? = null,
-        val sellerPseudo: String? = null,
-        val adminUuid: UUID? = null,
-        val adminPseudo: String? = null,
-        val itemStack: ItemStack? = null,
-        val quantity: Int = 1,
-        val price: Double? = null,
-        val logType: LogType,
-        val fromLocation: Location,
-        val toLocation: Location,
-        val auditData: AuditData
-) : Paginated
+    override val id: UUID? = null,
+    val playerUuid: UUID,
+    val playerPseudo: String,
+    val sellerUuid: UUID? = null,
+    val sellerPseudo: String? = null,
+    val adminUuid: UUID? = null,
+    val adminPseudo: String? = null,
+    override val itemStack: ItemStack,
+    val quantity: Int = 1,
+    val price: Double? = null,
+    val logType: LogType,
+    val fromLocation: Location,
+    val toLocation: Location,
+    val auditData: AuditData,
+    override val version: Int
+) : Entity(id, itemStack, version)
 
 enum class LogType {
     SELL,
