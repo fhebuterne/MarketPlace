@@ -5,11 +5,11 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 data class Mails(
-        override val id: UUID? = null,
-        val playerPseudo: String,
-        val playerUuid: UUID,
-        override val itemStack: ItemStack,
-        val quantity: Int = 1,
-        val auditData: AuditData,
-        override val version: Int
-) : Entity(id, itemStack, version)
+    override val id: UUID? = null,
+    val playerPseudo: String,
+    val playerUuid: UUID,
+    override val itemStack: ItemStack,
+    val quantity: Int = 1,
+    val auditData: AuditData,
+    override val version: Int
+) : Paginated(id, itemStack, version)

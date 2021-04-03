@@ -1,12 +1,16 @@
 package fr.fabienhebuterne.marketplace.services.pagination
 
+import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.base.EntityService
 import fr.fabienhebuterne.marketplace.storage.PaginationRepository
 import java.util.*
 
-abstract class PaginationService<T : Paginated>(private val paginationRepository: PaginationRepository<T>) : EntityService<T>(paginationRepository) {
+abstract class PaginationService<T : Paginated>(
+    private val paginationRepository: PaginationRepository<T>,
+    private val marketPlace: MarketPlace
+) : EntityService<T>(paginationRepository, marketPlace) {
 
     val playersView: MutableMap<UUID, Pagination<T>> = mutableMapOf()
 
@@ -38,9 +42,9 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
     }
 
     fun getPaginated(
-            from: Int = 0,
-            to: Int = 45,
-            pagination: Pagination<T>
+        from: Int = 0,
+        to: Int = 45,
+        pagination: Pagination<T>
     ): Pagination<T> {
         var fromInt = from
         var toInt = to
@@ -65,15 +69,26 @@ abstract class PaginationService<T : Paginated>(private val paginationRepository
         }
 
         val results = if (!pagination.showAll) {
-            paginationRepository.findAll(pagination.currentPlayer, fromInt, toInt, pagination.searchKeyword, pagination.filter)
+            paginationRepository.findAll(
+                pagination.currentPlayer,
+                fromInt,
+                toInt,
+                pagination.searchKeyword,
+                pagination.filter
+            )
         } else {
-            paginationRepository.findAll(from = fromInt, to = toInt, searchKeyword = pagination.searchKeyword, filter = pagination.filter)
+            paginationRepository.findAll(
+                from = fromInt,
+                to = toInt,
+                searchKeyword = pagination.searchKeyword,
+                filter = pagination.filter
+            )
         }
 
         val paginationUpdated = pagination.copy(
-                results,
-                currentPageInt,
-                countAll
+            results,
+            currentPageInt,
+            countAll
         )
 
         playersView[pagination.viewPlayer] = paginationUpdated

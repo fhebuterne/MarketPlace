@@ -20,7 +20,7 @@ data class Logs(
     val toLocation: Location,
     val auditData: AuditData,
     override val version: Int
-) : Entity(id, itemStack, version)
+) : Paginated(id, itemStack, version)
 
 enum class LogType {
     SELL,

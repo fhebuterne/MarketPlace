@@ -7,18 +7,20 @@ import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
-class LogsService(private val marketPlace: MarketPlace,
-                  private val logsRepository: LogsRepository) : PaginationService<Logs>(logsRepository) {
+class LogsService(
+    private val marketPlace: MarketPlace,
+    private val logsRepository: LogsRepository
+) : PaginationService<Logs>(logsRepository, marketPlace) {
 
     fun createFrom(
-            player: OfflinePlayer,
-            adminPlayer: Player? = null,
-            paginated: Entity,
-            quantity: Int,
-            needingMoney: Double?,
-            logType: LogType,
-            fromLocation: Location,
-            toLocation: Location
+        player: OfflinePlayer,
+        adminPlayer: Player? = null,
+        paginated: Entity,
+        quantity: Int,
+        needingMoney: Double?,
+        logType: LogType,
+        fromLocation: Location,
+        toLocation: Location
     ) {
         var logs = Logs(
             playerUuid = player.uniqueId,
@@ -36,21 +38,21 @@ class LogsService(private val marketPlace: MarketPlace,
 
         if (adminPlayer != null) {
             logs = logs.copy(
-                    adminUuid = adminPlayer.uniqueId,
-                    adminPseudo = adminPlayer.name
+                adminUuid = adminPlayer.uniqueId,
+                adminPseudo = adminPlayer.name
             )
         }
 
         if (needingMoney != null) {
             logs = logs.copy(
-                    price = needingMoney
+                price = needingMoney
             )
         }
 
         if (paginated is Listings) {
             logs = logs.copy(
-                    sellerUuid = paginated.sellerUuid,
-                    sellerPseudo = paginated.sellerPseudo
+                sellerUuid = paginated.sellerUuid,
+                sellerPseudo = paginated.sellerPseudo
             )
         }
 

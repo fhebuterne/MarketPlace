@@ -16,6 +16,7 @@ import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
+import fr.fabienhebuterne.marketplace.services.MigrationService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -66,6 +67,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
 
     @UnsafeSerializationApi
     override fun onEnable() {
+        isReload = true
         instance = this
 
         if (!setupEconomy()) {
@@ -111,6 +113,9 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         itemStackReflection = itemStackReflec
         loadSkull(itemStackReflection)
 
+        val migrationService: MigrationService by kodein.instance()
+        migrationService.migrateAllEntities()
+
         // TODO : Create factory to init listeners
         loader.server.pluginManager.registerEvents(InventoryClickEventListener(this.instance, kodein), this.loader)
         loader.server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this.instance, kodein), this.loader)
@@ -120,6 +125,8 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         val expirationService: ExpirationService by kodein.instance()
         expirationService.startTaskExpirationListingsToMails()
         expirationService.startTaskExpirationMailsToDelete()
+
+        isReload = false
     }
 
     private fun initDependencyInjection(database: Database) {
@@ -146,6 +153,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
                 )
             }
             bind<ExpirationService>() with singleton { ExpirationService(instance, instance(), instance(), instance()) }
+            bind<MigrationService>() with singleton { MigrationService(instance, instance(), instance(), instance()) }
         }
     }
 

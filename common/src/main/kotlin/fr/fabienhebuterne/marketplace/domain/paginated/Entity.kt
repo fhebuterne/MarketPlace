@@ -7,4 +7,4 @@ abstract class Entity(
     open val id: UUID? = null,
     open val itemStack: ItemStack,
     open val version: Int
-) : Paginated
+)

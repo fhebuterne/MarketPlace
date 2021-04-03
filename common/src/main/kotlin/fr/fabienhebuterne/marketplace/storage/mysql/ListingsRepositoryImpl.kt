@@ -107,24 +107,22 @@ class ListingsRepositoryImpl(
         return transaction(marketPlaceDb) {
             val selectBase = buildSelect(uuid, searchKeyword)
 
-            when {
-                from != null && to != null -> {
-                    selectBase
-                        .limit(to, from.toLong())
-                        .orderBy(filterDomainToStorage(filter))
-                        .map { fromRow(it) }
-                }
-                from == null && to == null -> {
-                    selectBase
-                        .orderBy(filterDomainToStorage(filter))
-                        .map { fromRow(it) }
-                }
-                else -> {
-                    selectBase
-                        .orderBy(filterDomainToStorage(filter))
-                        .map { fromRow(it) }
-                }
+            val find = if (from != null && to != null) {
+                selectBase.limit(to, from.toLong())
+            } else {
+                selectBase
             }
+
+            find.orderBy(filterDomainToStorage(filter))
+                .map { fromRow(it) }
+        }
+    }
+
+    override fun findByLowerVersion(version: Int): List<Listings> {
+        return transaction(marketPlaceDb) {
+            ListingsTable
+                .select { ListingsTable.version less version }
+                .map { fromRow(it) }
         }
     }
 
@@ -168,13 +166,9 @@ class ListingsRepositoryImpl(
     }
 
     override fun update(entity: Listings): Listings {
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
-
         transaction(marketPlaceDb) {
             ListingsTable.update({
-                (sellerUuid eq entity.sellerUuid.toString()) and
-                        (itemStack eq itemStackString) and
-                        (price eq entity.price)
+                ListingsTable.id eq entity.id
             }) {
                 fromEntity(it, entity)
             }

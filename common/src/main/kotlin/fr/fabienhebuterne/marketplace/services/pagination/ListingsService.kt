@@ -15,7 +15,7 @@ class ListingsService(
     private val marketPlace: MarketPlace,
     private val listingsRepository: ListingsRepository,
     private val logsService: LogsService
-) : PaginationService<Listings>(listingsRepository) {
+) : PaginationService<Listings>(listingsRepository, marketPlace) {
 
     fun updateListings(findExistingListings: Listings, currentItemStack: ItemStack, player: Player) {
         val updatedListings = findExistingListings.copy(
@@ -37,9 +37,10 @@ class ListingsService(
             toLocation = Location.LISTING_INVENTORY
         )
 
-        val listingUpdated = marketPlace.tl.listingUpdated.replace("{{quantityAdded}}", currentItemStack.amount.toString())
-            .replace("{{item}}", findExistingListings.itemStack.type.toString())
-            .replace("{{quantityTotal}}", updatedListings.quantity.toString())
+        val listingUpdated =
+            marketPlace.tl.listingUpdated.replace("{{quantityAdded}}", currentItemStack.amount.toString())
+                .replace("{{item}}", findExistingListings.itemStack.type.toString())
+                .replace("{{quantityTotal}}", updatedListings.quantity.toString())
 
         player.sendMessage(listingUpdated)
         player.inventory.setItemInMainHand(ItemStack(Material.AIR))

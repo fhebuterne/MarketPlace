@@ -94,24 +94,22 @@ class MailsRepositoryImpl(private val instance: MarketPlace,
         return transaction(marketPlaceDb) {
             val selectBase = buildSelect(uuid, searchKeyword)
 
-            when {
-                from != null && to != null -> {
-                    selectBase
-                            .limit(to, from.toLong())
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
-                from == null && to == null -> {
-                    selectBase
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
-                else -> {
-                    selectBase
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
+            val find = if (from != null && to != null) {
+                selectBase.limit(to, from.toLong())
+            } else {
+                selectBase
             }
+
+            find.orderBy(filterDomainToStorage(filter))
+                .map { fromRow(it) }
+        }
+    }
+
+    override fun findByLowerVersion(version: Int): List<Mails> {
+        return transaction(marketPlaceDb) {
+            MailsTable
+                .select { MailsTable.version less version }
+                .map { fromRow(it) }
         }
     }
 
@@ -146,12 +144,9 @@ class MailsRepositoryImpl(private val instance: MarketPlace,
     }
 
     override fun update(entity: Mails): Mails {
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
-
         transaction(marketPlaceDb) {
             MailsTable.update({
-                (playerUuid eq entity.playerUuid.toString()) and
-                        (itemStack eq itemStackString)
+                MailsTable.id eq entity.id
             }) {
                 fromEntity(it, entity)
             }

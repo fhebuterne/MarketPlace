@@ -51,31 +51,33 @@ object LogsTable : UUIDTable("marketplace_logs") {
     val version = LogsTable.integer("version")
 }
 
-class LogsRepositoryImpl(private val instance: MarketPlace,
-                         private val marketPlaceDb: Database) : LogsRepository {
+class LogsRepositoryImpl(
+    private val instance: MarketPlace,
+    private val marketPlaceDb: Database
+) : LogsRepository {
     private val json = Json
 
     override fun fromRow(row: ResultRow): Logs {
         val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
 
         return Logs(
-                id = row[id].value,
-                playerUuid = UUID.fromString(row[playerUuid]),
-                playerPseudo = row[playerPseudo],
-                sellerUuid = row[sellerUuid]?.let { UUID.fromString(row[sellerUuid]) },
-                sellerPseudo = row[sellerPseudo],
-                adminUuid = row[adminUuid]?.let { UUID.fromString(row[adminUuid]) },
-                adminPseudo = row[adminPseudo],
-                itemStack = itemStack,
-                quantity = row[quantity],
-                price = row[price],
-                logType = row[logType],
-                toLocation = row[toLocation],
-                fromLocation = row[fromLocation],
-                auditData = AuditData(
-                        createdAt = row[createdAt]
-                ),
-                version = instance.itemStackReflection.getVersion()
+            id = row[id].value,
+            playerUuid = UUID.fromString(row[playerUuid]),
+            playerPseudo = row[playerPseudo],
+            sellerUuid = row[sellerUuid]?.let { UUID.fromString(row[sellerUuid]) },
+            sellerPseudo = row[sellerPseudo],
+            adminUuid = row[adminUuid]?.let { UUID.fromString(row[adminUuid]) },
+            adminPseudo = row[adminPseudo],
+            itemStack = itemStack,
+            quantity = row[quantity],
+            price = row[price],
+            logType = row[logType],
+            toLocation = row[toLocation],
+            fromLocation = row[fromLocation],
+            auditData = AuditData(
+                createdAt = row[createdAt]
+            ),
+            version = instance.itemStackReflection.getVersion()
         )
     }
 
@@ -118,24 +120,22 @@ class LogsRepositoryImpl(private val instance: MarketPlace,
         return transaction(marketPlaceDb) {
             val selectBase = buildSelect(uuid, searchKeyword)
 
-            when {
-                from != null && to != null -> {
-                    selectBase
-                            .limit(to, from.toLong())
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
-                from == null && to == null -> {
-                    selectBase
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
-                else -> {
-                    selectBase
-                            .orderBy(filterDomainToStorage(filter))
-                            .map { fromRow(it) }
-                }
+            val find = if (from != null && to != null) {
+                selectBase.limit(to, from.toLong())
+            } else {
+                selectBase
             }
+
+            find.orderBy(filterDomainToStorage(filter))
+                .map { fromRow(it) }
+        }
+    }
+
+    override fun findByLowerVersion(version: Int): List<Logs> {
+        return transaction(marketPlaceDb) {
+            LogsTable
+                .select { LogsTable.version less version }
+                .map { fromRow(it) }
         }
     }
 
@@ -159,7 +159,14 @@ class LogsRepositoryImpl(private val instance: MarketPlace,
     }
 
     override fun update(entity: Logs): Logs {
-        TODO("Not yet implemented")
+        transaction(marketPlaceDb) {
+            LogsTable.update({
+                LogsTable.id eq entity.id
+            }) {
+                fromEntity(it, entity)
+            }
+        }
+        return entity
     }
 
     override fun delete(id: UUID) {

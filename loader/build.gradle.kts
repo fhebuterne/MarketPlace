@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":loader-utils"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinxCoroutines}")
     compileOnly(project(":common"))
     compileOnly(files("../tmp/spigot-1.12.2.jar"))
 }
