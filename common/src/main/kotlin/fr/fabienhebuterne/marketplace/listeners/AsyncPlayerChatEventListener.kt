@@ -40,7 +40,10 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)
                 event.player.sendMessage(marketPlace.tl.cancelBuying)
             } else if (!intIsValid(event.message)) {
-                throw BadArgumentException(event.player, MessageFormat.format(marketPlace.tl.errors.numberNotValid, event.message))
+                throw BadArgumentException(
+                    event.player,
+                    MessageFormat.format(marketPlace.tl.errors.numberNotValid, event.message)
+                )
             } else {
                 marketService.buyItem(event.player, rawSlot, event.message.toInt(), true)
                 marketService.playersWaitingCustomQuantity.remove(event.player.uniqueId)

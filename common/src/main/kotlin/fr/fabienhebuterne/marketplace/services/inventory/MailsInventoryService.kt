@@ -14,7 +14,8 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-class MailsInventoryService(private val instance: MarketPlace, mailsService: MailsService) : InventoryTypeService<Mails>(instance, mailsService) {
+class MailsInventoryService(private val instance: MarketPlace, mailsService: MailsService) :
+    InventoryTypeService<Mails>(instance, mailsService) {
     override fun initInventory(pagination: Pagination<Mails>, player: Player): Inventory {
         val currentPlayerName = Bukkit.getOfflinePlayer(pagination.currentPlayer).name
         val inventory = instance.loader.server.createInventory(

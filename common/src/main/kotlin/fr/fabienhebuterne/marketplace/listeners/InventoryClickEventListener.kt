@@ -65,10 +65,12 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
         listingsInventoryService.clickOnFilter(event, player)
 
         if (event.rawSlot == InventoryLoreEnum.MAIL.rawSlot) {
-            val inventoryPaginated = mailsService.getPaginated(pagination = Pagination(
+            val inventoryPaginated = mailsService.getPaginated(
+                pagination = Pagination(
                     currentPlayer = player.uniqueId,
                     viewPlayer = player.uniqueId
-            ))
+                )
+            )
             val mailsInventory = mailsInventoryService.initInventory(inventoryPaginated, player)
             player.openInventory(mailsInventory)
         }
@@ -80,11 +82,13 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
         mailsInventoryService.clickOnFilter(event, player)
 
         if (event.rawSlot == InventoryLoreEnum.LISTING.rawSlot) {
-            val inventoryPaginated = listingsService.getPaginated(pagination = Pagination(
+            val inventoryPaginated = listingsService.getPaginated(
+                pagination = Pagination(
                     showAll = true,
                     currentPlayer = player.uniqueId,
                     viewPlayer = player.uniqueId
-            ))
+                )
+            )
             val listingsInventory = listingsInventoryService.initInventory(inventoryPaginated, player)
             player.openInventory(listingsInventory)
         }

@@ -37,13 +37,13 @@ class ExpirationService(
                     }
 
                     logsService.createFrom(
-                            player = Bukkit.getOfflinePlayer(it.sellerUuid),
-                            paginated = it,
-                            quantity = it.quantity,
-                            needingMoney = null,
-                            logType = LogType.EXPIRED,
-                            fromLocation = Location.LISTING_INVENTORY,
-                            toLocation = Location.MAIL_INVENTORY
+                        player = Bukkit.getOfflinePlayer(it.sellerUuid),
+                        paginated = it,
+                        quantity = it.quantity,
+                        needingMoney = null,
+                        logType = LogType.EXPIRED,
+                        fromLocation = Location.LISTING_INVENTORY,
+                        toLocation = Location.MAIL_INVENTORY
                     )
 
                     it.id?.let { id -> listingsService.delete(id) }

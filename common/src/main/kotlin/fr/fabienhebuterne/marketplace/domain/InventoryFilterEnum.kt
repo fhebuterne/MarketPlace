@@ -8,11 +8,11 @@ import fr.fabienhebuterne.marketplace.domain.config.Item
 private val defaultItem = Item("Translation not loaded")
 
 enum class InventoryFilterEnum(
-        val order: Int,
-        var filterName: FilterName,
-        var filterType: FilterType,
-        var itemTranslation: Item = defaultItem,
-        val inventoryType: InventoryType? = null
+    val order: Int,
+    var filterName: FilterName,
+    var filterType: FilterType,
+    var itemTranslation: Item = defaultItem,
+    val inventoryType: InventoryType? = null
 ) {
     CREATED_AT_DESC(1, FilterName.CREATED_AT, FilterType.DESC),
     CREATED_AT_ASC(2, FilterName.CREATED_AT, FilterType.ASC),

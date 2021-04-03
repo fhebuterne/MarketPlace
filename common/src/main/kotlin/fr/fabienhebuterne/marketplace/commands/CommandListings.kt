@@ -33,9 +33,9 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
         marketService.playersWaitingDefinedQuantity.remove(player.uniqueId)
 
         var pagination = Pagination<Listings>(
-                showAll = true,
-                currentPlayer = player.uniqueId,
-                viewPlayer = player.uniqueId
+            showAll = true,
+            currentPlayer = player.uniqueId,
+            viewPlayer = player.uniqueId
         )
 
         if (args.size > 1) {

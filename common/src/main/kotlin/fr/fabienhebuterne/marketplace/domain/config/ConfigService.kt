@@ -8,9 +8,11 @@ import java.io.File
 import java.io.IOException
 import kotlin.reflect.KClass
 
-class ConfigService<T : Any>(private val instance: MarketPlace,
-                             private val fileName: String,
-                             private val kClass: KClass<T>) {
+class ConfigService<T : Any>(
+    private val instance: MarketPlace,
+    private val fileName: String,
+    private val kClass: KClass<T>
+) {
 
     private var file: File = File(instance.loader.dataFolder, "$fileName.json")
     private lateinit var obj: T

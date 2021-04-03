@@ -31,12 +31,12 @@ abstract class InventoryTypeService<T : Paginated>(
         event.isCancelled = true
         playersWaitingSearch.remove(event.player.uniqueId)
         val paginated = paginationService.getPaginated(
-                pagination = Pagination(
-                        searchKeyword = event.message,
-                        currentPlayer = event.player.uniqueId,
-                        viewPlayer = event.player.uniqueId,
-                        showAll = showAll
-                )
+            pagination = Pagination(
+                searchKeyword = event.message,
+                currentPlayer = event.player.uniqueId,
+                viewPlayer = event.player.uniqueId,
+                showAll = showAll
+            )
         )
         val initInventory = initInventory(paginated, event.player)
         event.player.openInventory(initInventory)
@@ -67,16 +67,16 @@ abstract class InventoryTypeService<T : Paginated>(
     fun clickOnFilter(event: InventoryClickEvent, player: Player, inventoryType: InventoryType) {
         if (event.rawSlot == InventoryLoreEnum.FILTER.rawSlot) {
             var pagination = paginationService.playersView[player.uniqueId]
-                    ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
+                ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
 
             val findByNameAndType =
-                    InventoryFilterEnum.findByNameAndType(pagination.filter.filterName, pagination.filter.filterType)
+                InventoryFilterEnum.findByNameAndType(pagination.filter.filterName, pagination.filter.filterType)
             val nextFilter = InventoryFilterEnum.next(findByNameAndType.order, inventoryType)
             pagination = pagination.copy(
-                    filter = Filter(
-                            filterName = nextFilter.filterName,
-                            filterType = nextFilter.filterType
-                    )
+                filter = Filter(
+                    filterName = nextFilter.filterName,
+                    filterType = nextFilter.filterType
+                )
             )
 
             val nextPage = paginationService.getPaginated(pagination = pagination)
@@ -86,9 +86,9 @@ abstract class InventoryTypeService<T : Paginated>(
     }
 
     open fun setBottomInventoryLine(
-            inventory: Inventory,
-            pagination: Pagination<out Paginated>,
-            inventoryType: InventoryType
+        inventory: Inventory,
+        pagination: Pagination<out Paginated>,
+        inventoryType: InventoryType
     ) {
         val emptyItemStack = instance.configService.getSerialization().inventoryLoreMaterial.empty
         val emptySlot = parseMaterialConfig(emptyItemStack)
@@ -101,8 +101,8 @@ abstract class InventoryTypeService<T : Paginated>(
         InventoryLoreEnum.values().forEach {
             val replace: (t: String) -> String = { t ->
                 t.replace("{{currentPage}}", pagination.currentPage.toString())
-                        .replace("{{maxPage}}", pagination.maxPage().toString())
-                        .replace("{{total}}", pagination.total.toString())
+                    .replace("{{maxPage}}", pagination.maxPage().toString())
+                    .replace("{{total}}", pagination.total.toString())
             }
 
             if (it == InventoryLoreEnum.FILTER) {

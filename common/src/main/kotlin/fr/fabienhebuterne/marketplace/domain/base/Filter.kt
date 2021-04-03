@@ -1,8 +1,8 @@
 package fr.fabienhebuterne.marketplace.domain.base
 
 data class Filter(
-        val filterName: FilterName,
-        val filterType: FilterType
+    val filterName: FilterName,
+    val filterType: FilterType
 )
 
 enum class FilterType {

@@ -35,21 +35,52 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
         } else {
             if (args.isEmpty()) {
                 val commandClassPathHelp = "$commandPath.CommandHelp"
-                instanceCommand(classLoader, commandClassPathHelp, kodein, permissionPrefix, "help", commandSender, commandLabel, command, args)
+                instanceCommand(
+                    classLoader,
+                    commandClassPathHelp,
+                    kodein,
+                    permissionPrefix,
+                    "help",
+                    commandSender,
+                    commandLabel,
+                    command,
+                    args
+                )
                 return true
             }
             args[0].toLowerCase()
         }
-        val commandName = commandLowercase.replaceFirst(commandLowercase[0].toString().toRegex(),
-                commandLowercase[0].toString().toUpperCase()
+        val commandName = commandLowercase.replaceFirst(
+            commandLowercase[0].toString().toRegex(),
+            commandLowercase[0].toString().toUpperCase()
         )
         val commandClassPath = "$commandPath.Command$commandName"
         try {
-            instanceCommand(classLoader, commandClassPath, kodein, permissionPrefix, commandName, commandSender, commandLabel, command, args)
+            instanceCommand(
+                classLoader,
+                commandClassPath,
+                kodein,
+                permissionPrefix,
+                commandName,
+                commandSender,
+                commandLabel,
+                command,
+                args
+            )
         } catch (ignored: CustomException) {
         } catch (ignored: ClassNotFoundException) {
             val commandClassPathHelp = "$commandPath.CommandHelp"
-            instanceCommand(classLoader, commandClassPathHelp, kodein, permissionPrefix, commandName, commandSender, commandLabel, command, args)
+            instanceCommand(
+                classLoader,
+                commandClassPathHelp,
+                kodein,
+                permissionPrefix,
+                commandName,
+                commandSender,
+                commandLabel,
+                command,
+                args
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }

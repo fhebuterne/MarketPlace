@@ -54,18 +54,18 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
         currentItemStackOne.amount = 1
 
         val listings = Listings(
-                sellerUuid = player.uniqueId,
-                sellerPseudo = player.name,
-                itemStack = currentItemStackOne,
-                quantity = currentItemStack.amount,
-                price = money,
-                world = player.world.name,
-                auditData = AuditData(
-                        System.currentTimeMillis(),
-                        System.currentTimeMillis(),
-                        System.currentTimeMillis() + (instance.conf.expiration.playerToListings * 1000)
-                ),
-                version = instance.itemStackReflection.getVersion()
+            sellerUuid = player.uniqueId,
+            sellerPseudo = player.name,
+            itemStack = currentItemStackOne,
+            quantity = currentItemStack.amount,
+            price = money,
+            world = player.world.name,
+            auditData = AuditData(
+                System.currentTimeMillis(),
+                System.currentTimeMillis(),
+                System.currentTimeMillis() + (instance.conf.expiration.playerToListings * 1000)
+            ),
+            version = instance.itemStackReflection.getVersion()
         )
 
         val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)

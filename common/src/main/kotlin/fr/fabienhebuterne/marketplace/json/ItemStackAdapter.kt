@@ -9,7 +9,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import org.bukkit.inventory.ItemStack
 
-class ItemStackSerializer(val instance: MarketPlace, private val currentItemVersion: Int? = null) : KSerializer<ItemStack> {
+class ItemStackSerializer(val instance: MarketPlace, private val currentItemVersion: Int? = null) :
+    KSerializer<ItemStack> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ItemStack", PrimitiveKind.STRING)
     override fun serialize(encoder: Encoder, value: ItemStack) {
         encoder.encodeString(instance.itemStackReflection.serializeItemStack(value))

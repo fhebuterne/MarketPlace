@@ -13,11 +13,11 @@ abstract class CallCommand<T : BootstrapLoader>(override val name: String) : ICa
     override lateinit var permission: String
 
     override fun run(
-            server: Server,
-            player: Player,
-            commandLabel: String,
-            cmd: Command,
-            args: Array<String>
+        server: Server,
+        player: Player,
+        commandLabel: String,
+        cmd: Command,
+        args: Array<String>
     ) {
         if (!player.hasPermission(permission)) {
             player.sendMessage(instance.missingPermissionMessage)
@@ -32,19 +32,23 @@ abstract class CallCommand<T : BootstrapLoader>(override val name: String) : ICa
         runFromPlayer(server, player, commandLabel, cmd, args)
     }
 
-    protected open fun runFromPlayer(server: Server,
-                                     player: Player,
-                                     commandLabel: String,
-                                     cmd: Command,
-                                     args: Array<String>) {
+    protected open fun runFromPlayer(
+        server: Server,
+        player: Player,
+        commandLabel: String,
+        cmd: Command,
+        args: Array<String>
+    ) {
         throw CommandNotAvailableException(player)
     }
 
-    override fun run(server: Server,
-                     commandSender: CommandSender,
-                     commandLabel: String,
-                     cmd: Command,
-                     args: Array<String>) {
+    override fun run(
+        server: Server,
+        commandSender: CommandSender,
+        commandLabel: String,
+        cmd: Command,
+        args: Array<String>
+    ) {
         if (instance.isReload) {
             commandSender.sendMessage(instance.reloadNotAvailableMessage)
             return
@@ -53,11 +57,13 @@ abstract class CallCommand<T : BootstrapLoader>(override val name: String) : ICa
         runFromOther(server, commandSender, commandLabel, cmd, args)
     }
 
-    protected open fun runFromOther(server: Server,
-                                    commandSender: CommandSender,
-                                    commandLabel: String,
-                                    cmd: Command,
-                                    args: Array<String>) {
+    protected open fun runFromOther(
+        server: Server,
+        commandSender: CommandSender,
+        commandLabel: String,
+        cmd: Command,
+        args: Array<String>
+    ) {
         throw CommandNotAvailableException(commandSender)
     }
 

@@ -30,11 +30,13 @@ interface ICallCommand<T : BootstrapLoader> {
      * @param cmd
      * @param args
      */
-    fun run(server: Server,
-            player: Player,
-            commandLabel: String,
-            cmd: Command,
-            args: Array<String>)
+    fun run(
+        server: Server,
+        player: Player,
+        commandLabel: String,
+        cmd: Command,
+        args: Array<String>
+    )
 
     /**
      * Other entities use this, like console, commandblocks...
@@ -44,9 +46,11 @@ interface ICallCommand<T : BootstrapLoader> {
      * @param cmd
      * @param args
      */
-    fun run(server: Server,
-            commandSender: CommandSender,
-            commandLabel: String,
-            cmd: Command,
-            args: Array<String>)
+    fun run(
+        server: Server,
+        commandSender: CommandSender,
+        commandLabel: String,
+        cmd: Command,
+        args: Array<String>
+    )
 }

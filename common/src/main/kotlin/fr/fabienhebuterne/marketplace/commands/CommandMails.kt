@@ -30,9 +30,19 @@ class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
                 return
             }
 
-            mailsService.getPaginated(pagination = Pagination(currentPlayer = Bukkit.getOfflinePlayer(args[1]).uniqueId, viewPlayer = player.uniqueId))
+            mailsService.getPaginated(
+                pagination = Pagination(
+                    currentPlayer = Bukkit.getOfflinePlayer(args[1]).uniqueId,
+                    viewPlayer = player.uniqueId
+                )
+            )
         } else {
-            mailsService.getPaginated(pagination = Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId))
+            mailsService.getPaginated(
+                pagination = Pagination(
+                    currentPlayer = player.uniqueId,
+                    viewPlayer = player.uniqueId
+                )
+            )
         }
 
         val initListingsInventory = mailsInventoryService.initInventory(mailsPaginated, player)

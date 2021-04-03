@@ -37,25 +37,27 @@ object MailsTable : UUIDTable("marketplace_mails") {
     val version = MailsTable.integer("version")
 }
 
-class MailsRepositoryImpl(private val instance: MarketPlace,
-                          private val marketPlaceDb: Database) : MailsRepository {
+class MailsRepositoryImpl(
+    private val instance: MarketPlace,
+    private val marketPlaceDb: Database
+) : MailsRepository {
     private val json = Json
 
     override fun fromRow(row: ResultRow): Mails {
         val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
 
         return Mails(
-                id = row[id].value,
-                playerUuid = UUID.fromString(row[playerUuid]),
-                playerPseudo = row[playerPseudo],
-                itemStack = itemStack,
-                quantity = row[quantity],
-                auditData = AuditData(
-                        createdAt = row[createdAt],
-                        updatedAt = row[updatedAt],
-                        expiredAt = row[expiredAt]
-                ),
-                version = instance.itemStackReflection.getVersion()
+            id = row[id].value,
+            playerUuid = UUID.fromString(row[playerUuid]),
+            playerPseudo = row[playerPseudo],
+            itemStack = itemStack,
+            quantity = row[quantity],
+            auditData = AuditData(
+                createdAt = row[createdAt],
+                updatedAt = row[updatedAt],
+                expiredAt = row[expiredAt]
+            ),
+            version = instance.itemStackReflection.getVersion()
         )
     }
 

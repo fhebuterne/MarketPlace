@@ -38,15 +38,15 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         }
 
         val logsPaginated = logsService.getPaginated(
-                from = 0,
-                to = 10,
-                pagination = Pagination(
-                        currentPage = currentPage,
-                        resultPerPage = 10,
-                        currentPlayer = player.uniqueId,
-                        viewPlayer = player.uniqueId,
-                        showAll = true
-                )
+            from = 0,
+            to = 10,
+            pagination = Pagination(
+                currentPage = currentPage,
+                resultPerPage = 10,
+                currentPlayer = player.uniqueId,
+                viewPlayer = player.uniqueId,
+                showAll = true
+            )
         )
         currentPage = logsPaginated.currentPage
 
@@ -59,7 +59,8 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
 
         if (currentPage > 1) {
             val previousPage = TextComponent(instance.tl.logs.previousPageExist)
-            previousPage.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.previousPage).create())
+            previousPage.hoverEvent =
+                HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.previousPage).create())
             previousPage.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs ${currentPage - 1}")
             message.addExtra(previousPage)
         } else {
@@ -67,10 +68,10 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         }
 
         val footerMiddle = instance.tl.logs.footer.split("%previousPage%")[1]
-                .replace("{{currentPage}}", logsPaginated.currentPage.toString())
-                .replace("{{maxPage}}", logsPaginated.maxPage().toString())
-                .replaceAfter("%nextPage%", "")
-                .replace("%nextPage%", "")
+            .replace("{{currentPage}}", logsPaginated.currentPage.toString())
+            .replace("{{maxPage}}", logsPaginated.maxPage().toString())
+            .replaceAfter("%nextPage%", "")
+            .replace("%nextPage%", "")
 
         TextComponent.fromLegacyText(footerMiddle).forEach {
             message.addExtra(it)
@@ -78,7 +79,8 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
 
         if (currentPage < logsPaginated.maxPage()) {
             val nextPage = TextComponent(instance.tl.logs.nextPageExist)
-            nextPage.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.nextPage).create())
+            nextPage.hoverEvent =
+                HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.nextPage).create())
             nextPage.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs ${currentPage + 1}")
             message.addExtra(nextPage)
         } else {
@@ -91,16 +93,20 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
     }
 
     private fun formatLogMessage(player: Player, logs: Logs) {
-        val prefix = TextComponent(instance.tl.logs.prefix.replace("{{logType}}", instance.tl.logs.type[logs.logType].orEmpty()))
+        val prefix =
+            TextComponent(instance.tl.logs.prefix.replace("{{logType}}", instance.tl.logs.type[logs.logType].orEmpty()))
         val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
         val prefixHover = instance.tl.logs.prefixHover.replace("{{fromLocation}}", logs.fromLocation.toString())
-                .replace("{{toLocation}}", logs.toLocation.toString())
-                .replace("{{createdAt}}", simpleDateFormat.format(Date(logs.auditData.createdAt)))
+            .replace("{{toLocation}}", logs.toLocation.toString())
+            .replace("{{createdAt}}", simpleDateFormat.format(Date(logs.auditData.createdAt)))
 
         prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(prefixHover).create())
 
         val msg = TextComponent("")
-        msg.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, ComponentBuilder(itemStackReflection.serializeItemStack(logs.itemStack)).create())
+        msg.hoverEvent = HoverEvent(
+            HoverEvent.Action.SHOW_ITEM,
+            ComponentBuilder(itemStackReflection.serializeItemStack(logs.itemStack)).create()
+        )
         TextComponent.fromLegacyText(getMessageLogType(logs)).forEach {
             msg.addExtra(it)
         }
@@ -112,19 +118,19 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
     private fun getMessageLogType(logs: Logs): String {
         return if (logs.adminUuid != null) {
             instance.tl.logs.adminMessage[logs.logType].orEmpty()
-                    .replace("{{adminPseudo}}", logs.adminPseudo.orEmpty())
-                    .replace("{{playerPseudo}}", logs.playerPseudo)
-                    .replace("{{quantity}}", logs.quantity.toString())
-                    .replace("{{itemStack}}", logs.itemStack.type?.name.orEmpty())
-                    .replace("{{price}}", logs.price.toString())
-                    .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
+                .replace("{{adminPseudo}}", logs.adminPseudo.orEmpty())
+                .replace("{{playerPseudo}}", logs.playerPseudo)
+                .replace("{{quantity}}", logs.quantity.toString())
+                .replace("{{itemStack}}", logs.itemStack.type?.name.orEmpty())
+                .replace("{{price}}", logs.price.toString())
+                .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
         } else {
             instance.tl.logs.message[logs.logType].orEmpty()
-                    .replace("{{playerPseudo}}", logs.playerPseudo)
-                    .replace("{{quantity}}", logs.quantity.toString())
-                    .replace("{{itemStack}}", logs.itemStack.type?.name.orEmpty())
-                    .replace("{{price}}", logs.price.toString())
-                    .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
+                .replace("{{playerPseudo}}", logs.playerPseudo)
+                .replace("{{quantity}}", logs.quantity.toString())
+                .replace("{{itemStack}}", logs.itemStack.type?.name.orEmpty())
+                .replace("{{price}}", logs.price.toString())
+                .replace("{{sellerPseudo}}", logs.sellerPseudo.orEmpty())
         }
     }
 
