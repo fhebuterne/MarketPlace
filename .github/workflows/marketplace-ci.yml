@@ -31,3 +31,8 @@ jobs:
         run: ./gradlew clean build -PbuildVersion=1.15.2
       - name: Build with Gradle - Compile plugin with 1.16.5
         run: ./gradlew clean build -PbuildVersion=1.16.5
+      - name: Analyze with SonarCloud
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

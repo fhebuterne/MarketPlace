@@ -3,10 +3,16 @@ plugins {
     id("com.github.johnrengelman.shadow") version Versions.shadowJar
     kotlin("jvm") version Versions.kotlinJvm
     kotlin("plugin.serialization") version Versions.kotlinSerialization
+    id("jacoco")
 }
 
 allprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "jacoco")
+
+    jacoco {
+        toolVersion = "0.8.6"
+    }
 
     group = "fr.fabienhebuterne"
     version = "1.0.0"
@@ -31,6 +37,16 @@ allprojects {
 
     tasks.test {
         useJUnitPlatform()
+        finalizedBy(tasks.jacocoTestReport)
+    }
+
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+        reports {
+            xml.isEnabled = true
+            csv.isEnabled = true
+            html.destination = file("${buildDir}/jacocoHtml")
+        }
     }
 
     tasks.compileKotlin {
