@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.services.pagination
 
 import fr.fabienhebuterne.marketplace.MarketPlace
+import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
@@ -38,9 +39,12 @@ class ListingsService(
         )
 
         val listingUpdated =
-            marketPlace.tl.listingUpdated.replace("{{quantityAdded}}", currentItemStack.amount.toString())
-                .replace("{{item}}", findExistingListings.itemStack.type.toString())
-                .replace("{{quantityTotal}}", updatedListings.quantity.toString())
+            marketPlace.tl.listingUpdated.replace(
+                ConfigPlaceholder.ADDED_QUANTITY.placeholder,
+                currentItemStack.amount.toString()
+            )
+                .replace(ConfigPlaceholder.ITEM_STACK.placeholder, findExistingListings.itemStack.type.toString())
+                .replace(ConfigPlaceholder.TOTAL_QUANTITY.placeholder, updatedListings.quantity.toString())
 
         player.sendMessage(listingUpdated)
         player.inventory.setItemInMainHand(ItemStack(Material.AIR))
@@ -59,9 +63,10 @@ class ListingsService(
             toLocation = Location.LISTING_INVENTORY
         )
 
-        val listingsCreatedMessage = marketPlace.tl.listingCreated.replace("{{quantity}}", listings.quantity.toString())
-            .replace("{{item}}", listings.itemStack.type.toString())
-            .replace("{{unitPrice}}", convertDoubleToReadeableString(listings.price))
+        val listingsCreatedMessage =
+            marketPlace.tl.listingCreated.replace(ConfigPlaceholder.QUANTITY.placeholder, listings.quantity.toString())
+                .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listings.itemStack.type.toString())
+                .replace(ConfigPlaceholder.UNIT_PRICE.placeholder, convertDoubleToReadeableString(listings.price))
 
         player.sendMessage(listingsCreatedMessage)
         player.inventory.setItemInMainHand(ItemStack(Material.AIR))

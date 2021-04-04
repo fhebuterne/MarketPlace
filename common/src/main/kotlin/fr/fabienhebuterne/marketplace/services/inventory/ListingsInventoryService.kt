@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
 import fr.fabienhebuterne.marketplace.domain.InventoryType.LISTINGS
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -54,18 +55,18 @@ class ListingsInventoryService(
 
         loreItem.addAll(instance.tl.listingItemBottomLoreSeller.toMutableList())
         loreItem.replaceAll {
-            it.replace("{{price}}", paginated.price.toString())
-                .replace("{{quantity}}", paginated.quantity.toString())
+            it.replace(ConfigPlaceholder.PRICE.placeholder, paginated.price.toString())
+                .replace(ConfigPlaceholder.QUANTITY.placeholder, paginated.quantity.toString())
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { interval ->
-                loreItem.replaceAll { it.replace("{{expiration}}", interval) }
+                loreItem.replaceAll { it.replace(ConfigPlaceholder.EXPIRATION.placeholder, interval) }
             }
-        } ?: loreItem.removeIf { it.contains("%expiration%") }
+        } ?: loreItem.removeIf { it.contains(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder) }
 
         loreItem.replaceAll {
-            it.replace("%expiration%", "")
+            it.replace(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder, "")
         }
 
         itemMeta?.lore = loreItem
@@ -83,29 +84,29 @@ class ListingsInventoryService(
 
         loreItem.addAll(instance.tl.listingItemBottomLorePlayer.toMutableList())
         loreItem.replaceAll {
-            it.replace("{{sellerPseudo}}", paginated.sellerPseudo)
-                .replace("{{price}}", convertDoubleToReadeableString(paginated.price))
-                .replace("{{quantity}}", paginated.quantity.toString())
+            it.replace(ConfigPlaceholder.SELLER_PSEUDO.placeholder, paginated.sellerPseudo)
+                .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadeableString(paginated.price))
+                .replace(ConfigPlaceholder.QUANTITY.placeholder, paginated.quantity.toString())
         }
 
         if (paginated.quantity < 2) {
-            loreItem.removeIf { it.contains("%middle%") }
+            loreItem.removeIf { it.contains(ConfigPlaceholder.MIDDLE_BOOLEAN.placeholder) }
         }
 
         if (paginated.quantity < 64) {
-            loreItem.removeIf { it.contains("%right%") }
+            loreItem.removeIf { it.contains(ConfigPlaceholder.RIGHT_BOOLEAN.placeholder) }
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { listings ->
-                loreItem.replaceAll { it.replace("{{expiration}}", listings) }
+                loreItem.replaceAll { it.replace(ConfigPlaceholder.EXPIRATION.placeholder, listings) }
             }
-        } ?: loreItem.removeIf { it.contains("%expiration%") }
+        } ?: loreItem.removeIf { it.contains(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder) }
 
         loreItem.replaceAll {
-            it.replace("%middle%", "")
-                .replace("%right%", "")
-                .replace("%expiration%", "")
+            it.replace(ConfigPlaceholder.MIDDLE_BOOLEAN.placeholder, "")
+                .replace(ConfigPlaceholder.RIGHT_BOOLEAN.placeholder, "")
+                .replace(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder, "")
         }
 
         if (player.hasPermission("marketplace.listings.other.remove")) {

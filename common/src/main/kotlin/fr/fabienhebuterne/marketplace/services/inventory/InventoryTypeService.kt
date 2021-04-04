@@ -6,6 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
 import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
@@ -100,9 +101,9 @@ abstract class InventoryTypeService<T : Paginated>(
 
         InventoryLoreEnum.values().forEach {
             val replace: (t: String) -> String = { t ->
-                t.replace("{{currentPage}}", pagination.currentPage.toString())
-                    .replace("{{maxPage}}", pagination.maxPage().toString())
-                    .replace("{{total}}", pagination.total.toString())
+                t.replace(ConfigPlaceholder.CURRENT_PAGE.placeholder, pagination.currentPage.toString())
+                    .replace(ConfigPlaceholder.MAX_PAGE.placeholder, pagination.maxPage().toString())
+                    .replace(ConfigPlaceholder.TOTAL.placeholder, pagination.total.toString())
             }
 
             if (it == InventoryLoreEnum.FILTER) {

@@ -72,16 +72,16 @@
     }
   },
   "clickMiddleListingInventory": [
-    "§8[§6MarketPlace§8] §aMerci d'entrer la quantité (max disponible: {{maxQuantity}}) que vous souhaitez avoir.",
+    "§8[§6MarketPlace§8] §aMerci d'entrer la quantité (max disponible: {{quantity}}) que vous souhaitez avoir.",
     "§8[§6MarketPlace§8] §aItem : §6{{itemStack}} §aPrix unitaire : §6{{price}}$",
     "§8[§6MarketPlace§8] §aSi vous voulez annuler, écrivez '§6§lcancel§a' dans le chat."
   ],
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
   "commandReloadStart": "§8[§6MarketPlace§8] §aRedémarrage du plugin en cours...",
   "commandReloadFinish": "§8[§6MarketPlace§8] §aRedémarrage du plugin terminé...",
-  "listingCreated": "§8[§6MarketPlace§8] §aVous venez de mettre en vente {{quantity}}x{{item}} pour {{unitPrice}}$.",
-  "listingUpdated": "§8[§6MarketPlace§8] §aVous venez d'ajouter {{quantityAdded}} à l'item {{item}}, vous avez désormais au total {{quantityTotal}} items en vente.",
-  "itemBuy": "§8[§6MarketPlace§8] §aVous venez d'acheter {{quantity}}x{{item}} pour {{price}}$.",
+  "listingCreated": "§8[§6MarketPlace§8] §aVous venez de mettre en vente {{quantity}}x{{itemStack}} pour {{unitPrice}}$.",
+  "listingUpdated": "§8[§6MarketPlace§8] §aVous venez d'ajouter {{addedQuantity}} à l'item {{itemStack}}, vous avez désormais au total {{totalQuantity}} items en vente.",
+  "itemBuy": "§8[§6MarketPlace§8] §aVous venez d'acheter {{quantity}}x{{itemStack}} pour {{price}}$.",
   "cancelBuying": "§8[§6MarketPlace§8] §aVous venez d'annuler votre achat.",
   "cancelSelling": "§8[§6MarketPlace§8] §aVous venez d'annuler votre vente.",
   "searchWaiting": "§8[§6MarketPlace§8] §aVeuillez saisir un type d'item (ex: DIRT) ou un mot clef associé au nom / lore de l'item...",

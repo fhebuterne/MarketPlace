@@ -72,16 +72,16 @@
     }
   },
   "clickMiddleListingInventory": [
-    "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{maxQuantity}}) you want to get.",
+    "§8[§6MarketPlace§8] §aPlease enter quantity (max available is: {{quantity}}) you want to get.",
     "§8[§6MarketPlace§8] §aItem : §6{{itemStack}} §aUnit price : §6{{price}}$",
     "§8[§6MarketPlace§8] §8[§6MarketPlace§8] §aIf you want to cancel, write '§6§lcancel§a' in chat."
   ],
   "commandAddUsage": "§8[§6MarketPlace§8] §cUsage: /marketplace add <money>",
   "commandReloadStart": "§8[§6MarketPlace§8] §aPlugin reload in progress...",
   "commandReloadFinish": "§8[§6MarketPlace§8] §aPlugin reload ended...",
-  "listingCreated": "§8[§6MarketPlace§8] §aYou just put on sale {{quantity}}x{{item}} for {{unitPrice}}$.",
-  "listingUpdated": "§8[§6MarketPlace§8] §aYou just added {{quantityAdded}} to item {{item}}, you now have a total {{quantityTotal}} items in sale.",
-  "itemBuy": "§8[§6MarketPlace§8] §aYou just bought {{quantity}}x{{item}} for {{price}}$.",
+  "listingCreated": "§8[§6MarketPlace§8] §aYou just put on sale {{quantity}}x{{itemStack}} for {{unitPrice}}$.",
+  "listingUpdated": "§8[§6MarketPlace§8] §aYou just added {{addedQuantity}} to item {{itemStack}}, you now have a total {{totalQuantity}} items in sale.",
+  "itemBuy": "§8[§6MarketPlace§8] §aYou just bought {{quantity}}x{{itemStack}} for {{price}}$.",
   "cancelBuying": "§8[§6MarketPlace§8] §aYou just canceled your purchase.",
   "cancelSelling": "§8[§6MarketPlace§8] §aYou just canceled your sale.",
   "searchWaiting": "§8[§6MarketPlace§8] §aPlease enter a type of item (ex: DIRT) or a keyword associated with the name / lore of the item...",

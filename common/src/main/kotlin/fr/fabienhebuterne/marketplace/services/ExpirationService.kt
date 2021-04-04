@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.MarketPlace
+import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -21,11 +22,12 @@ class ExpirationService(
             findAllListings.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     marketPlace.configService.getSerialization().expiration.listingsToMailsNotifCommand.forEach { command ->
-                        val commandReplace = command.replace("{{playerPseudo}}", it.sellerPseudo)
-                            .replace("{{playerUUID}}", it.sellerUuid.toString())
-                            .replace("{{quantity}}", it.quantity.toString())
-                            .replace("{{itemStack}}", it.itemStack.type.toString())
-                            .replace("{{price}}", it.price.toString())
+                        val commandReplace =
+                            command.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, it.sellerPseudo)
+                                .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, it.sellerUuid.toString())
+                                .replace(ConfigPlaceholder.QUANTITY.placeholder, it.quantity.toString())
+                                .replace(ConfigPlaceholder.ITEM_STACK.placeholder, it.itemStack.type.toString())
+                                .replace(ConfigPlaceholder.PRICE.placeholder, it.price.toString())
 
                         if (Bukkit.isPrimaryThread()) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
@@ -60,10 +62,13 @@ class ExpirationService(
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     marketPlace.configService.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
                         val commandReplace =
-                            command.replace("{{playerPseudo}}", Bukkit.getOfflinePlayer(it.playerUuid).name ?: "")
-                                .replace("{{playerUUID}}", it.playerUuid.toString())
-                                .replace("{{quantity}}", it.quantity.toString())
-                                .replace("{{itemStack}}", it.itemStack.type.toString())
+                            command.replace(
+                                ConfigPlaceholder.PLAYER_PSEUDO.placeholder,
+                                Bukkit.getOfflinePlayer(it.playerUuid).name ?: ""
+                            )
+                                .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, it.playerUuid.toString())
+                                .replace(ConfigPlaceholder.QUANTITY.placeholder, it.quantity.toString())
+                                .replace(ConfigPlaceholder.ITEM_STACK.placeholder, it.itemStack.type.toString())
 
                         if (Bukkit.isPrimaryThread()) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)

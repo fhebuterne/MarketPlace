@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
 import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
@@ -49,17 +50,17 @@ class MailsInventoryService(private val instance: MarketPlace, mailsService: Mai
         }
 
         loreItem?.replaceAll {
-            it.replace("{{quantity}}", paginated.quantity.toString())
+            it.replace(ConfigPlaceholder.QUANTITY.placeholder, paginated.quantity.toString())
         }
 
         paginated.auditData.expiredAt?.let { expiredAt ->
             formatInterval(expiredAt)?.let { interval ->
-                loreItem?.replaceAll { it.replace("{{expiration}}", interval) }
+                loreItem?.replaceAll { it.replace(ConfigPlaceholder.EXPIRATION.placeholder, interval) }
             }
-        } ?: loreItem?.removeIf { it.contains("%expiration%") }
+        } ?: loreItem?.removeIf { it.contains(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder) }
 
         loreItem?.replaceAll {
-            it.replace("%expiration%", "")
+            it.replace(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder, "")
         }
 
         itemMeta?.lore = loreItem

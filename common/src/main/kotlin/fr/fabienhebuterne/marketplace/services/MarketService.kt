@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.services
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
+import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
@@ -117,11 +118,12 @@ class MarketService(
 
 
         marketPlace.configService.getSerialization().sellerItemNotifCommand.forEach { command ->
-            val commandReplace = command.replace("{{playerPseudo}}", listingsDatabase.sellerPseudo)
-                .replace("{{playerUUID}}", listingsDatabase.sellerUuid.toString())
-                .replace("{{quantity}}", quantity.toString())
-                .replace("{{itemStack}}", listingsDatabase.itemStack.type.toString())
-                .replace("{{totalPrice}}", needingMoney.toString())
+            val commandReplace =
+                command.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, listingsDatabase.sellerPseudo)
+                    .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, listingsDatabase.sellerUuid.toString())
+                    .replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
+                    .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
+                    .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
 
             if (Bukkit.isPrimaryThread()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
@@ -132,9 +134,9 @@ class MarketService(
             }
         }
 
-        val itemBuyMessage = marketPlace.tl.itemBuy.replace("{{quantity}}", quantity.toString())
-            .replace("{{item}}", listingsDatabase.itemStack.type.toString())
-            .replace("{{price}}", needingMoney.toString())
+        val itemBuyMessage = marketPlace.tl.itemBuy.replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
+            .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
+            .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
 
         player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
@@ -268,9 +270,9 @@ class MarketService(
             playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
             marketPlace.tl.clickMiddleListingInventory
                 .map {
-                    it.replace("{{maxQuantity}}", listings.quantity.toString())
-                        .replace("{{price}}", convertDoubleToReadeableString(listings.price))
-                        .replace("{{itemStack}}", listings.itemStack.type.toString())
+                    it.replace(ConfigPlaceholder.QUANTITY.placeholder, listings.quantity.toString())
+                        .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadeableString(listings.price))
+                        .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listings.itemStack.type.toString())
                 }
                 .forEach {
                     player.sendMessage(it)
