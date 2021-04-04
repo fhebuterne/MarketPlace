@@ -1,7 +1,8 @@
 object Versions {
-    const val kotlinJvm = "1.4.31"
-    const val kotlinSerialization = "1.4.31"
-    const val kotlinReflect = "1.4.31"
+    private const val kotlin = "1.4.31"
+    const val kotlinJvm = kotlin
+    const val kotlinSerialization = kotlin
+    const val kotlinReflect = kotlin
     const val kotlinxCoroutines = "1.4.3"
     const val kotlinx = "1.0-M1-1.4.0-rc"
     const val kodein = "7.3.1"

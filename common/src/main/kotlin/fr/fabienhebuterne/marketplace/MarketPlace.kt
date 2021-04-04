@@ -183,9 +183,13 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         return null
     }
 
-    override fun onDisable() {}
+    override fun onDisable() {
+        // No method on disable
+    }
 
-    override fun onLoad() {}
+    override fun onLoad() {
+        // No method on load
+    }
 
     override fun onCommand(
         sender: CommandSender,
