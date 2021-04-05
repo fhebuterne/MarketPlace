@@ -17,6 +17,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.util.*
@@ -43,7 +44,9 @@ class MarketServiceTest : BaseTest() {
         logsService
     )
 
-    private fun initPlayerView(): MutableMap<UUID, Pagination<Listings>> {
+    private fun initPlayerView(quantity: Int = 31): MutableMap<UUID, Pagination<Listings>> {
+        val itemStack: ItemStack = mockk()
+
         val listings = mutableMapOf(
             Pair(
                 fabienUuid,
@@ -51,7 +54,8 @@ class MarketServiceTest : BaseTest() {
                     results = listOf(
                         Listings(
                             auditData = AuditData(createdAt = System.currentTimeMillis()),
-                            itemStack = ItemStack(Material.DIRT),
+                            itemStack = itemStack,
+                            quantity = quantity,
                             price = 10.0,
                             sellerPseudo = "Ergail",
                             sellerUuid = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f"),
@@ -70,11 +74,20 @@ class MarketServiceTest : BaseTest() {
         return listings
     }
 
+    @BeforeAll
+    fun initItemStack() {
+        // Mockk only for itemStack
+        mockkStatic(Bukkit::class)
+        val itemFactory: ItemFactory = mockk()
+        every { Bukkit.getItemFactory() } returns itemFactory
+        every { itemFactory.equals(null, null) } returns false
+        every { itemFactory.getItemMeta(Material.DIRT) } returns null
+    }
+
     @Test
     fun `should player can't buy item if quantity is not sufficient`() {
         // GIVEN
-        initPlayerView()
-
+        initPlayerView(1)
         val playerMockTest: Player = mockk()
         every { playerMockTest.uniqueId } returns UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
         every { playerMockTest.sendMessage(translation.errors.quantityNotAvailable) } just Runs
@@ -96,29 +109,48 @@ class MarketServiceTest : BaseTest() {
     fun `should player can't buy item if item selected no longer exist`() {
         // GIVEN
         val playerView = initPlayerView()
-
         val listings: Listings = playerView[fabienUuid]?.results?.get(0)
             ?: throw IllegalAccessException("Can't found listings")
-
-        // Mockk only for itemStack
-        mockkStatic(Bukkit::class)
-        val itemFactory: ItemFactory = mockk()
-        every { Bukkit.getItemFactory() } returns itemFactory
-        every { itemFactory.equals(null, null) } returns false
-        every { itemFactory.getItemMeta(Material.DIRT) } returns null
-
         val playerMockTest: Player = mockk()
         every { playerMockTest.uniqueId } returns UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
         every { playerMockTest.sendMessage(translation.errors.itemNotExist) } just Runs
-        every { listingsRepository.find(listings.sellerUuid, any(), listings.price) } returns null
+        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns null
 
         // WHEN
         marketService.buyItem(playerMockTest, 0, 1, false)
 
         // THEN
         verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, any(), listings.price)
+            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
             playerMockTest.sendMessage(translation.errors.itemNotExist)
+        }
+    }
+
+
+    @Test
+    fun `should player can't buy item if quantity in DB is not sufficient`() {
+        // GIVEN
+        val playerView = initPlayerView()
+        val listings: Listings = playerView[fabienUuid]?.results?.get(0)
+            ?: throw IllegalAccessException("Can't found listings")
+        val playerMockTest: Player = mockk()
+        every { playerMockTest.uniqueId } returns UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
+        every { playerMockTest.sendMessage(translation.errors.quantityNotAvailable) } just Runs
+        every {
+            listingsRepository.find(
+                listings.sellerUuid,
+                listings.itemStack,
+                listings.price
+            )
+        } returns listings.copy(quantity = 30)
+
+        // WHEN
+        marketService.buyItem(playerMockTest, 0, 31, false)
+
+        // THEN
+        verify(exactly = 1) {
+            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            playerMockTest.sendMessage(translation.errors.quantityNotAvailable)
         }
     }
 }
