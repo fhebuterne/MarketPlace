@@ -1,13 +1,11 @@
 package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.MarketPlace
-import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
-import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
@@ -82,29 +80,7 @@ class MarketService(
             listingsDatabase.id?.let { listingsRepository.delete(it) }
         }
 
-
-        val mailsDatabase = mailsRepository.find(player.uniqueId, listingsDatabase.itemStack)
-
-        if (mailsDatabase == null) {
-            mailsRepository.create(
-                Mails(
-                    playerUuid = player.uniqueId,
-                    playerPseudo = player.name,
-                    itemStack = listings.itemStack,
-                    quantity = quantity,
-                    auditData = AuditData(
-                        createdAt = System.currentTimeMillis(),
-                        updatedAt = System.currentTimeMillis(),
-                        expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
-                    ),
-                    version = marketPlace.itemStackReflection.getVersion()
-                )
-            )
-        } else {
-            mailsRepository.update(
-                mailsDatabase.copy(quantity = mailsDatabase.quantity + quantity)
-            )
-        }
+        mailsService.saveListingsToMail(listingsDatabase, player, quantity)
 
         logsService.createFrom(
             player = player,
@@ -116,8 +92,23 @@ class MarketService(
             toLocation = Location.MAIL_INVENTORY
         )
 
+        sellerNotificationCommandsExecute(listingsDatabase, quantity, needingMoney)
 
-        marketPlace.configService.getSerialization().sellerItemNotifCommand.forEach { command ->
+        val itemBuyMessage = marketPlace.tl.itemBuy.replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
+            .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
+            .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
+
+        player.sendMessage(itemBuyMessage)
+        val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
+        player.openInventory(listingsInventoryService.initInventory(refreshInventory, player))
+    }
+
+    private fun sellerNotificationCommandsExecute(
+        listingsDatabase: Listings,
+        quantity: Int,
+        needingMoney: Double
+    ) {
+        marketPlace.conf.sellerItemNotifCommand.forEach { command ->
             val commandReplace =
                 command.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, listingsDatabase.sellerPseudo)
                     .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, listingsDatabase.sellerUuid.toString())
@@ -133,14 +124,6 @@ class MarketService(
                 }, 20L)
             }
         }
-
-        val itemBuyMessage = marketPlace.tl.itemBuy.replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
-            .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
-            .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
-
-        player.sendMessage(itemBuyMessage)
-        val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
-        player.openInventory(listingsInventoryService.initInventory(refreshInventory, player))
     }
 
     private fun giveMoneySeller(player: Player, money: Double) {

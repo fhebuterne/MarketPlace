@@ -4,6 +4,8 @@ import fr.fabienhebuterne.marketplace.BaseTest
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
+import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
+import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -18,8 +20,12 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import strikt.api.expectCatching
+import strikt.assertions.isA
+import strikt.assertions.isFailure
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,6 +38,7 @@ class MarketServiceTest : BaseTest() {
     private val mailsRepository: MailsRepository = mockk()
     private val mailsInventoryService: MailsInventoryService = mockk()
     private val logsService: LogsService = mockk()
+    private var playerMock: Player = mockk()
 
     private val marketService: MarketService = MarketService(
         marketPlace,
@@ -84,16 +91,21 @@ class MarketServiceTest : BaseTest() {
         every { itemFactory.getItemMeta(Material.DIRT) } returns null
     }
 
+    @BeforeEach
+    fun initPlayerMock() {
+        // Reset this mock on each test
+        playerMock = mockk()
+        every { playerMock.uniqueId } returns fabienUuid
+    }
+
     @Test
-    fun `should player can't buy item if quantity is not sufficient`() {
+    fun `should player cannot buy item if quantity is not sufficient`() {
         // GIVEN
         initPlayerView(1)
-        val playerMockTest: Player = mockk()
-        every { playerMockTest.uniqueId } returns UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
-        every { playerMockTest.sendMessage(translation.errors.quantityNotAvailable) } just Runs
+        every { playerMock.sendMessage(translation.errors.quantityNotAvailable) } just Runs
 
         // WHEN
-        marketService.buyItem(playerMockTest, 0, 5, true)
+        marketService.buyItem(playerMock, 0, 5, true)
 
         // THEN
         verify(exactly = 0) {
@@ -101,41 +113,37 @@ class MarketServiceTest : BaseTest() {
         }
 
         verify(exactly = 1) {
-            playerMockTest.sendMessage(translation.errors.quantityNotAvailable)
+            playerMock.sendMessage(translation.errors.quantityNotAvailable)
         }
     }
 
     @Test
-    fun `should player can't buy item if item selected no longer exist`() {
+    fun `should player cannot buy item if item selected no longer exist`() {
         // GIVEN
         val playerView = initPlayerView()
         val listings: Listings = playerView[fabienUuid]?.results?.get(0)
             ?: throw IllegalAccessException("Can't found listings")
-        val playerMockTest: Player = mockk()
-        every { playerMockTest.uniqueId } returns UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
-        every { playerMockTest.sendMessage(translation.errors.itemNotExist) } just Runs
+        every { playerMock.sendMessage(translation.errors.itemNotExist) } just Runs
         every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns null
 
         // WHEN
-        marketService.buyItem(playerMockTest, 0, 1, false)
+        marketService.buyItem(playerMock, 0, 1, false)
 
         // THEN
         verify(exactly = 1) {
             listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
-            playerMockTest.sendMessage(translation.errors.itemNotExist)
+            playerMock.sendMessage(translation.errors.itemNotExist)
         }
     }
 
 
     @Test
-    fun `should player can't buy item if quantity in DB is not sufficient`() {
+    fun `should player cannot buy item if quantity in DB is not sufficient`() {
         // GIVEN
         val playerView = initPlayerView()
         val listings: Listings = playerView[fabienUuid]?.results?.get(0)
             ?: throw IllegalAccessException("Can't found listings")
-        val playerMockTest: Player = mockk()
-        every { playerMockTest.uniqueId } returns UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
-        every { playerMockTest.sendMessage(translation.errors.quantityNotAvailable) } just Runs
+        every { playerMock.sendMessage(translation.errors.quantityNotAvailable) } just Runs
         every {
             listingsRepository.find(
                 listings.sellerUuid,
@@ -145,12 +153,48 @@ class MarketServiceTest : BaseTest() {
         } returns listings.copy(quantity = 30)
 
         // WHEN
-        marketService.buyItem(playerMockTest, 0, 31, false)
+        marketService.buyItem(playerMock, 0, 31, false)
 
         // THEN
         verify(exactly = 1) {
             listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
-            playerMockTest.sendMessage(translation.errors.quantityNotAvailable)
+            playerMock.sendMessage(translation.errors.quantityNotAvailable)
+        }
+    }
+
+
+    @Test
+    fun `should player cannot buy item if his money is not sufficient`() {
+        // GIVEN
+        val playerView = initPlayerView()
+        val listings: Listings = playerView[fabienUuid]?.results?.get(0)
+            ?: throw IllegalAccessException("Can't found listings")
+        val quantity = 30
+        every {
+            listingsRepository.find(
+                listings.sellerUuid,
+                listings.itemStack,
+                listings.price
+            )
+        } returns listings.copy(quantity = quantity)
+        every {
+            marketPlace.getEconomy().has(
+                Bukkit.getOfflinePlayer(fabienUuid),
+                listings.price * quantity
+            )
+        } returns false
+        loadNotEnoughMoneyExceptionTranslation(translation.errors.notEnoughMoney)
+        every { playerMock.sendMessage(translation.errors.notEnoughMoney) } just Runs
+
+        // WHEN
+        expectCatching {
+            marketService.buyItem(playerMock, 0, 30, false)
+        }.isFailure().isA<NotEnoughMoneyException>()
+
+        // THEN
+        verify(exactly = 1) {
+            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            playerMock.sendMessage(translation.errors.notEnoughMoney)
         }
     }
 }
