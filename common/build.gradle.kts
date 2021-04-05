@@ -7,17 +7,19 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+sourceSets["main"].compileClasspath += files("${project.rootDir}/buildSrc/build/")
+
 configurations["testImplementation"].extendsFrom(configurations["compileOnly"])
 
 val buildVersion: String? by project
 
 dependencies {
     // Tech Stack dependency
-    compileOnly("org.jetbrains.exposed:exposed-core:${Versions.exposed}")
-    compileOnly("org.jetbrains.exposed:exposed-dao:${Versions.exposed}")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:${Versions.exposed}")
+    compileOnly("${Artefacts.exposedGroup}:exposed-core:${Versions.exposed}")
+    compileOnly("${Artefacts.exposedGroup}:exposed-dao:${Versions.exposed}")
+    compileOnly("${Artefacts.exposedGroup}:exposed-jdbc:${Versions.exposed}")
     compileOnly("mysql:mysql-connector-java:${Versions.mysqlDriver}")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinx}")
+    compileOnly("${Artefacts.kotlinxGroup}:kotlinx-serialization-runtime:${Versions.kotlinx}")
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.vault}")
     implementation("org.kodein.di:kodein-di-jvm:${Versions.kodein}")
     implementation("me.lucko:jar-relocator:${Versions.jarRelocator}")
@@ -45,6 +47,8 @@ dependencies {
     implementation(project(":nms:v1_14_R1"))
     implementation(project(":nms:v1_15_R1"))
     implementation(project(":nms:v1_16_R3"))
+    // Needed to get Versions object in Dependency class
+    compileOnly(fileTree("${project.rootDir}/buildSrc/build/"))
 }
 
 tasks.shadowJar {
@@ -53,13 +57,13 @@ tasks.shadowJar {
     archiveFileName.set("marketplace.jarinjar")
 
     dependencies {
-        exclude(dependency("org.jetbrains.exposed:*"))
-        exclude(dependency("org.jetbrains.kotlinx:*"))
+        exclude(dependency("${Artefacts.exposedGroup}:*"))
+        exclude(dependency("${Artefacts.kotlinxGroup}:*"))
         exclude(dependency("com.mysql:*"))
     }
 
     relocate("com.mysql", "fr.fabienhebuterne.marketplace.libs.mysql")
-    relocate("org.jetbrains.kotlinx", "fr.fabienhebuterne.marketplace.libs.kotlinx")
+    relocate(Artefacts.kotlinxGroup, "fr.fabienhebuterne.marketplace.libs.kotlinx")
 }
 
 tasks.build {

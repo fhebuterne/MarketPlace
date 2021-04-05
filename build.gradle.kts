@@ -28,7 +28,7 @@ allprojects {
     defaultDependencies()
 
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinReflect}")
+        implementation("${Artefacts.kotlinGroup}:kotlin-reflect:${Versions.kotlinReflect}")
         testImplementation("io.mockk:mockk:${Versions.mockk}")
         testImplementation("io.strikt:strikt-core:${Versions.strikt}")
         testImplementation("org.junit.jupiter:junit-jupiter:${Versions.junit}")

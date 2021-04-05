@@ -1,23 +1,24 @@
 package fr.fabienhebuterne.marketplace.utils
 
+private val EXPOSED_URL = BaseURL.BINTRAY.url + "kotlin/exposed/"
+
 // TODO : Add md5 check
 enum class DependencyEnum(val group: String, val nameDependency: String, val version: String, val baseUrl: String) {
-    SLF4J_API("org.slf4j", "slf4j-api", "1.7.30", BaseURL.MAVEN.url),
-    KOTLIN_STDLIB("org.jetbrains.kotlin", "kotlin-stdlib", "1.4.31", BaseURL.MAVEN.url),
-    KOTLIN_STDLIB_JDK8("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", "1.4.31", BaseURL.MAVEN.url),
-    KOTLIN_REFLECT("org.jetbrains.kotlin", "kotlin-reflect", "1.4.31", BaseURL.MAVEN.url),
-    MYSQL_CONNECTOR_JAVA("mysql", "mysql-connector-java", "8.0.23", BaseURL.MAVEN.url),
-    EXPOSED_JDBC("org.jetbrains.exposed", "exposed-jdbc", "0.29.1", BaseURL.BINTRAY.url + "kotlin/exposed/"),
-    EXPOSED_DAO("org.jetbrains.exposed", "exposed-dao", "0.29.1", BaseURL.BINTRAY.url + "kotlin/exposed/"),
-    EXPOSED_CORE("org.jetbrains.exposed", "exposed-core", "0.29.1", BaseURL.BINTRAY.url + "kotlin/exposed/"),
+    KOTLIN_STDLIB(Artefacts.kotlinGroup, "kotlin-stdlib", Versions.kotlinJvm, BaseURL.MAVEN.url),
+    KOTLIN_STDLIB_JDK8(Artefacts.kotlinGroup, "kotlin-stdlib-jdk8", Versions.kotlinJvm, BaseURL.MAVEN.url),
+    KOTLIN_REFLECT(Artefacts.kotlinGroup, "kotlin-reflect", Versions.kotlinReflect, BaseURL.MAVEN.url),
+    MYSQL_CONNECTOR_JAVA("mysql", "mysql-connector-java", Versions.mysqlDriver, BaseURL.MAVEN.url),
+    EXPOSED_JDBC(Artefacts.exposedGroup, "exposed-jdbc", Versions.exposed, EXPOSED_URL),
+    EXPOSED_DAO(Artefacts.exposedGroup, "exposed-dao", Versions.exposed, EXPOSED_URL),
+    EXPOSED_CORE(Artefacts.exposedGroup, "exposed-core", Versions.exposed, EXPOSED_URL),
     KOTLINX_SERIALIZATION_RUNTIME(
         "org{}jetbrains{}kotlinx",
         "kotlinx-serialization-runtime",
-        "1.0-M1-1.4.0-rc",
+        Versions.kotlinSerialization,
         BaseURL.MAVEN.url
     ),
-    KODEIN_DI_JVM("org.kodein.di", "kodein-di-jvm", "7.3.1", BaseURL.MAVEN.url),
-    KODEIN_DI("org.kodein.di", "kodein-di", "7.3.1", BaseURL.MAVEN.url);
+    KODEIN_DI_JVM("org.kodein.di", "kodein-di-jvm", Versions.kodein, BaseURL.MAVEN.url),
+    KODEIN_DI("org.kodein.di", "kodein-di", Versions.kodein, BaseURL.MAVEN.url);
 
     fun constructDownloadUrl(): String {
         return this.baseUrl + this.group.replace(
