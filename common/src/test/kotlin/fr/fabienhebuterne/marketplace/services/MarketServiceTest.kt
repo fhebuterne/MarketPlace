@@ -19,16 +19,13 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import strikt.api.expectCatching
 import strikt.assertions.isA
 import strikt.assertions.isFailure
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MarketServiceTest : BaseTest() {
 
     private val listingsService: ListingsService = mockk()
@@ -81,7 +78,7 @@ class MarketServiceTest : BaseTest() {
         return listings
     }
 
-    @BeforeAll
+    @BeforeEach
     fun initItemStack() {
         // Mockk only for itemStack
         mockkStatic(Bukkit::class)
