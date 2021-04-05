@@ -68,6 +68,8 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
                 args
             )
         } catch (ignored: CustomException) {
+            // We ignore CustomException because error msg send to player
+            // and don't want to have stacktrace on console
         } catch (ignored: ClassNotFoundException) {
             val commandClassPathHelp = "$commandPath.CommandHelp"
             instanceCommand(

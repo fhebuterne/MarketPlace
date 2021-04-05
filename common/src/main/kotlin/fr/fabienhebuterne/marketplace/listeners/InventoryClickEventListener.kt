@@ -29,6 +29,8 @@ class InventoryClickEventListener(private val marketPlace: MarketPlace, kodein: 
         try {
             execute(event)
         } catch (ignored: CustomException) {
+            // We ignore CustomException because error msg send to player
+            // and don't want to have stacktrace on console
         } catch (e: Exception) {
             e.printStackTrace()
         }

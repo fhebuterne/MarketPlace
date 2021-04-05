@@ -41,31 +41,31 @@
   },
   "inventoryFilterEnum": {
     "createdAt": {
-      "ASC": {
+      "asc": {
         "displayName": "§cDate de création - Croissant",
         "lore": []
       },
-      "DESC": {
+      "desc": {
         "displayName": "§cDate de création - Décroissant",
         "lore": []
       }
     },
     "expiredAt": {
-      "ASC": {
+      "asc": {
         "displayName": "§cDate d''expiration - Croissant",
         "lore": []
       },
-      "DESC": {
+      "desc": {
         "displayName": "§cDate d''expiration - Décroissant",
         "lore": []
       }
     },
     "price": {
-      "ASC": {
+      "asc": {
         "displayName": "§cPrix - Croissant",
         "lore": []
       },
-      "DESC": {
+      "desc": {
         "displayName": "§cPrix - Décroissant",
         "lore": []
       }

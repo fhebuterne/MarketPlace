@@ -48,11 +48,11 @@ enum class InventoryFilterEnum(
 }
 
 fun loadInventoryFilterTranslation(inventoryFilterEnum: InventoryFilterEnumTranslation) {
-    InventoryFilterEnum.CREATED_AT_DESC.itemTranslation = inventoryFilterEnum.createdAt.DESC
-    InventoryFilterEnum.CREATED_AT_ASC.itemTranslation = inventoryFilterEnum.createdAt.ASC
-    InventoryFilterEnum.EXPIRED_AT_DESC.itemTranslation = inventoryFilterEnum.expiredAt.DESC
-    InventoryFilterEnum.EXPIRED_AT_ASC.itemTranslation = inventoryFilterEnum.expiredAt.ASC
-    InventoryFilterEnum.PRICE_DESC.itemTranslation = inventoryFilterEnum.price.DESC
-    InventoryFilterEnum.PRICE_ASC.itemTranslation = inventoryFilterEnum.price.ASC
+    InventoryFilterEnum.CREATED_AT_DESC.itemTranslation = inventoryFilterEnum.createdAt.desc
+    InventoryFilterEnum.CREATED_AT_ASC.itemTranslation = inventoryFilterEnum.createdAt.asc
+    InventoryFilterEnum.EXPIRED_AT_DESC.itemTranslation = inventoryFilterEnum.expiredAt.desc
+    InventoryFilterEnum.EXPIRED_AT_ASC.itemTranslation = inventoryFilterEnum.expiredAt.asc
+    InventoryFilterEnum.PRICE_DESC.itemTranslation = inventoryFilterEnum.price.desc
+    InventoryFilterEnum.PRICE_ASC.itemTranslation = inventoryFilterEnum.price.asc
 }
 

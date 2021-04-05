@@ -61,8 +61,8 @@ data class InventoryFilterEnumTranslation(
 
 @Serializable
 data class InventoryFilterTypeEnumTranslation(
-    val ASC: Item,
-    val DESC: Item
+    val asc: Item,
+    val desc: Item
 )
 
 @Serializable
