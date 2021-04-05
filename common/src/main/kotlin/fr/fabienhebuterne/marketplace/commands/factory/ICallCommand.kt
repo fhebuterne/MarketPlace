@@ -30,7 +30,7 @@ interface ICallCommand<T : BootstrapLoader> {
      * @param cmd
      * @param args
      */
-    fun run(
+    fun runAsPlayer(
         server: Server,
         player: Player,
         commandLabel: String,

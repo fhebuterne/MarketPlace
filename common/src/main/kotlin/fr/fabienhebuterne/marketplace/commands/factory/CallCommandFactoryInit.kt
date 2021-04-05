@@ -104,11 +104,10 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
         cmd.instance = instance
         cmd.permission = permissionPrefix + commandName
         if (commandSender is Player) {
-            cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
+            cmd.runAsPlayer(Bukkit.getServer(), commandSender, commandLabel, command, args)
         } else {
             cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
         }
     }
-
 
 }

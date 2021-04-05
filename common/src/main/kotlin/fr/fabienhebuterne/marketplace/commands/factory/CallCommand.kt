@@ -12,7 +12,7 @@ abstract class CallCommand<T : BootstrapLoader>(override val name: String) : ICa
     override lateinit var instance: T
     override lateinit var permission: String
 
-    override fun run(
+    override fun runAsPlayer(
         server: Server,
         player: Player,
         commandLabel: String,

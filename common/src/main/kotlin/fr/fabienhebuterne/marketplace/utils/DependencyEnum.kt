@@ -14,7 +14,7 @@ enum class DependencyEnum(val group: String, val nameDependency: String, val ver
     KOTLINX_SERIALIZATION_RUNTIME(
         "org{}jetbrains{}kotlinx",
         "kotlinx-serialization-runtime",
-        Versions.kotlinSerialization,
+        Versions.kotlinx,
         BaseURL.MAVEN.url
     ),
     KODEIN_DI_JVM("org.kodein.di", "kodein-di-jvm", Versions.kodein, BaseURL.MAVEN.url),
