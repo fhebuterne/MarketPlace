@@ -17,6 +17,7 @@ import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.MigrationService
+import fr.fabienhebuterne.marketplace.services.NotificationService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -135,6 +136,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(instance, database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(instance, database) }
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(instance, database) }
+            bind<NotificationService>() with singleton { NotificationService(instance) }
             bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance()) }
             bind<MailsService>() with singleton { MailsService(instance, instance()) }
             bind<LogsService>() with singleton { LogsService(instance, instance()) }
@@ -149,10 +151,19 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
                     instance(),
                     instance(),
                     instance(),
+                    instance(),
                     instance()
                 )
             }
-            bind<ExpirationService>() with singleton { ExpirationService(instance, instance(), instance(), instance()) }
+            bind<ExpirationService>() with singleton {
+                ExpirationService(
+                    instance,
+                    instance(),
+                    instance(),
+                    instance(),
+                    instance()
+                )
+            }
             bind<MigrationService>() with singleton { MigrationService(instance, instance(), instance(), instance()) }
         }
     }

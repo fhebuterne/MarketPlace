@@ -37,7 +37,8 @@ class MarketService(
     private val mailsService: MailsService,
     private val mailsRepository: MailsRepository,
     private val mailsInventoryService: MailsInventoryService,
-    private val logsService: LogsService
+    private val logsService: LogsService,
+    private val notificationService: NotificationService
 ) {
 
     val playersWaitingCustomQuantity: MutableMap<UUID, Int> = mutableMapOf()
@@ -92,7 +93,7 @@ class MarketService(
             toLocation = Location.MAIL_INVENTORY
         )
 
-        sellerNotificationCommandsExecute(listingsDatabase, quantity, needingMoney)
+        notificationService.sellerItemNotification(listingsDatabase, quantity, needingMoney)
 
         val itemBuyMessage = marketPlace.tl.itemBuy.replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
             .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
@@ -101,29 +102,6 @@ class MarketService(
         player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
         player.openInventory(listingsInventoryService.initInventory(refreshInventory, player))
-    }
-
-    private fun sellerNotificationCommandsExecute(
-        listingsDatabase: Listings,
-        quantity: Int,
-        needingMoney: Double
-    ) {
-        marketPlace.conf.sellerItemNotifCommand.forEach { command ->
-            val commandReplace =
-                command.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, listingsDatabase.sellerPseudo)
-                    .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, listingsDatabase.sellerUuid.toString())
-                    .replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
-                    .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
-                    .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
-
-            if (Bukkit.isPrimaryThread()) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-            } else {
-                Bukkit.getScheduler().runTaskLater(marketPlace.loader, Runnable {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-                }, 20L)
-            }
-        }
     }
 
     private fun giveMoneySeller(player: Player, money: Double) {

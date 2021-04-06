@@ -1,7 +1,6 @@
 package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.MarketPlace
-import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Location
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -13,7 +12,8 @@ class ExpirationService(
     private val marketPlace: MarketPlace,
     private val listingsService: ListingsService,
     private val mailsService: MailsService,
-    private val logsService: LogsService
+    private val logsService: LogsService,
+    private val notificationService: NotificationService
 ) {
 
     fun startTaskExpirationListingsToMails() {
@@ -21,22 +21,7 @@ class ExpirationService(
             val findAllListings = listingsService.findAll()
             findAllListings.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
-                    marketPlace.configService.getSerialization().expiration.listingsToMailsNotifCommand.forEach { command ->
-                        val commandReplace =
-                            command.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, it.sellerPseudo)
-                                .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, it.sellerUuid.toString())
-                                .replace(ConfigPlaceholder.QUANTITY.placeholder, it.quantity.toString())
-                                .replace(ConfigPlaceholder.ITEM_STACK.placeholder, it.itemStack.type.toString())
-                                .replace(ConfigPlaceholder.PRICE.placeholder, it.price.toString())
-
-                        if (Bukkit.isPrimaryThread()) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-                        } else {
-                            Bukkit.getScheduler().runTaskLater(marketPlace.loader, Runnable {
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-                            }, 20)
-                        }
-                    }
+                    notificationService.listingsToMailsNotification(it)
 
                     logsService.createFrom(
                         player = Bukkit.getOfflinePlayer(it.sellerUuid),
@@ -60,24 +45,7 @@ class ExpirationService(
             val findAllMails = mailsService.findAll()
             findAllMails.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
-                    marketPlace.configService.getSerialization().expiration.mailsToDeleteNotifCommand.forEach { command ->
-                        val commandReplace =
-                            command.replace(
-                                ConfigPlaceholder.PLAYER_PSEUDO.placeholder,
-                                Bukkit.getOfflinePlayer(it.playerUuid).name ?: ""
-                            )
-                                .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, it.playerUuid.toString())
-                                .replace(ConfigPlaceholder.QUANTITY.placeholder, it.quantity.toString())
-                                .replace(ConfigPlaceholder.ITEM_STACK.placeholder, it.itemStack.type.toString())
-
-                        if (Bukkit.isPrimaryThread()) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-                        } else {
-                            Bukkit.getScheduler().runTaskLater(marketPlace.loader, Runnable {
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplace)
-                            }, 20)
-                        }
-                    }
+                    notificationService.mailsToDeleteNotification(it)
 
                     logsService.createFrom(
                         player = Bukkit.getOfflinePlayer(it.playerUuid).player!!,
