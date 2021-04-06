@@ -6,7 +6,7 @@ object Versions {
     const val kotlinxCoroutines = "1.4.3"
     const val kotlinx = "1.0-M1-1.4.0-rc"
     const val kodein = "7.3.1"
-    const val mockk = "1.10.6"
+    const val mockk = "1.11.0"
     const val strikt = "0.29.0"
     const val junit = "5.7.1"
     const val shadowJar = "5.2.0"
