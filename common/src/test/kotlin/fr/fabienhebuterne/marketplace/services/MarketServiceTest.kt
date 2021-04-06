@@ -35,6 +35,7 @@ class MarketServiceTest : BaseTest() {
     private val mailsRepository: MailsRepository = mockk()
     private val mailsInventoryService: MailsInventoryService = mockk()
     private val logsService: LogsService = mockk()
+    private val notificationService: NotificationService = mockk()
     private var playerMock: Player = mockk()
 
     private val marketService: MarketService = MarketService(
@@ -45,7 +46,8 @@ class MarketServiceTest : BaseTest() {
         mailsService,
         mailsRepository,
         mailsInventoryService,
-        logsService
+        logsService,
+        notificationService
     )
 
     private fun initPlayerView(quantity: Int = 31): MutableMap<UUID, Pagination<Listings>> {
