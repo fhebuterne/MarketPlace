@@ -3,8 +3,6 @@ package fr.fabienhebuterne.marketplace.services.pagination
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
-import fr.fabienhebuterne.marketplace.domain.paginated.Location
-import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Material
@@ -28,14 +26,11 @@ class ListingsService(
         )
         update(updatedListings)
 
-        logsService.createFrom(
+        logsService.saveListingsLog(
             player = player,
-            paginated = updatedListings,
+            listings = updatedListings,
             quantity = currentItemStack.amount,
-            needingMoney = findExistingListings.price,
-            logType = LogType.SELL,
-            fromLocation = Location.PLAYER_INVENTORY,
-            toLocation = Location.LISTING_INVENTORY
+            money = findExistingListings.price,
         )
 
         val listingUpdated =
@@ -53,14 +48,11 @@ class ListingsService(
     fun create(player: Player, listings: Listings) {
         create(listings)
 
-        logsService.createFrom(
+        logsService.saveListingsLog(
             player = player,
-            paginated = listings,
+            listings = listings,
             quantity = listings.quantity,
-            needingMoney = listings.price,
-            logType = LogType.SELL,
-            fromLocation = Location.PLAYER_INVENTORY,
-            toLocation = Location.LISTING_INVENTORY
+            money = listings.price,
         )
 
         val listingsCreatedMessage =

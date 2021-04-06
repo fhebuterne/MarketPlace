@@ -4,8 +4,6 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
-import fr.fabienhebuterne.marketplace.domain.paginated.Location
-import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
@@ -82,17 +80,7 @@ class MarketService(
         }
 
         mailsService.saveListingsToMail(listingsDatabase, player, quantity)
-
-        logsService.createFrom(
-            player = player,
-            paginated = listingsDatabase,
-            quantity = quantity,
-            needingMoney = needingMoney,
-            logType = LogType.BUY,
-            fromLocation = Location.LISTING_INVENTORY,
-            toLocation = Location.MAIL_INVENTORY
-        )
-
+        logsService.buyItemLog(player, listingsDatabase, quantity, needingMoney)
         notificationService.sellerItemNotification(listingsDatabase, quantity, needingMoney)
 
         val itemBuyMessage = marketPlace.tl.itemBuy.replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
@@ -168,33 +156,11 @@ class MarketService(
         val listingsFind = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (listingsFind == null) {
-            // TODO : throw exception here
             player.sendMessage(marketPlace.tl.errors.itemNotExist)
             return
         }
 
-        if (!isAdmin) {
-            logsService.createFrom(
-                player = player,
-                paginated = listings,
-                quantity = listings.quantity,
-                needingMoney = null,
-                logType = LogType.CANCEL,
-                fromLocation = Location.LISTING_INVENTORY,
-                toLocation = Location.MAIL_INVENTORY
-            )
-        } else {
-            logsService.createFrom(
-                player = Bukkit.getOfflinePlayer(listings.sellerUuid),
-                adminPlayer = player,
-                paginated = listings,
-                quantity = listings.quantity,
-                needingMoney = null,
-                logType = LogType.CANCEL,
-                fromLocation = Location.LISTING_INVENTORY,
-                toLocation = Location.MAIL_INVENTORY
-            )
-        }
+        logsService.listingsToMailsLog(player, listings, isAdmin)
 
         listingsService.playersView[player.uniqueId] = listingsService.playersView[player.uniqueId]?.let {
             val elementToRemove = it.results.filterIndexed { index, _ -> index == event.rawSlot }
@@ -333,28 +299,7 @@ class MarketService(
                 player.inventory.addItem(itemStack)
             }
 
-        if (isAdmin) {
-            logsService.createFrom(
-                player = Bukkit.getOfflinePlayer(mail.playerUuid),
-                adminPlayer = player,
-                paginated = mail,
-                quantity = amountItemStack,
-                needingMoney = null,
-                logType = LogType.GET,
-                fromLocation = Location.MAIL_INVENTORY,
-                toLocation = Location.PLAYER_INVENTORY
-            )
-        } else {
-            logsService.createFrom(
-                player = Bukkit.getOfflinePlayer(mail.playerUuid),
-                paginated = mail,
-                quantity = amountItemStack,
-                needingMoney = null,
-                logType = LogType.GET,
-                fromLocation = Location.MAIL_INVENTORY,
-                toLocation = Location.PLAYER_INVENTORY
-            )
-        }
+        logsService.takeItemLog(player, mail, amountItemStack, isAdmin)
 
         if (mail.quantity - amountItemStack <= 0) {
             mail.id?.let { mailsRepository.delete(it) }

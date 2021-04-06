@@ -1,8 +1,6 @@
 package fr.fabienhebuterne.marketplace.services
 
 import fr.fabienhebuterne.marketplace.MarketPlace
-import fr.fabienhebuterne.marketplace.domain.paginated.Location
-import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
@@ -22,17 +20,7 @@ class ExpirationService(
             findAllListings.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     notificationService.listingsToMailsNotification(it)
-
-                    logsService.createFrom(
-                        player = Bukkit.getOfflinePlayer(it.sellerUuid),
-                        paginated = it,
-                        quantity = it.quantity,
-                        needingMoney = null,
-                        logType = LogType.EXPIRED,
-                        fromLocation = Location.LISTING_INVENTORY,
-                        toLocation = Location.MAIL_INVENTORY
-                    )
-
+                    logsService.expirationListingsToMailsLog(it)
                     it.id?.let { id -> listingsService.delete(id) }
                     mailsService.saveListingsToMail(it)
                 }
@@ -46,17 +34,7 @@ class ExpirationService(
             findAllMails.forEach {
                 if (it.auditData.expiredAt != null && it.auditData.expiredAt < System.currentTimeMillis()) {
                     notificationService.mailsToDeleteNotification(it)
-
-                    logsService.createFrom(
-                        player = Bukkit.getOfflinePlayer(it.playerUuid).player!!,
-                        paginated = it,
-                        quantity = it.quantity,
-                        needingMoney = null,
-                        logType = LogType.EXPIRED,
-                        fromLocation = Location.MAIL_INVENTORY,
-                        toLocation = Location.NONE
-                    )
-
+                    logsService.expirationMailsToDeleteLog(it)
                     it.id?.let { id -> mailsService.delete(id) }
                 }
             }
