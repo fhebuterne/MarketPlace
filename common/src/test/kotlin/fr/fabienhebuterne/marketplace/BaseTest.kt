@@ -24,6 +24,7 @@ abstract class BaseTest {
 
     lateinit var translation: Translation
     val fabienUuid: UUID = UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
+    val ergailUuid: UUID = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f")
 
     @BeforeEach
     @UnsafeSerializationApi

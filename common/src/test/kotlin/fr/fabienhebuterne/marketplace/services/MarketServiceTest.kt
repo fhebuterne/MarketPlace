@@ -42,7 +42,8 @@ class MarketServiceTest : BaseTest() {
     private val logsService: LogsService = mockk()
     private val notificationService: NotificationService = mockk()
     private var playerMock: Player = mockk()
-    private val offlinePlayer: OfflinePlayer = mockk()
+    private val fabienOfflinePlayer: OfflinePlayer = mockk()
+    private val ergailOfflinePlayer: OfflinePlayer = mockk()
 
     private val marketService: MarketService = MarketService(
         marketPlace,
@@ -72,7 +73,7 @@ class MarketServiceTest : BaseTest() {
                             quantity = quantity,
                             price = 10.0,
                             sellerPseudo = "Ergail",
-                            sellerUuid = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f"),
+                            sellerUuid = ergailUuid,
                             world = "world",
                             version = 1343
                         )
@@ -84,7 +85,8 @@ class MarketServiceTest : BaseTest() {
         )
 
         every { listingsService.playersView } returns listings
-        every { Bukkit.getOfflinePlayer(fabienUuid) } returns offlinePlayer
+        every { Bukkit.getOfflinePlayer(fabienUuid) } returns fabienOfflinePlayer
+        every { Bukkit.getOfflinePlayer(ergailUuid) } returns ergailOfflinePlayer
 
         return listings[fabienUuid] ?: throw IllegalAccessException("listing not found")
     }
@@ -172,7 +174,7 @@ class MarketServiceTest : BaseTest() {
         val money = listings.price * quantity
 
         every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsQte
-        every { marketPlace.getEconomy().has(offlinePlayer, money) } returns false
+        every { marketPlace.getEconomy().has(fabienOfflinePlayer, money) } returns false
         loadNotEnoughMoneyExceptionTranslation(translation.errors.notEnoughMoney)
         every { playerMock.sendMessage(translation.errors.notEnoughMoney) } just Runs
 
@@ -217,9 +219,9 @@ class MarketServiceTest : BaseTest() {
 
         every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
         every { marketPlace.getEconomy() } returns economy
-        every { economy.has(offlinePlayer, money) } returns true
-        every { economy.withdrawPlayer(offlinePlayer, money) } returns economyResponse
-        every { economy.depositPlayer(offlinePlayer, money) } returns economyResponse
+        every { economy.has(fabienOfflinePlayer, money) } returns true
+        every { economy.withdrawPlayer(fabienOfflinePlayer, money) } returns economyResponse
+        every { economy.depositPlayer(ergailOfflinePlayer, money) } returns economyResponse
         if (quantity == quantityDb) {
             every { listingsRepository.delete(listings.id!!) } just Runs
         } else {
@@ -241,9 +243,9 @@ class MarketServiceTest : BaseTest() {
         // THEN
         verify(exactly = 1) {
             listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
-            economy.has(offlinePlayer, money)
-            economy.withdrawPlayer(offlinePlayer, money)
-            economy.depositPlayer(offlinePlayer, money)
+            economy.has(fabienOfflinePlayer, money)
+            economy.withdrawPlayer(fabienOfflinePlayer, money)
+            economy.depositPlayer(ergailOfflinePlayer, money)
             if (quantity == quantityDb) {
                 listingsRepository.delete(listings.id!!)
             } else {

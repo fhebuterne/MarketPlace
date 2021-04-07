@@ -69,7 +69,7 @@ class MarketService(
         val needingMoney = listingsDatabase.price * quantity
 
         takeMoneyBuyer(player, needingMoney)
-        giveMoneySeller(player, needingMoney)
+        giveMoneySeller(listingsDatabase.sellerUuid, needingMoney)
 
         val takeQuantity = listingsDatabase.quantity - quantity
 
@@ -92,8 +92,8 @@ class MarketService(
         player.openInventory(listingsInventoryService.initInventory(refreshInventory, player))
     }
 
-    private fun giveMoneySeller(player: Player, money: Double) {
-        marketPlace.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player.uniqueId), money)
+    private fun giveMoneySeller(sellerUuid: UUID, money: Double) {
+        marketPlace.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(sellerUuid), money)
     }
 
     private fun takeMoneyBuyer(player: Player, needingMoney: Double) {
