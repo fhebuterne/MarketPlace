@@ -42,6 +42,7 @@ class MarketServiceTest : BaseTest() {
     private val logsService: LogsService = mockk()
     private val notificationService: NotificationService = mockk()
     private var playerMock: Player = mockk()
+    private val offlinePlayer: OfflinePlayer = mockk()
 
     private val marketService: MarketService = MarketService(
         marketPlace,
@@ -83,6 +84,7 @@ class MarketServiceTest : BaseTest() {
         )
 
         every { listingsService.playersView } returns listings
+        every { Bukkit.getOfflinePlayer(fabienUuid) } returns offlinePlayer
 
         return listings[fabienUuid] ?: throw IllegalAccessException("listing not found")
     }
@@ -146,14 +148,9 @@ class MarketServiceTest : BaseTest() {
         // GIVEN
         val playerView = initPlayerView()
         val listings: Listings = playerView.results[0]
+        val listingsQte = listings.copy(quantity = 30)
         every { playerMock.sendMessage(translation.errors.quantityNotAvailable) } just Runs
-        every {
-            listingsRepository.find(
-                listings.sellerUuid,
-                listings.itemStack,
-                listings.price
-            )
-        } returns listings.copy(quantity = 30)
+        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsQte
 
         // WHEN
         marketService.buyItem(playerMock, 0, 31, false)
@@ -169,18 +166,12 @@ class MarketServiceTest : BaseTest() {
     fun `should player cannot buy item if his money is not sufficient`() {
         // GIVEN
         val playerView = initPlayerView()
-        val listings: Listings = playerView.results[0]
         val quantity = 30
+        val listings: Listings = playerView.results[0]
+        val listingsQte = listings.copy(quantity = quantity)
         val money = listings.price * quantity
-        val offlinePlayer: OfflinePlayer = mockk()
-        every { Bukkit.getOfflinePlayer(fabienUuid) } returns offlinePlayer
-        every {
-            listingsRepository.find(
-                listings.sellerUuid,
-                listings.itemStack,
-                listings.price
-            )
-        } returns listings.copy(quantity = quantity)
+
+        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsQte
         every { marketPlace.getEconomy().has(offlinePlayer, money) } returns false
         loadNotEnoughMoneyExceptionTranslation(translation.errors.notEnoughMoney)
         every { playerMock.sendMessage(translation.errors.notEnoughMoney) } just Runs
@@ -199,81 +190,46 @@ class MarketServiceTest : BaseTest() {
 
     @Test
     fun `should player can buy an item when quantity is inferior than sell`() {
-        // GIVEN
-        val playerView = initPlayerView()
-        val listings: Listings = playerView.results[0]
-        val quantity = 5
-        val listingsDb = listings.copy(quantity = 30)
-        val money = listings.price * quantity
-        val economyResponse = EconomyResponse(100.0, 100.0, EconomyResponse.ResponseType.SUCCESS, "")
-        val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
-        val offlinePlayer: OfflinePlayer = mockk()
-        val economy: Economy = mockk()
-
-        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter 5xDIRT pour 50.0$."
-
-        every { Bukkit.getOfflinePlayer(fabienUuid) } returns offlinePlayer
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsDb
-        every { marketPlace.getEconomy() } returns economy
-        every { economy.has(offlinePlayer, money) } returns true
-        every { economy.withdrawPlayer(offlinePlayer, money) } returns economyResponse
-        every { economy.depositPlayer(offlinePlayer, money) } returns economyResponse
-        every { listingsRepository.update(listings.copy(quantity = 25)) } returns listings.copy(quantity = 25)
-        every { mailsService.saveListingsToMail(listingsDb, playerMock, quantity) } just Runs
-        every { logsService.buyItemLog(playerMock, listingsDb, quantity, money) } just Runs
-        every { notificationService.sellerItemNotification(listingsDb, quantity, money) } just Runs
-        every { playerMock.sendMessage(finalMessage) } just Runs
-        every { listingsService.getPaginated(pagination = playerView) } returns playerView
-        every { listingsInventoryService.initInventory(playerView, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
-
-        // WHEN
-        marketService.buyItem(playerMock, 0, quantity, false)
-
-        // THEN
-        verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
-            economy.has(offlinePlayer, money)
-            economy.withdrawPlayer(offlinePlayer, money)
-            economy.depositPlayer(offlinePlayer, money)
-            listingsRepository.update(listings.copy(quantity = 25))
-            mailsService.saveListingsToMail(listingsDb, playerMock, quantity)
-            logsService.buyItemLog(playerMock, listingsDb, quantity, money)
-            notificationService.sellerItemNotification(listingsDb, quantity, money)
-            playerMock.sendMessage(finalMessage)
-            listingsService.getPaginated(pagination = playerView)
-            listingsInventoryService.initInventory(playerView, playerMock)
-            playerMock.openInventory(inventory)
-        }
+        this.`should player can buy an item when quantity is equal or inferior than sell`(5, 30)
     }
+
 
     @Test
     fun `should player can buy an item when quantity is equal than sell`() {
+        this.`should player can buy an item when quantity is equal or inferior than sell`(40, 40)
+    }
+
+
+    private fun `should player can buy an item when quantity is equal or inferior than sell`(
+        quantity: Int,
+        quantityDb: Int
+    ) {
         // GIVEN
-        val playerView = initPlayerView()
+        val playerView = initPlayerView(quantityDb)
         val listings: Listings = playerView.results[0]
-        val quantity = 30
-        val listingsDb = listings.copy(quantity = 30)
         val money = listings.price * quantity
         val economyResponse = EconomyResponse(100.0, 100.0, EconomyResponse.ResponseType.SUCCESS, "")
         val inventory: Inventory = mockk()
         val inventoryView: InventoryView = mockk()
-        val offlinePlayer: OfflinePlayer = mockk()
         val economy: Economy = mockk()
 
-        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter 30xDIRT pour 300.0$."
+        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${money}$."
 
-        every { Bukkit.getOfflinePlayer(fabienUuid) } returns offlinePlayer
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsDb
+        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
         every { marketPlace.getEconomy() } returns economy
         every { economy.has(offlinePlayer, money) } returns true
         every { economy.withdrawPlayer(offlinePlayer, money) } returns economyResponse
         every { economy.depositPlayer(offlinePlayer, money) } returns economyResponse
-        every { listingsRepository.delete(listings.id!!) } just Runs
-        every { mailsService.saveListingsToMail(listingsDb, playerMock, quantity) } just Runs
-        every { logsService.buyItemLog(playerMock, listingsDb, quantity, money) } just Runs
-        every { notificationService.sellerItemNotification(listingsDb, quantity, money) } just Runs
+        if (quantity == quantityDb) {
+            every { listingsRepository.delete(listings.id!!) } just Runs
+        } else {
+            every { listingsRepository.update(listings.copy(quantity = quantityDb - quantity)) } returns listings.copy(
+                quantity = quantityDb - quantity
+            )
+        }
+        every { mailsService.saveListingsToMail(listings, playerMock, quantity) } just Runs
+        every { logsService.buyItemLog(playerMock, listings, quantity, money) } just Runs
+        every { notificationService.sellerItemNotification(listings, quantity, money) } just Runs
         every { playerMock.sendMessage(finalMessage) } just Runs
         every { listingsService.getPaginated(pagination = playerView) } returns playerView
         every { listingsInventoryService.initInventory(playerView, playerMock) } returns inventory
@@ -288,10 +244,14 @@ class MarketServiceTest : BaseTest() {
             economy.has(offlinePlayer, money)
             economy.withdrawPlayer(offlinePlayer, money)
             economy.depositPlayer(offlinePlayer, money)
-            listingsRepository.delete(listings.id!!)
-            mailsService.saveListingsToMail(listingsDb, playerMock, quantity)
-            logsService.buyItemLog(playerMock, listingsDb, quantity, money)
-            notificationService.sellerItemNotification(listingsDb, quantity, money)
+            if (quantity == quantityDb) {
+                listingsRepository.delete(listings.id!!)
+            } else {
+                listingsRepository.update(listings.copy(quantity = quantityDb - quantity))
+            }
+            mailsService.saveListingsToMail(listings, playerMock, quantity)
+            logsService.buyItemLog(playerMock, listings, quantity, money)
+            notificationService.sellerItemNotification(listings, quantity, money)
             playerMock.sendMessage(finalMessage)
             listingsService.getPaginated(pagination = playerView)
             listingsInventoryService.initInventory(playerView, playerMock)
