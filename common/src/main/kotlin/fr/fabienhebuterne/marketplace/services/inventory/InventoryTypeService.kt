@@ -10,6 +10,7 @@ import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.PaginationService
 import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
@@ -40,7 +41,9 @@ abstract class InventoryTypeService<T : Paginated>(
             )
         )
         val initInventory = initInventory(paginated, event.player)
-        event.player.openInventory(initInventory)
+        Bukkit.getScheduler().runTask(instance.loader, Runnable {
+            event.player.openInventory(initInventory)
+        })
     }
 
     fun clickOnSearch(event: InventoryClickEvent, player: Player) {

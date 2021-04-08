@@ -14,6 +14,7 @@ import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import io.mockk.*
+import kotlinx.serialization.UnsafeSerializationApi
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
@@ -24,6 +25,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemFactory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitScheduler
+import org.bukkit.scheduler.BukkitTask
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
@@ -45,17 +48,7 @@ class MarketServiceTest : BaseTest() {
     private val fabienOfflinePlayer: OfflinePlayer = mockk()
     private val ergailOfflinePlayer: OfflinePlayer = mockk()
 
-    private val marketService: MarketService = MarketService(
-        marketPlace,
-        listingsService,
-        listingsRepository,
-        listingsInventoryService,
-        mailsService,
-        mailsRepository,
-        mailsInventoryService,
-        logsService,
-        notificationService
-    )
+    private lateinit var marketService: MarketService
 
     private fun initPlayerView(quantity: Int = 31): Pagination<Listings> {
         val itemStack: ItemStack = mockk()
@@ -91,14 +84,28 @@ class MarketServiceTest : BaseTest() {
         return listings[fabienUuid] ?: throw IllegalAccessException("listing not found")
     }
 
+    @UnsafeSerializationApi
     @BeforeEach
     fun initItemStack() {
+        super.init()
         // Mockk only for itemStack
         mockkStatic(Bukkit::class)
         val itemFactory: ItemFactory = mockk()
         every { Bukkit.getItemFactory() } returns itemFactory
         every { itemFactory.equals(null, null) } returns false
         every { itemFactory.getItemMeta(Material.DIRT) } returns null
+
+        marketService = MarketService(
+            marketPlace,
+            listingsService,
+            listingsRepository,
+            listingsInventoryService,
+            mailsService,
+            mailsRepository,
+            mailsInventoryService,
+            logsService,
+            notificationService
+        )
     }
 
     @BeforeEach
@@ -214,9 +221,13 @@ class MarketServiceTest : BaseTest() {
         val inventory: Inventory = mockk()
         val inventoryView: InventoryView = mockk()
         val economy: Economy = mockk()
-
+        val bukkitScheduler: BukkitScheduler = mockk()
+        val bukkitTask: BukkitTask = mockk()
+        val runnableSlot = slot<Runnable>()
+        val loader = marketPlace.loader
         val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${money}$."
 
+        every { Bukkit.getScheduler() } returns bukkitScheduler
         every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
         every { marketPlace.getEconomy() } returns economy
         every { economy.has(fabienOfflinePlayer, money) } returns true
@@ -236,6 +247,10 @@ class MarketServiceTest : BaseTest() {
         every { listingsService.getPaginated(pagination = playerView) } returns playerView
         every { listingsInventoryService.initInventory(playerView, playerMock) } returns inventory
         every { playerMock.openInventory(inventory) } returns inventoryView
+        every { bukkitScheduler.runTask(loader, capture(runnableSlot)) } answers {
+            runnableSlot.captured.run()
+            bukkitTask
+        }
 
         // WHEN
         marketService.buyItem(playerMock, 0, quantity, false)
@@ -257,7 +272,9 @@ class MarketServiceTest : BaseTest() {
             playerMock.sendMessage(finalMessage)
             listingsService.getPaginated(pagination = playerView)
             listingsInventoryService.initInventory(playerView, playerMock)
+            bukkitScheduler.runTask(loader, runnableSlot.captured)
             playerMock.openInventory(inventory)
         }
+
     }
 }

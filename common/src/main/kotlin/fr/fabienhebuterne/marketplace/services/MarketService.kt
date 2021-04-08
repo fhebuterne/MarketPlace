@@ -89,7 +89,10 @@ class MarketService(
 
         player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
-        player.openInventory(listingsInventoryService.initInventory(refreshInventory, player))
+        val initInventory = listingsInventoryService.initInventory(refreshInventory, player)
+        Bukkit.getScheduler().runTask(marketPlace.loader, Runnable {
+            player.openInventory(initInventory)
+        })
     }
 
     private fun giveMoneySeller(sellerUuid: UUID, money: Double) {

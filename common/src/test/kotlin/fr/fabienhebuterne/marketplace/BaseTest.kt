@@ -7,7 +7,6 @@ import io.mockk.mockk
 import kotlinx.serialization.UnsafeSerializationApi
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
-import org.junit.jupiter.api.BeforeEach
 import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -18,15 +17,14 @@ abstract class BaseTest {
     private val resource: URL = this::class.java.classLoader.getResource("loader")
         ?: throw IllegalAccessException("ressource path not exist")
     private val filepath: Path = Paths.get(resource.toURI())
-    private val javaPluginMock: JavaPlugin = mockk()
     private val serverMock: Server = mockk()
+    val javaPluginMock: JavaPlugin = mockk()
     val marketPlace: MarketPlace = mockk()
 
     lateinit var translation: Translation
     val fabienUuid: UUID = UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
     val ergailUuid: UUID = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f")
 
-    @BeforeEach
     @UnsafeSerializationApi
     fun init() {
         every { marketPlace.loader } returns javaPluginMock
