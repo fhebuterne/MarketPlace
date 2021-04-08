@@ -17,7 +17,7 @@
     ]
   },
   "sellerItemNotifCommand": [
-    "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has been sell for {{totalPrice}}."
+    "mail send {{playerPseudo}} your item {{quantity}}x{{itemStack}} has been sell for {{price}}."
   ],
   "maxDecimalMoney": 2,
   "maxMoneyToSellItem": 1000000000000,
