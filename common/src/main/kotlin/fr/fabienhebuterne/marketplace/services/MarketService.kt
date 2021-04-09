@@ -268,11 +268,11 @@ class MarketService(
         val paginationMails = mailsService.playersView[player.uniqueId]
         val mail = paginationMails?.results?.get(rawSlot) ?: return
 
-        val slotInventoryAvailable = player.inventory.contents.clone()
+        val slotInventoryAvailable = player.inventory.storageContents.clone()
             .filter { it == null || it.type == Material.AIR }
             .count()
 
-        val itemPresentSlotAvailable: Int = player.inventory.contents.clone()
+        val itemPresentSlotAvailable: Int = player.inventory.storageContents.clone()
             .filterNotNull()
             .filter { it.isSimilar(mail.itemStack) }
             .filter { it.amount < it.maxStackSize }
@@ -311,6 +311,7 @@ class MarketService(
         }
 
         val refreshInventory = mailsService.getPaginated(pagination = paginationMails)
-        player.openInventory(mailsInventoryService.initInventory(refreshInventory, player))
+        val initInventory = mailsInventoryService.initInventory(refreshInventory, player)
+        player.openInventory(initInventory)
     }
 }

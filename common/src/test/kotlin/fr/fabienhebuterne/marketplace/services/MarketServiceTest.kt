@@ -4,8 +4,10 @@ import fr.fabienhebuterne.marketplace.BaseTest
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
+import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
+import fr.fabienhebuterne.marketplace.initMock
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -21,10 +23,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryView
-import org.bukkit.inventory.ItemFactory
-import org.bukkit.inventory.ItemStack
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.inventory.*
 import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.scheduler.BukkitTask
 import org.junit.jupiter.api.BeforeEach
@@ -50,7 +50,7 @@ class MarketServiceTest : BaseTest() {
 
     private lateinit var marketService: MarketService
 
-    private fun initPlayerView(quantity: Int = 31): Pagination<Listings> {
+    private fun initListings(quantity: Int = 31): Pagination<Listings> {
         val itemStack: ItemStack = mockk()
         every { itemStack.type } returns Material.DIRT
 
@@ -81,7 +81,38 @@ class MarketServiceTest : BaseTest() {
         every { Bukkit.getOfflinePlayer(fabienUuid) } returns fabienOfflinePlayer
         every { Bukkit.getOfflinePlayer(ergailUuid) } returns ergailOfflinePlayer
 
-        return listings[fabienUuid] ?: throw IllegalAccessException("listing not found")
+        return listings[fabienUuid] ?: throw IllegalAccessException("listings not found")
+    }
+
+    private fun initMails(quantity: Int = 31): Pagination<Mails> {
+        val itemStack = initMock(Material.DIRT, 1, null, false)
+
+        val mails = mutableMapOf(
+            Pair(
+                fabienUuid,
+                Pagination(
+                    results = listOf(
+                        Mails(
+                            id = UUID.randomUUID(),
+                            playerPseudo = "Fabien91",
+                            playerUuid = fabienUuid,
+                            itemStack = itemStack,
+                            quantity = quantity,
+                            auditData = AuditData(createdAt = System.currentTimeMillis()),
+                            version = 1343
+                        )
+                    ),
+                    currentPlayer = fabienUuid,
+                    viewPlayer = fabienUuid
+                )
+            )
+        )
+
+        every { mailsService.playersView } returns mails
+        every { Bukkit.getOfflinePlayer(fabienUuid) } returns fabienOfflinePlayer
+        every { Bukkit.getOfflinePlayer(ergailUuid) } returns ergailOfflinePlayer
+
+        return mails[fabienUuid] ?: throw IllegalAccessException("mails not found")
     }
 
     @UnsafeSerializationApi
@@ -93,7 +124,7 @@ class MarketServiceTest : BaseTest() {
         val itemFactory: ItemFactory = mockk()
         every { Bukkit.getItemFactory() } returns itemFactory
         every { itemFactory.equals(null, null) } returns false
-        every { itemFactory.getItemMeta(Material.DIRT) } returns null
+        every { itemFactory.getItemMeta(any()) } returns null
 
         marketService = MarketService(
             marketPlace,
@@ -118,7 +149,7 @@ class MarketServiceTest : BaseTest() {
     @Test
     fun `should player cannot buy item if quantity is not sufficient`() {
         // GIVEN
-        initPlayerView(1)
+        initListings(1)
         every { playerMock.sendMessage(translation.errors.quantityNotAvailable) } just Runs
 
         // WHEN
@@ -137,7 +168,7 @@ class MarketServiceTest : BaseTest() {
     @Test
     fun `should player cannot buy item if item selected no longer exist`() {
         // GIVEN
-        val playerView = initPlayerView()
+        val playerView = initListings()
         val listings: Listings = playerView.results[0]
         every { playerMock.sendMessage(translation.errors.itemNotExist) } just Runs
         every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns null
@@ -155,7 +186,7 @@ class MarketServiceTest : BaseTest() {
     @Test
     fun `should player cannot buy item if quantity in DB is not sufficient`() {
         // GIVEN
-        val playerView = initPlayerView()
+        val playerView = initListings()
         val listings: Listings = playerView.results[0]
         val listingsQte = listings.copy(quantity = 30)
         every { playerMock.sendMessage(translation.errors.quantityNotAvailable) } just Runs
@@ -174,7 +205,7 @@ class MarketServiceTest : BaseTest() {
     @Test
     fun `should player cannot buy item if his money is not sufficient`() {
         // GIVEN
-        val playerView = initPlayerView()
+        val playerView = initListings()
         val quantity = 30
         val listings: Listings = playerView.results[0]
         val listingsQte = listings.copy(quantity = quantity)
@@ -202,19 +233,17 @@ class MarketServiceTest : BaseTest() {
         this.`should player can buy an item when quantity is equal or inferior than sell`(5, 30)
     }
 
-
     @Test
     fun `should player can buy an item when quantity is equal than sell`() {
         this.`should player can buy an item when quantity is equal or inferior than sell`(40, 40)
     }
-
 
     private fun `should player can buy an item when quantity is equal or inferior than sell`(
         quantity: Int,
         quantityDb: Int
     ) {
         // GIVEN
-        val playerView = initPlayerView(quantityDb)
+        val playerView = initListings(quantityDb)
         val listings: Listings = playerView.results[0]
         val money = listings.price * quantity
         val economyResponse = EconomyResponse(100.0, 100.0, EconomyResponse.ResponseType.SUCCESS, "")
@@ -275,6 +304,68 @@ class MarketServiceTest : BaseTest() {
             bukkitScheduler.runTask(loader, runnableSlot.captured)
             playerMock.openInventory(inventory)
         }
+    }
 
+    @Test
+    fun `should cannot take an item from mails to inventory when is air or null`() {
+        // GIVEN
+        val itemStack: ItemStack = mockk()
+        every { itemStack.type } returns Material.DIRT
+
+        val inventoryClickEvent: InventoryClickEvent = mockk()
+        every { inventoryClickEvent.rawSlot } returns 0
+        every { inventoryClickEvent.currentItem } returns null
+
+        // WHEN
+        marketService.clickOnMailsInventory(inventoryClickEvent, playerMock)
+
+        // THEN
+        verify(exactly = 0) {
+            mailsService.playersView[playerMock.uniqueId]
+        }
+    }
+
+    @Test
+    fun `should normal player can take limited items quantity from mails to inventory`() {
+        // GIVEN
+        val inventory: Inventory = mockk()
+        val inventoryView: InventoryView = mockk()
+        val playerInventory: PlayerInventory = mockk()
+        val playerView = initMails(200)
+        val mails: Mails = playerView.results[0]
+        every { mails.itemStack.clone() } returns mails.itemStack
+
+        val itemStackDirtInInventory = initMock(Material.DIRT, 62, mails.itemStack, true)
+
+        val inventoryClickEvent: InventoryClickEvent = mockk()
+        every { inventoryClickEvent.rawSlot } returns 0
+        every { inventoryClickEvent.currentItem } returns mails.itemStack
+        every { inventoryClickEvent.isShiftClick } returns false
+        every { inventoryClickEvent.isLeftClick } returns true
+        every { playerMock.inventory } returns playerInventory
+        every { playerInventory.storageContents } returns arrayOf(itemStackDirtInInventory, null, null)
+        every { playerInventory.addItem(mails.itemStack) } returns hashMapOf()
+
+        every { logsService.takeItemLog(playerMock, mails, 130, false) } just Runs
+        every { mailsRepository.update(mails.copy(quantity = 70)) } returns mails.copy(quantity = 70)
+        every { mailsService.getPaginated(pagination = playerView) } returns playerView
+        every { mailsInventoryService.initInventory(playerView, playerMock) } returns inventory
+        every { playerMock.openInventory(inventory) } returns inventoryView
+
+        // WHEN
+        marketService.clickOnMailsInventory(inventoryClickEvent, playerMock)
+
+        // THEN
+        verify(exactly = 130) {
+            playerInventory.addItem(mails.itemStack)
+        }
+
+        verify(exactly = 1) {
+            logsService.takeItemLog(playerMock, mails, 130, false)
+            mailsRepository.update(mails.copy(quantity = 70))
+            mailsService.getPaginated(pagination = playerView)
+            mailsInventoryService.initInventory(playerView, playerMock)
+            playerMock.openInventory(inventory)
+        }
     }
 }
