@@ -21,7 +21,7 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 MarketPlace use Gradle 6, to build use these commands :
 
 ```
-sh ./install-dependency-in-cache.sh
+bash ./install-dependency-in-cache.sh
 sh ./buildtools.sh 1.16.5
 ./gradlew clean build
 ```
