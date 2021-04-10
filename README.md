@@ -14,6 +14,7 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 ## Requirements
 
 - Java 8
+- MySQL 8.0
 
 ## Build
 
