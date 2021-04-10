@@ -22,7 +22,6 @@ import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.*
 import org.bukkit.scheduler.BukkitScheduler
@@ -44,7 +43,6 @@ class MarketServiceTest : BaseTest() {
     private val mailsInventoryService: MailsInventoryService = mockk()
     private val logsService: LogsService = mockk()
     private val notificationService: NotificationService = mockk()
-    private var playerMock: Player = mockk()
     private val fabienOfflinePlayer: OfflinePlayer = mockk()
     private val ergailOfflinePlayer: OfflinePlayer = mockk()
 
@@ -118,7 +116,7 @@ class MarketServiceTest : BaseTest() {
     @UnsafeSerializationApi
     @BeforeEach
     fun initItemStack() {
-        super.init()
+        //super.init()
         // Mockk only for itemStack
         mockkStatic(Bukkit::class)
         val itemFactory: ItemFactory = mockk()
@@ -137,13 +135,6 @@ class MarketServiceTest : BaseTest() {
             logsService,
             notificationService
         )
-    }
-
-    @BeforeEach
-    fun initPlayerMock() {
-        // Reset this mock on each test
-        playerMock = mockk()
-        every { playerMock.uniqueId } returns fabienUuid
     }
 
     @Test

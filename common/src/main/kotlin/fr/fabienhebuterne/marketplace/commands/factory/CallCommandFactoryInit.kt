@@ -2,7 +2,6 @@ package fr.fabienhebuterne.marketplace.commands.factory
 
 import fr.fabienhebuterne.marketplace.commands.factory.exceptions.CustomException
 import fr.fabienhebuterne.marketplace.utils.BootstrapLoader
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -104,11 +103,11 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
         val cmd: ICallCommand<BootstrapLoader> = classLoader.loadClass(commandClassPath).getConstructor(DI::class.java)
             .newInstance(kodein) as ICallCommand<BootstrapLoader>
         cmd.instance = instance
-        cmd.permission = permissionPrefix + commandName
+        cmd.permission = permissionPrefix + commandName.toLowerCase()
         if (commandSender is Player) {
-            cmd.runAsPlayer(Bukkit.getServer(), commandSender, commandLabel, command, args)
+            cmd.runAsPlayer(instance.loader.server, commandSender, commandLabel, command, args)
         } else {
-            cmd.run(Bukkit.getServer(), commandSender, commandLabel, command, args)
+            cmd.run(instance.loader.server, commandSender, commandLabel, command, args)
         }
     }
 
