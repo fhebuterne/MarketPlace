@@ -37,6 +37,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Install spigot nms dependencies
+        run: bash ./install-dependency-in-cache.sh ${{ secrets.CI_URL }} ${{ secrets.CI_USER }} ${{ secrets.CI_PASSWORD }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
@@ -45,6 +47,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Install spigot nms dependencies
+        run: bash ./install-dependency-in-cache.sh ${{ secrets.CI_URL }} ${{ secrets.CI_USER }} ${{ secrets.CI_PASSWORD }}
+      - name: Build with Gradle
+        run: ./gradlew clean build -PbuildVersion=1.12.2
       - name: Set up JDK 11 for Sonar
         uses: actions/setup-java@v1
         with:
