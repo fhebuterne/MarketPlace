@@ -1,9 +1,8 @@
 #!/bin/bash
 
-if [[ -d ./tmp ]]
-then
-    echo "remove existing tmp directory"
-    rm -r ./tmp
+if [[ -d ./tmp ]]; then
+  echo "remove existing tmp directory"
+  rm -r ./tmp
 fi
 
 mkdir ./tmp && cd ./tmp || exit

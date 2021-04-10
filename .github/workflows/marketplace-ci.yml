@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Install spigot nms dependencies
-        run: sh ./install-dependency-in-cache.sh ${{ secrets.CI_URL }} ${{ secrets.CI_USER }} ${{ secrets.CI_PASSWORD }}
+        run: bash ./install-dependency-in-cache.sh ${{ secrets.CI_URL }} ${{ secrets.CI_USER }} ${{ secrets.CI_PASSWORD }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle - Compile plugin with 1.12.2
