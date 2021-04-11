@@ -25,11 +25,11 @@ import java.text.MessageFormat
 
 class CommandAddTest : BaseTest() {
 
+    private val commandAddPermission = "marketplace.add"
     private val command: Command = mockk()
     private val listingsRepositoryMock: ListingsRepository = mockk()
     private val listingsServiceMock: ListingsService = mockk()
     private val listingsInventoryServiceMock: ListingsInventoryService = mockk()
-
     private val kodein = DI {
         bind<ListingsRepository>() with singleton { listingsRepositoryMock }
         bind<ListingsService>() with singleton { listingsServiceMock }
@@ -42,7 +42,7 @@ class CommandAddTest : BaseTest() {
         loadEmptyHandExceptionTranslation(translation.errors.handEmpty)
 
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { playerMock.hasPermission(commandAddPermission) } returns true
         every { marketPlace.isReload } returns false
         every { playerMock.inventory.itemInMainHand.type } returns Material.AIR
         every { playerMock.sendMessage(translation.errors.handEmpty) } just Runs
@@ -55,15 +55,15 @@ class CommandAddTest : BaseTest() {
             "marketplace",
             arrayOf("add"),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.add")
+            playerMock.hasPermission(commandAddPermission)
             playerMock.sendMessage(translation.errors.handEmpty)
         }
     }
@@ -72,7 +72,7 @@ class CommandAddTest : BaseTest() {
     fun `should player cannot use add command when missing arguments`() {
         // GIVEN
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { playerMock.hasPermission(commandAddPermission) } returns true
         every { marketPlace.isReload } returns false
         every { playerMock.inventory.itemInMainHand.type } returns Material.DIRT
         every { playerMock.sendMessage(translation.commandAddUsage) } just Runs
@@ -82,18 +82,18 @@ class CommandAddTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("add"),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.add")
+            playerMock.hasPermission(commandAddPermission)
             playerMock.sendMessage(translation.commandAddUsage)
         }
     }
@@ -103,7 +103,7 @@ class CommandAddTest : BaseTest() {
         // GIVEN
         val money = "DoubleNotValid"
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { playerMock.hasPermission(commandAddPermission) } returns true
         every { marketPlace.isReload } returns false
         every { playerMock.inventory.itemInMainHand.type } returns Material.DIRT
         every { playerMock.sendMessage(MessageFormat.format(translation.errors.numberNotValid, money)) } just Runs
@@ -113,18 +113,18 @@ class CommandAddTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("add", money),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.add")
+            playerMock.hasPermission(commandAddPermission)
             playerMock.sendMessage(MessageFormat.format(translation.errors.numberNotValid, money))
         }
     }
@@ -134,7 +134,7 @@ class CommandAddTest : BaseTest() {
         // GIVEN
         val money = "100000000000000.0"
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { playerMock.hasPermission(commandAddPermission) } returns true
         every { marketPlace.isReload } returns false
         every { playerMock.inventory.itemInMainHand.type } returns Material.DIRT
         every { playerMock.sendMessage(MessageFormat.format(translation.errors.numberTooBig, money)) } just Runs
@@ -144,18 +144,18 @@ class CommandAddTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("add", money),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.add")
+            playerMock.hasPermission(commandAddPermission)
             playerMock.sendMessage(MessageFormat.format(translation.errors.numberTooBig, money))
         }
     }
@@ -171,7 +171,7 @@ class CommandAddTest : BaseTest() {
         every { secondItemStack.setAmount(1) } just Runs
         val itemStack: ItemStack = initItemStackMock(Material.DIRT, 10, null, false)
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { playerMock.hasPermission(commandAddPermission) } returns true
         every { marketPlace.isReload } returns false
         every { marketPlace.itemStackReflection.getVersion() } returns 1343
         every { playerMock.inventory } returns playerInventory
@@ -188,18 +188,18 @@ class CommandAddTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("add", money.toString()),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.add")
+            playerMock.hasPermission(commandAddPermission)
             listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money)
             listingsInventoryServiceMock.confirmationAddNewItem(playerMock, any())
             playerMock.openInventory(inventory)
@@ -227,7 +227,7 @@ class CommandAddTest : BaseTest() {
         )
 
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { playerMock.hasPermission(commandAddPermission) } returns true
         every { marketPlace.isReload } returns false
         every { marketPlace.itemStackReflection.getVersion() } returns 1343
         every { playerMock.inventory } returns playerInventory
@@ -243,18 +243,18 @@ class CommandAddTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("add", money.toString()),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.add")
+            playerMock.hasPermission(commandAddPermission)
             listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money)
             listingsServiceMock.updateListings(listings, 24, playerMock)
         }

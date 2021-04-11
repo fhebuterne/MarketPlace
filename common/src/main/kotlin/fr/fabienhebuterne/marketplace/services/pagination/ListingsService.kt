@@ -66,4 +66,14 @@ class ListingsService(
 
     fun findUUIDBySellerPseudo(sellerPseudo: String): UUID? = listingsRepository.findUUIDBySellerPseudo(sellerPseudo)
 
+    fun updatePseudo(player: Player) {
+        val findListingsByUUID = listingsRepository.findByUUID(player.uniqueId)
+        val filterListings: List<Listings> = findListingsByUUID.filter { it.sellerPseudo != player.name }
+        filterListings.map {
+            it.copy(sellerPseudo = player.name)
+        }.forEach {
+            listingsRepository.update(it)
+        }
+    }
+
 }

@@ -23,8 +23,8 @@ abstract class BaseTest {
     private val resource: URL = this::class.java.classLoader.getResource("loader")
         ?: throw IllegalAccessException("ressource path not exist")
     private val filepath: Path = Paths.get(resource.toURI())
-    val serverMock: Server = mockk()
-    val javaPluginMock: JavaPlugin = mockk()
+    private val serverMock: Server = mockk()
+    private val javaPluginMock: JavaPlugin = mockk()
     val marketPlace: MarketPlace = mockk()
     var playerMock: Player = mockk()
 
@@ -32,6 +32,10 @@ abstract class BaseTest {
     lateinit var config: Config
     val fabienUuid: UUID = UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
     val ergailUuid: UUID = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f")
+
+    val commandPath = "fr.fabienhebuterne.marketplace.commands"
+    val commandLabel = "marketplace"
+    val permissionPrefix = "marketplace."
 
     @UnsafeSerializationApi
     @BeforeEach

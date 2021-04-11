@@ -52,4 +52,14 @@ class MailsService(
         }
     }
 
+    fun updatePseudo(player: Player) {
+        val findMailsByUUID = mailsRepository.findByUUID(player.uniqueId)
+        val filterMails: List<Mails> = findMailsByUUID.filter { it.playerPseudo != player.name }
+        filterMails.map {
+            it.copy(playerPseudo = player.name)
+        }.forEach {
+            mailsRepository.update(it)
+        }
+    }
+
 }

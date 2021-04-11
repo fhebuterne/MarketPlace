@@ -26,11 +26,11 @@ class CommandHelpTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("help"),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )

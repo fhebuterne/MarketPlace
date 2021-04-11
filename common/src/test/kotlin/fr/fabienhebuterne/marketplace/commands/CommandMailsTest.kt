@@ -22,10 +22,10 @@ import org.kodein.di.singleton
 
 class CommandMailsTest : BaseTest() {
 
+    private val commandMailPermission = "marketplace.mails"
     private val command: Command = mockk()
     private val mailsServiceMock: MailsService = mockk()
     private val mailsInventoryService: MailsInventoryService = mockk()
-
     private val kodein = DI {
         bind<MailsService>() with singleton { mailsServiceMock }
         bind<MailsInventoryService>() with singleton { mailsInventoryService }
@@ -42,7 +42,7 @@ class CommandMailsTest : BaseTest() {
         val inventoryView: InventoryView = mockk()
 
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.mails") } returns true
+        every { playerMock.hasPermission(commandMailPermission) } returns true
         every { marketPlace.isReload } returns false
         every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
         every { mailsInventoryService.initInventory(pagination, playerMock) } returns inventory
@@ -53,18 +53,18 @@ class CommandMailsTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("mails"),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.mails")
+            playerMock.hasPermission(commandMailPermission)
             mailsServiceMock.getPaginated(pagination = pagination)
             mailsInventoryService.initInventory(pagination, playerMock)
             playerMock.openInventory(inventory)
@@ -85,7 +85,7 @@ class CommandMailsTest : BaseTest() {
         )
 
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission("marketplace.mails") } returns true
+        every { playerMock.hasPermission(commandMailPermission) } returns true
         every { playerMock.hasPermission("marketplace.mails.other") } returns true
         every { marketPlace.isReload } returns false
         every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
@@ -98,18 +98,18 @@ class CommandMailsTest : BaseTest() {
         callCommandFactoryInit.onCommand(
             playerMock,
             command,
-            "marketplace",
+            commandLabel,
             arrayOf("mails", playerName),
             MarketPlace::class.java.classLoader,
-            "fr.fabienhebuterne.marketplace.commands",
-            "marketplace.",
+            commandPath,
+            permissionPrefix,
             true,
             kodein
         )
 
         // THEN
         verify(exactly = 1) {
-            playerMock.hasPermission("marketplace.mails")
+            playerMock.hasPermission(commandMailPermission)
             playerMock.hasPermission("marketplace.mails.other")
             mailsServiceMock.getPaginated(pagination = pagination)
             mailsInventoryService.initInventory(pagination, playerMock)
