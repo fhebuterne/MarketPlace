@@ -16,17 +16,18 @@ import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import io.mockk.*
-import kotlinx.serialization.UnsafeSerializationApi
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.inventory.*
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryView
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.scheduler.BukkitTask
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.assertions.isA
@@ -46,7 +47,17 @@ class MarketServiceTest : BaseTest() {
     private val fabienOfflinePlayer: OfflinePlayer = mockk()
     private val ergailOfflinePlayer: OfflinePlayer = mockk()
 
-    private lateinit var marketService: MarketService
+    private val marketService: MarketService = MarketService(
+        marketPlace,
+        listingsService,
+        listingsRepository,
+        listingsInventoryService,
+        mailsService,
+        mailsRepository,
+        mailsInventoryService,
+        logsService,
+        notificationService
+    )
 
     private fun initListings(quantity: Int = 31): Pagination<Listings> {
         val itemStack: ItemStack = mockk()
@@ -111,30 +122,6 @@ class MarketServiceTest : BaseTest() {
         every { Bukkit.getOfflinePlayer(ergailUuid) } returns ergailOfflinePlayer
 
         return mails[fabienUuid] ?: throw IllegalAccessException("mails not found")
-    }
-
-    @UnsafeSerializationApi
-    @BeforeEach
-    fun initItemStack() {
-        //super.init()
-        // Mockk only for itemStack
-        mockkStatic(Bukkit::class)
-        val itemFactory: ItemFactory = mockk()
-        every { Bukkit.getItemFactory() } returns itemFactory
-        every { itemFactory.equals(null, null) } returns false
-        every { itemFactory.getItemMeta(any()) } returns null
-
-        marketService = MarketService(
-            marketPlace,
-            listingsService,
-            listingsRepository,
-            listingsInventoryService,
-            mailsService,
-            mailsRepository,
-            mailsInventoryService,
-            logsService,
-            notificationService
-        )
     }
 
     @Test

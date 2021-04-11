@@ -5,9 +5,12 @@ import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.domain.config.Translation
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.serialization.UnsafeSerializationApi
+import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFactory
 import org.bukkit.plugin.java.JavaPlugin
 import org.junit.jupiter.api.BeforeEach
 import java.net.URL
@@ -50,6 +53,13 @@ abstract class BaseTest {
         config = configService.getSerialization()
 
         every { marketPlace.conf } returns config
+
+        // Mockk only for itemStack
+        mockkStatic(Bukkit::class)
+        val itemFactory: ItemFactory = mockk()
+        every { Bukkit.getItemFactory() } returns itemFactory
+        every { itemFactory.equals(null, null) } returns false
+        every { itemFactory.getItemMeta(any()) } returns null
     }
 
     @BeforeEach
