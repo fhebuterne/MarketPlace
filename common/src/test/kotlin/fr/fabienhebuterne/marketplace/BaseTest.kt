@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace
 
+import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
 import fr.fabienhebuterne.marketplace.domain.config.Translation
 import io.mockk.every
@@ -25,6 +26,7 @@ abstract class BaseTest {
     var playerMock: Player = mockk()
 
     lateinit var translation: Translation
+    lateinit var config: Config
     val fabienUuid: UUID = UUID.fromString("522841e6-a3b6-48dd-b67c-0b0f06ec1aa6")
     val ergailUuid: UUID = UUID.fromString("4a109300-ec09-4c47-9e8d-de735dd7f17f")
 
@@ -35,13 +37,19 @@ abstract class BaseTest {
         every { marketPlace.loader.dataFolder } returns filepath.toFile()
         every { marketPlace.loader.server } returns serverMock
 
-        val configService = ConfigService(marketPlace, "translation-fr", Translation::class)
-        configService.loadConfig()
-        translation = configService.getSerialization()
+        val configTranslationService = ConfigService(marketPlace, "translation-fr", Translation::class)
+        configTranslationService.loadConfig()
+        translation = configTranslationService.getSerialization()
 
-        every { marketPlace.tl } returns configService.getSerialization()
+        every { marketPlace.tl } returns configTranslationService.getSerialization()
         every { marketPlace.missingPermissionMessage } returns translation.errors.missingPermission
         every { marketPlace.reloadNotAvailableMessage } returns translation.errors.reloadNotAvailable
+
+        val configService = ConfigService(marketPlace, "config", Config::class)
+        configService.loadConfig()
+        config = configService.getSerialization()
+
+        every { marketPlace.conf } returns config
     }
 
     @BeforeEach
@@ -49,6 +57,8 @@ abstract class BaseTest {
         // Reset this mock on each test
         playerMock = mockk()
         every { playerMock.uniqueId } returns fabienUuid
+        every { playerMock.name } returns "Fabien91"
+        every { playerMock.world.name } returns "world"
     }
 
 }

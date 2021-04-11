@@ -7,7 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.exceptions.NotEnoughMoneyException
 import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
-import fr.fabienhebuterne.marketplace.initMock
+import fr.fabienhebuterne.marketplace.initItemStackMock
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -83,7 +83,7 @@ class MarketServiceTest : BaseTest() {
     }
 
     private fun initMails(quantity: Int = 31): Pagination<Mails> {
-        val itemStack = initMock(Material.DIRT, 1, null, false)
+        val itemStack = initItemStackMock(Material.DIRT, 1, null, false)
 
         val mails = mutableMapOf(
             Pair(
@@ -326,7 +326,7 @@ class MarketServiceTest : BaseTest() {
         val mails: Mails = playerView.results[0]
         every { mails.itemStack.clone() } returns mails.itemStack
 
-        val itemStackDirtInInventory = initMock(Material.DIRT, 62, mails.itemStack, true)
+        val itemStackDirtInInventory = initItemStackMock(Material.DIRT, 62, mails.itemStack, true)
 
         val inventoryClickEvent: InventoryClickEvent = mockk()
         every { inventoryClickEvent.rawSlot } returns 0

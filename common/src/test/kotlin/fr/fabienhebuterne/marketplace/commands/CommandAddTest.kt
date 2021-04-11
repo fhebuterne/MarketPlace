@@ -4,16 +4,22 @@ import fr.fabienhebuterne.marketplace.BaseTest
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
 import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
+import fr.fabienhebuterne.marketplace.initItemStackMock
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import io.mockk.*
 import org.bukkit.Material
 import org.bukkit.command.Command
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryView
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
 import org.junit.jupiter.api.Test
 import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.singleton
+import java.text.MessageFormat
 
 class CommandAddTest : BaseTest() {
 
@@ -90,4 +96,111 @@ class CommandAddTest : BaseTest() {
         }
     }
 
+    @Test
+    fun `should player cannot use add command when money is not a double valid`() {
+        // GIVEN
+        val money = "DoubleNotValid"
+        every { command.aliases } returns arrayListOf()
+        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { marketPlace.isReload } returns false
+        every { playerMock.inventory.itemInMainHand.type } returns Material.DIRT
+        every { playerMock.sendMessage(MessageFormat.format(translation.errors.numberNotValid, money)) } just Runs
+
+        // WHEN
+        val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
+        callCommandFactoryInit.onCommand(
+            playerMock,
+            command,
+            "marketplace",
+            arrayOf("add", money),
+            MarketPlace::class.java.classLoader,
+            "fr.fabienhebuterne.marketplace.commands",
+            "marketplace.",
+            true,
+            kodein
+        )
+
+        // THEN
+        verify(exactly = 1) {
+            playerMock.hasPermission("marketplace.add")
+            playerMock.sendMessage(MessageFormat.format(translation.errors.numberNotValid, money))
+        }
+    }
+
+    @Test
+    fun `should player cannot use add command when money is superior than limit in config`() {
+        // GIVEN
+        val money = "100000000000000.0"
+        every { command.aliases } returns arrayListOf()
+        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { marketPlace.isReload } returns false
+        every { playerMock.inventory.itemInMainHand.type } returns Material.DIRT
+        every { playerMock.sendMessage(MessageFormat.format(translation.errors.numberTooBig, money)) } just Runs
+
+        // WHEN
+        val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
+        callCommandFactoryInit.onCommand(
+            playerMock,
+            command,
+            "marketplace",
+            arrayOf("add", money),
+            MarketPlace::class.java.classLoader,
+            "fr.fabienhebuterne.marketplace.commands",
+            "marketplace.",
+            true,
+            kodein
+        )
+
+        // THEN
+        verify(exactly = 1) {
+            playerMock.hasPermission("marketplace.add")
+            playerMock.sendMessage(MessageFormat.format(translation.errors.numberTooBig, money))
+        }
+    }
+
+    @Test
+    fun `should player add new item in listings with add command`() {
+        // GIVEN
+        val money = 100.0
+        val inventory: Inventory = mockk()
+        val inventoryView: InventoryView = mockk()
+        val playerInventory: PlayerInventory = mockk()
+        val secondItemStack: ItemStack = initItemStackMock(Material.DIRT, 1, null, false)
+        every { secondItemStack.setAmount(1) } just Runs
+        val itemStack: ItemStack = initItemStackMock(Material.DIRT, 10, null, false)
+        every { command.aliases } returns arrayListOf()
+        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { marketPlace.isReload } returns false
+        every { marketPlace.itemStackReflection.getVersion() } returns 1343
+        every { playerMock.inventory } returns playerInventory
+        every { playerInventory.itemInMainHand } returns itemStack
+        every { playerInventory.itemInMainHand.amount } returns 10
+        every { playerInventory.itemInMainHand.type } returns itemStack.type
+        every { playerInventory.itemInMainHand.clone() } returns secondItemStack
+        every { listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money) } returns null
+        every { listingsInventoryServiceMock.confirmationAddNewItem(playerMock, any()) } returns inventory
+        every { playerMock.openInventory(inventory) } returns inventoryView
+
+        // WHEN
+        val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
+        callCommandFactoryInit.onCommand(
+            playerMock,
+            command,
+            "marketplace",
+            arrayOf("add", money.toString()),
+            MarketPlace::class.java.classLoader,
+            "fr.fabienhebuterne.marketplace.commands",
+            "marketplace.",
+            true,
+            kodein
+        )
+
+        // THEN
+        verify(exactly = 1) {
+            playerMock.hasPermission("marketplace.add")
+            listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money)
+            listingsInventoryServiceMock.confirmationAddNewItem(playerMock, any())
+            playerMock.openInventory(inventory)
+        }
+    }
 }

@@ -5,7 +5,7 @@ import io.mockk.mockk
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-fun initMock(
+fun initItemStackMock(
     material: Material,
     amount: Int = 1,
     similar: ItemStack?,
