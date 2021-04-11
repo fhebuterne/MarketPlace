@@ -3,6 +3,8 @@ package fr.fabienhebuterne.marketplace.commands
 import fr.fabienhebuterne.marketplace.BaseTest
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
+import fr.fabienhebuterne.marketplace.domain.base.AuditData
+import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
 import fr.fabienhebuterne.marketplace.initItemStackMock
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
@@ -201,6 +203,60 @@ class CommandAddTest : BaseTest() {
             listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money)
             listingsInventoryServiceMock.confirmationAddNewItem(playerMock, any())
             playerMock.openInventory(inventory)
+        }
+    }
+
+    @Test
+    fun `should player update existing item in listings with add command`() {
+        // GIVEN
+        val money = 100.0
+        val playerInventory: PlayerInventory = mockk()
+        val secondItemStack: ItemStack = initItemStackMock(Material.DIRT, 1, null, false)
+        every { secondItemStack.setAmount(1) } just Runs
+        val itemStack: ItemStack = initItemStackMock(Material.DIRT, 24, null, false)
+
+        val listings = Listings(
+            sellerUuid = fabienUuid,
+            sellerPseudo = "Fabien91",
+            itemStack = secondItemStack,
+            quantity = itemStack.amount,
+            price = money,
+            world = "world",
+            auditData = AuditData(createdAt = System.currentTimeMillis()),
+            version = 1343
+        )
+
+        every { command.aliases } returns arrayListOf()
+        every { playerMock.hasPermission("marketplace.add") } returns true
+        every { marketPlace.isReload } returns false
+        every { marketPlace.itemStackReflection.getVersion() } returns 1343
+        every { playerMock.inventory } returns playerInventory
+        every { playerInventory.itemInMainHand } returns itemStack
+        every { playerInventory.itemInMainHand.amount } returns 24
+        every { playerInventory.itemInMainHand.type } returns itemStack.type
+        every { playerInventory.itemInMainHand.clone() } returns secondItemStack
+        every { listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money) } returns listings
+        every { listingsServiceMock.updateListings(listings, 24, playerMock) } just Runs
+
+        // WHEN
+        val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
+        callCommandFactoryInit.onCommand(
+            playerMock,
+            command,
+            "marketplace",
+            arrayOf("add", money.toString()),
+            MarketPlace::class.java.classLoader,
+            "fr.fabienhebuterne.marketplace.commands",
+            "marketplace.",
+            true,
+            kodein
+        )
+
+        // THEN
+        verify(exactly = 1) {
+            playerMock.hasPermission("marketplace.add")
+            listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money)
+            listingsServiceMock.updateListings(listings, 24, playerMock)
         }
     }
 }

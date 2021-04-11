@@ -16,9 +16,9 @@ class ListingsService(
     private val logsService: LogsService
 ) : PaginationService<Listings>(listingsRepository, marketPlace) {
 
-    fun updateListings(findExistingListings: Listings, currentItemStack: ItemStack, player: Player) {
+    fun updateListings(findExistingListings: Listings, amount: Int, player: Player) {
         val updatedListings = findExistingListings.copy(
-            quantity = findExistingListings.quantity + currentItemStack.amount,
+            quantity = findExistingListings.quantity + amount,
             auditData = findExistingListings.auditData.copy(
                 updatedAt = System.currentTimeMillis(),
                 expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
@@ -29,14 +29,14 @@ class ListingsService(
         logsService.saveListingsLog(
             player = player,
             listings = updatedListings,
-            quantity = currentItemStack.amount,
+            quantity = amount,
             money = findExistingListings.price,
         )
 
         val listingUpdated =
             marketPlace.tl.listingUpdated.replace(
                 ConfigPlaceholder.ADDED_QUANTITY.placeholder,
-                currentItemStack.amount.toString()
+                amount.toString()
             )
                 .replace(ConfigPlaceholder.ITEM_STACK.placeholder, findExistingListings.itemStack.type.toString())
                 .replace(ConfigPlaceholder.TOTAL_QUANTITY.placeholder, updatedListings.quantity.toString())

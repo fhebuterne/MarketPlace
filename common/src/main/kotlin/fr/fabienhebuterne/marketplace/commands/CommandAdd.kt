@@ -71,7 +71,7 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
         val findExistingListings = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
 
         if (findExistingListings != null) {
-            listingsService.updateListings(findExistingListings, currentItemStack, player)
+            listingsService.updateListings(findExistingListings, currentItemStack.amount, player)
         } else {
             val confirmationAddNewItemInventory = listingsInventoryService.confirmationAddNewItem(player, listings)
             player.openInventory(confirmationAddNewItemInventory)
