@@ -44,6 +44,7 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
+import java.time.Clock
 
 class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
@@ -131,13 +132,14 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     }
 
     private fun initDependencyInjection(database: Database) {
+        val clock = Clock.systemDefaultZone()
         kodein = DI {
             bind<IItemStackReflection>() with singleton { initItemStackNms() ?: throw Exception() }
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(instance, database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(instance, database) }
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(instance, database) }
             bind<NotificationService>() with singleton { NotificationService(instance) }
-            bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance()) }
+            bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance(), clock) }
             bind<MailsService>() with singleton { MailsService(instance, instance()) }
             bind<LogsService>() with singleton { LogsService(instance, instance()) }
             bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance, instance()) }

@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack
 fun initItemStackMock(
     material: Material,
     amount: Int = 1,
-    similar: ItemStack?,
-    isSimilar: Boolean,
+    similar: ItemStack? = null,
+    isSimilar: Boolean = false,
     maxStackSize: Int = 64
 ): ItemStack {
     val itemStack: ItemStack = mockk()

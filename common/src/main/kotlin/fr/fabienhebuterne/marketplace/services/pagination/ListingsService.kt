@@ -8,20 +8,23 @@ import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.time.Clock
+import java.time.Instant
 import java.util.*
 
 class ListingsService(
     private val marketPlace: MarketPlace,
     private val listingsRepository: ListingsRepository,
-    private val logsService: LogsService
+    private val logsService: LogsService,
+    private val clock: Clock
 ) : PaginationService<Listings>(listingsRepository, marketPlace) {
 
     fun updateListings(findExistingListings: Listings, amount: Int, player: Player) {
         val updatedListings = findExistingListings.copy(
             quantity = findExistingListings.quantity + amount,
             auditData = findExistingListings.auditData.copy(
-                updatedAt = System.currentTimeMillis(),
-                expiredAt = System.currentTimeMillis() + (marketPlace.configService.getSerialization().expiration.listingsToMails * 1000)
+                updatedAt = Instant.now(clock).toEpochMilli(),
+                expiredAt = Instant.now(clock).toEpochMilli() + (marketPlace.conf.expiration.listingsToMails * 1000)
             )
         )
         update(updatedListings)
