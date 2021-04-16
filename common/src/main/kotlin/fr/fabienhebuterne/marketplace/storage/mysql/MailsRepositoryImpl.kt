@@ -183,4 +183,16 @@ class MailsRepositoryImpl(
             }
         }
     }
+
+    override fun findUuidByPseudo(playerPseudo: String): UUID? {
+        val transaction = transaction(marketPlaceDb) {
+            MailsTable.select {
+                MailsTable.playerPseudo eq playerPseudo
+            }.limit(1).firstOrNull()
+        }
+
+        return transaction?.let {
+            fromRow(it).playerUuid
+        }
+    }
 }

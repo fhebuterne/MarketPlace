@@ -12,6 +12,7 @@ import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.kodein.di.DI
 import org.kodein.di.instance
+import java.util.*
 
 class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
 
@@ -44,10 +45,13 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
                 return
             }
 
-            val uuid = listingsService.findUUIDBySellerPseudo(args[1])
-            if (uuid == null) {
-                player.sendMessage(instance.tl.errors.playerNotFound)
-                return
+            val uuid: UUID = if (args[1].length == 36) {
+                UUID.fromString(args[1])
+            } else {
+                listingsService.findUUIDBySellerPseudo(args[1]) ?: run {
+                    player.sendMessage(instance.tl.errors.playerNotFound)
+                    return
+                }
             }
 
             pagination = pagination.copy(showAll = false, currentPlayer = uuid)

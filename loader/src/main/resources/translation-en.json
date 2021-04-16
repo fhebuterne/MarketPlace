@@ -8,8 +8,8 @@
     "itemNotExist": "§8[§6MarketPlace§8] §cThe requested item does not exist.",
     "inventoryFull": "§8[§6MarketPlace§8] §cThe inventory is full.",
     "reloadNotAvailable": "§8[§6MarketPlace§8] §cThe plugin is not available, please wait...",
-    "missingPermission": "§8[§6MarketPlace§8] §cYou don''t have permission to do this.",
-    "playerNotFound": "§8[§6MarketPlace§8] §cPlayer cannot be found."
+    "missingPermission": "§8[§6MarketPlace§8] §cYou don't have permission to do this.",
+    "playerNotFound": "§8[§6MarketPlace§8] §cPlayer cannot be found or don't have items on market."
   },
   "inventoryEnum": {
     "search": {

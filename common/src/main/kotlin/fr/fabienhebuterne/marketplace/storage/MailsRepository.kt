@@ -7,4 +7,5 @@ import java.util.*
 interface MailsRepository : PaginationRepository<Mails> {
     fun find(playerUuid: UUID, itemStack: ItemStack): Mails?
     fun findByUUID(playerUuid: UUID): List<Mails>
+    fun findUuidByPseudo(playerPseudo: String): UUID?
 }

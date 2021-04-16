@@ -7,10 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.bukkit.Bukkit
+import io.mockk.*
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.Command
 import org.bukkit.inventory.Inventory
@@ -72,26 +69,17 @@ class CommandMailsTest : BaseTest() {
     }
 
     @Test
-    fun `should open mails inventory as an admin with mails command`() {
+    fun `should cannot open mails inventory as an admin when missing permission with mails command`() {
         // GIVEN
-        val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
         val playerName = "Ergail"
         val offlinePlayer: OfflinePlayer = mockk()
         every { offlinePlayer.uniqueId } returns ergailUuid
-        val pagination = Pagination<Mails>(
-            currentPlayer = offlinePlayer.uniqueId,
-            viewPlayer = playerMock.uniqueId
-        )
 
         every { command.aliases } returns arrayListOf()
-        every { playerMock.hasPermission(commandMailPermission) } returns true
-        every { playerMock.hasPermission("marketplace.mails.other") } returns true
         every { marketPlace.isReload } returns false
-        every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
-        every { mailsInventoryService.initInventory(pagination, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
-        every { Bukkit.getOfflinePlayer(playerName) } returns offlinePlayer
+        every { playerMock.hasPermission(commandMailPermission) } returns true
+        every { playerMock.hasPermission("marketplace.mails.other") } returns false
+        every { playerMock.sendMessage(translation.errors.missingPermission) } just Runs
 
         // WHEN
         val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
@@ -111,6 +99,51 @@ class CommandMailsTest : BaseTest() {
         verify(exactly = 1) {
             playerMock.hasPermission(commandMailPermission)
             playerMock.hasPermission("marketplace.mails.other")
+            playerMock.sendMessage(translation.errors.missingPermission)
+        }
+    }
+
+    @Test
+    fun `should open mails inventory as an admin with mails command`() {
+        // GIVEN
+        val inventory: Inventory = mockk()
+        val inventoryView: InventoryView = mockk()
+        val playerName = "Ergail"
+        val offlinePlayer: OfflinePlayer = mockk()
+        every { offlinePlayer.uniqueId } returns ergailUuid
+        val pagination = Pagination<Mails>(
+            currentPlayer = offlinePlayer.uniqueId,
+            viewPlayer = playerMock.uniqueId
+        )
+
+        every { command.aliases } returns arrayListOf()
+        every { playerMock.hasPermission(commandMailPermission) } returns true
+        every { playerMock.hasPermission("marketplace.mails.other") } returns true
+        every { mailsServiceMock.findUuidByPseudo(playerName) } returns ergailUuid
+        every { marketPlace.isReload } returns false
+        every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
+        every { mailsInventoryService.initInventory(pagination, playerMock) } returns inventory
+        every { playerMock.openInventory(inventory) } returns inventoryView
+
+        // WHEN
+        val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
+        callCommandFactoryInit.onCommand(
+            playerMock,
+            command,
+            commandLabel,
+            arrayOf("mails", playerName),
+            MarketPlace::class.java.classLoader,
+            commandPath,
+            permissionPrefix,
+            true,
+            kodein
+        )
+
+        // THEN
+        verify(exactly = 1) {
+            playerMock.hasPermission(commandMailPermission)
+            playerMock.hasPermission("marketplace.mails.other")
+            mailsServiceMock.findUuidByPseudo(playerName)
             mailsServiceMock.getPaginated(pagination = pagination)
             mailsInventoryService.initInventory(pagination, playerMock)
             playerMock.openInventory(inventory)

@@ -5,12 +5,12 @@ import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
-import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.kodein.di.DI
 import org.kodein.di.instance
+import java.util.*
 
 class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
 
@@ -24,15 +24,24 @@ class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
         cmd: Command,
         args: Array<String>
     ) {
-        val mailsPaginated = if (args.size == 2 && player.hasPermission("marketplace.mails.other")) {
-            // TODO : Get UUID from DB with pseudo and use it here to remove depreciated method
-            if (Bukkit.getOfflinePlayer(args[1]) == null) {
+        val mailsPaginated = if (args.size == 2) {
+            if (!player.hasPermission("marketplace.mails.other")) {
+                player.sendMessage(instance.tl.errors.missingPermission)
                 return
+            }
+
+            val uuid: UUID = if (args[1].length == 36) {
+                UUID.fromString(args[1])
+            } else {
+                mailsService.findUuidByPseudo(args[1]) ?: run {
+                    player.sendMessage(instance.tl.errors.playerNotFound)
+                    return
+                }
             }
 
             mailsService.getPaginated(
                 pagination = Pagination(
-                    currentPlayer = Bukkit.getOfflinePlayer(args[1]).uniqueId,
+                    currentPlayer = uuid,
                     viewPlayer = player.uniqueId
                 )
             )

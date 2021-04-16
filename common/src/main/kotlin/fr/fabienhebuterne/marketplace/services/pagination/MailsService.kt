@@ -6,6 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import org.bukkit.entity.Player
+import java.util.*
 
 class MailsService(
     private val marketPlace: MarketPlace,
@@ -61,5 +62,7 @@ class MailsService(
             mailsRepository.update(it)
         }
     }
+
+    fun findUuidByPseudo(playerPseudo: String): UUID? = mailsRepository.findUuidByPseudo(playerPseudo)
 
 }
