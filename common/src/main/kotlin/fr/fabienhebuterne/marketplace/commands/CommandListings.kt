@@ -45,13 +45,15 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
                 return
             }
 
-            val uuid: UUID = if (args[1].length == 36) {
+            val uuid: UUID? = if (args[1].length == 36) {
                 UUID.fromString(args[1])
             } else {
-                listingsService.findUUIDBySellerPseudo(args[1]) ?: run {
-                    player.sendMessage(instance.tl.errors.playerNotFound)
-                    return
-                }
+                listingsService.findUUIDBySellerPseudo(args[1])
+            }
+
+            if (uuid == null) {
+                player.sendMessage(instance.tl.errors.playerNotFound)
+                return
             }
 
             pagination = pagination.copy(showAll = false, currentPlayer = uuid)

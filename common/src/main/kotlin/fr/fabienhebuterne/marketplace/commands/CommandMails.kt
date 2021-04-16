@@ -24,35 +24,34 @@ class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
         cmd: Command,
         args: Array<String>
     ) {
-        val mailsPaginated = if (args.size == 2) {
+        var currentPlayer = player.uniqueId
+
+        if (args.size == 2) {
             if (!player.hasPermission("marketplace.mails.other")) {
                 player.sendMessage(instance.tl.errors.missingPermission)
                 return
             }
 
-            val uuid: UUID = if (args[1].length == 36) {
+            val uuidFetcher: UUID? = if (args[1].length == 36) {
                 UUID.fromString(args[1])
             } else {
-                mailsService.findUuidByPseudo(args[1]) ?: run {
-                    player.sendMessage(instance.tl.errors.playerNotFound)
-                    return
-                }
+                mailsService.findUuidByPseudo(args[1])
             }
 
-            mailsService.getPaginated(
-                pagination = Pagination(
-                    currentPlayer = uuid,
-                    viewPlayer = player.uniqueId
-                )
-            )
-        } else {
-            mailsService.getPaginated(
-                pagination = Pagination(
-                    currentPlayer = player.uniqueId,
-                    viewPlayer = player.uniqueId
-                )
-            )
+            if (uuidFetcher == null) {
+                player.sendMessage(instance.tl.errors.playerNotFound)
+                return
+            }
+
+            currentPlayer = uuidFetcher
         }
+
+        val mailsPaginated = mailsService.getPaginated(
+            pagination = Pagination(
+                currentPlayer = currentPlayer,
+                viewPlayer = player.uniqueId
+            )
+        )
 
         val initListingsInventory = mailsInventoryService.initInventory(mailsPaginated, player)
         player.openInventory(initListingsInventory)
