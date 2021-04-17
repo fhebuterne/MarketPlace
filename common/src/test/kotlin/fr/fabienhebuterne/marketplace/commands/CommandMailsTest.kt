@@ -205,6 +205,7 @@ class CommandMailsTest : BaseTest() {
         every { playerMock.hasPermission(commandMailOtherPermission) } returns true
         every { marketPlace.isReload } returns false
         every { mailsServiceMock.findUuidByPseudo(playerName) } returns null
+        every { playerMock.sendMessage(translation.errors.playerNotFound) } just Runs
 
         // WHEN
         val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
@@ -225,6 +226,7 @@ class CommandMailsTest : BaseTest() {
             playerMock.hasPermission(commandMailPermission)
             playerMock.hasPermission(commandMailOtherPermission)
             mailsServiceMock.findUuidByPseudo(playerName)
+            playerMock.sendMessage(translation.errors.playerNotFound)
         }
 
         verify(exactly = 0) {
