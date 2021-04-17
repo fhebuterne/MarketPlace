@@ -42,12 +42,10 @@ abstract class PaginationService<T : Paginated>(
     }
 
     fun getPaginated(
-        from: Int = 0,
-        to: Int = 45,
         pagination: Pagination<T>
     ): Pagination<T> {
-        var fromInt = from
-        var toInt = to
+        var fromInt = 0
+        var toInt = pagination.resultPerPage
         var currentPageInt = pagination.currentPage
 
         val countAll = if (!pagination.showAll) {
@@ -57,15 +55,15 @@ abstract class PaginationService<T : Paginated>(
         }
 
         if (currentPageInt > 1) {
-            fromInt = (currentPageInt - 1) * to
-            toInt = from + to
+            fromInt = (currentPageInt - 1) * pagination.resultPerPage
+            toInt = pagination.resultPerPage
         }
 
         // If currentPage doens't have result
         if (countAll < fromInt) {
             currentPageInt = 1
-            fromInt = from
-            toInt = to
+            fromInt = 0
+            toInt = pagination.resultPerPage
         }
 
         val results = if (!pagination.showAll) {

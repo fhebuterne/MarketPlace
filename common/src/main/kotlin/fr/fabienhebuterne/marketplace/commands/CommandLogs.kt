@@ -32,15 +32,13 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         cmd: Command,
         args: Array<String>
     ) {
-        var currentPage = if (args.size == 2 && intIsValid(args[1])) {
+        val currentPage = if (args.size == 2 && intIsValid(args[1])) {
             args[1].toInt()
         } else {
             1
         }
 
         val logsPaginated = logsService.getPaginated(
-            from = 0,
-            to = 10,
             pagination = Pagination(
                 currentPage = currentPage,
                 resultPerPage = 10,
@@ -49,7 +47,6 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
                 showAll = true
             )
         )
-        currentPage = logsPaginated.currentPage
 
         player.sendMessage(instance.tl.logs.header)
         logsPaginated.results.forEach {
@@ -59,7 +56,7 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         val message =
             TextComponent(instance.tl.logs.footer.split(ConfigPlaceholder.PREVIOUS_PAGE_BOOLEAN.placeholder)[0])
 
-        if (currentPage > 1) {
+        if (logsPaginated.currentPage > 1) {
             val previousPage = TextComponent(instance.tl.logs.previousPageExist)
             previousPage.hoverEvent =
                 HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.previousPage).create())
@@ -79,7 +76,7 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
             message.addExtra(it)
         }
 
-        if (currentPage < logsPaginated.maxPage()) {
+        if (logsPaginated.currentPage < logsPaginated.maxPage()) {
             val nextPage = TextComponent(instance.tl.logs.nextPageExist)
             nextPage.hoverEvent =
                 HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.nextPage).create())
