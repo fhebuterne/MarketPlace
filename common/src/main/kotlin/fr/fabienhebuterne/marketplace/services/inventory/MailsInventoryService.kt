@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
+import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
@@ -75,7 +76,10 @@ class MailsInventoryService(private val instance: MarketPlace, mailsService: Mai
         super.setBottomInventoryLine(inventory, pagination, InventoryType.MAILS)
     }
 
-    fun clickOnFilter(event: InventoryClickEvent, player: Player) {
-        super.clickOnFilter(event, player, InventoryType.MAILS)
+    fun clickOnBottomLineMails(
+        event: InventoryClickEvent,
+        player: Player
+    ) {
+        super.clickOnBottomLine(event, player, InventoryType.MAILS, InventoryLoreEnum.MAIL)
     }
 }

@@ -129,4 +129,27 @@ abstract class InventoryTypeService<T : Paginated>(
         }
     }
 
+    fun clickOnBottomLine(
+        event: InventoryClickEvent,
+        player: Player,
+        inventoryType: InventoryType,
+        inventoryLoreEnum: InventoryLoreEnum
+    ) {
+        clickOnSwitchPage(event, player)
+        clickOnSearch(event, player)
+        clickOnFilter(event, player, inventoryType)
+
+        if (event.rawSlot == inventoryLoreEnum.rawSlot) {
+            val inventoryPaginated = paginationService.getPaginated(
+                pagination = Pagination(
+                    showAll = true,
+                    currentPlayer = player.uniqueId,
+                    viewPlayer = player.uniqueId
+                )
+            )
+            val listingsInventory = initInventory(inventoryPaginated, player)
+            player.openInventory(listingsInventory)
+        }
+    }
+
 }

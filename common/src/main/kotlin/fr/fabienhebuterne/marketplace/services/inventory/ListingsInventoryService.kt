@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
+import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryType.LISTINGS
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
@@ -175,7 +176,10 @@ class ListingsInventoryService(
         super.setBottomInventoryLine(inventory, pagination, LISTINGS)
     }
 
-    fun clickOnFilter(event: InventoryClickEvent, player: Player) {
-        super.clickOnFilter(event, player, LISTINGS)
+    fun clickOnBottomLineListings(
+        event: InventoryClickEvent,
+        player: Player
+    ) {
+        super.clickOnBottomLine(event, player, LISTINGS, InventoryLoreEnum.LISTING)
     }
 }

@@ -28,7 +28,7 @@ class PlayerJoinEventListenerTest : BaseTest() {
         every { mailsService.updatePseudo(playerMock) } just Runs
 
         // WHEN
-        PlayerJoinEventListener(kodein).onPlayerJoinEvent(playerJointEvent)
+        PlayerJoinEventListener(kodein).onEvent(playerJointEvent)
 
         // THEN
         verify(exactly = 1) {

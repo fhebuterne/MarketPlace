@@ -27,7 +27,7 @@ class LogsService(
 
     fun expirationMailsToDeleteLog(mails: Mails) {
         createFrom(
-            player = Bukkit.getOfflinePlayer(mails.playerUuid).player!!,
+            player = Bukkit.getOfflinePlayer(mails.playerUuid),
             entity = mails,
             quantity = mails.quantity,
             needingMoney = null,
