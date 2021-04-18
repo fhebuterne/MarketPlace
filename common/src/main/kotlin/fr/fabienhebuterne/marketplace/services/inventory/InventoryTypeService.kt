@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.services.inventory
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.InventoryFilterEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
+import fr.fabienhebuterne.marketplace.domain.InventoryOpened
 import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.Filter
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
@@ -20,16 +21,17 @@ import java.util.*
 
 abstract class InventoryTypeService<T : Paginated>(
     private val instance: MarketPlace,
-    private val paginationService: PaginationService<T>
+    private val paginationService: PaginationService<T>,
+    private val inventoryOpenedService: InventoryOpenedService,
+    private val inventoryType: InventoryType
 ) {
-
     val playersWaitingSearch: MutableList<UUID> = mutableListOf()
 
     abstract fun initInventory(pagination: Pagination<T>, player: Player): Inventory
 
     abstract fun setBaseBottomLore(itemStack: ItemStack, paginated: T, player: Player): ItemStack
 
-    fun searchItemstack(event: AsyncPlayerChatEvent, showAll: Boolean) {
+    fun searchItemStack(event: AsyncPlayerChatEvent, showAll: Boolean) {
         event.isCancelled = true
         playersWaitingSearch.remove(event.player.uniqueId)
         val paginated = paginationService.getPaginated(
@@ -42,7 +44,7 @@ abstract class InventoryTypeService<T : Paginated>(
         )
         val initInventory = initInventory(paginated, event.player)
         Bukkit.getScheduler().runTask(instance.loader, Runnable {
-            event.player.openInventory(initInventory)
+            openInventory(event.player, initInventory)
         })
     }
 
@@ -58,17 +60,17 @@ abstract class InventoryTypeService<T : Paginated>(
         if (event.rawSlot == InventoryLoreEnum.PREVIOUS_PAGE.rawSlot) {
             val previousPage = paginationService.previousPage(player.uniqueId)
             val initInventory = initInventory(previousPage, player)
-            player.openInventory(initInventory)
+            openInventory(player, initInventory)
         }
 
         if (event.rawSlot == InventoryLoreEnum.NEXT_PAGE.rawSlot) {
             val nextPage = paginationService.nextPage(player.uniqueId)
             val initInventory = initInventory(nextPage, player)
-            player.openInventory(initInventory)
+            openInventory(player, initInventory)
         }
     }
 
-    fun clickOnFilter(event: InventoryClickEvent, player: Player, inventoryType: InventoryType) {
+    fun clickOnFilter(event: InventoryClickEvent, player: Player) {
         if (event.rawSlot == InventoryLoreEnum.FILTER.rawSlot) {
             var pagination = paginationService.playersView[player.uniqueId]
                 ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId)
@@ -85,14 +87,13 @@ abstract class InventoryTypeService<T : Paginated>(
 
             val nextPage = paginationService.getPaginated(pagination = pagination)
             val initInventory = initInventory(nextPage, player)
-            player.openInventory(initInventory)
+            openInventory(player, initInventory)
         }
     }
 
-    open fun setBottomInventoryLine(
+    fun setBottomInventoryLine(
         inventory: Inventory,
-        pagination: Pagination<out Paginated>,
-        inventoryType: InventoryType
+        pagination: Pagination<out Paginated>
     ) {
         val emptyItemStack = instance.configService.getSerialization().inventoryLoreMaterial.empty
         val emptySlot = parseMaterialConfig(emptyItemStack)
@@ -132,12 +133,11 @@ abstract class InventoryTypeService<T : Paginated>(
     fun clickOnBottomLine(
         event: InventoryClickEvent,
         player: Player,
-        inventoryType: InventoryType,
         inventoryLoreEnum: InventoryLoreEnum
     ) {
         clickOnSwitchPage(event, player)
         clickOnSearch(event, player)
-        clickOnFilter(event, player, inventoryType)
+        clickOnFilter(event, player)
 
         if (event.rawSlot == inventoryLoreEnum.rawSlot) {
             val inventoryPaginated = paginationService.getPaginated(
@@ -147,9 +147,15 @@ abstract class InventoryTypeService<T : Paginated>(
                     viewPlayer = player.uniqueId
                 )
             )
-            val listingsInventory = initInventory(inventoryPaginated, player)
-            player.openInventory(listingsInventory)
+            val inventory = initInventory(inventoryPaginated, player)
+            openInventory(player, inventory, inventoryLoreEnum.inventoryType)
         }
+    }
+
+    fun openInventory(player: Player, inventory: Inventory, inventoryTypeParam: InventoryType? = null) {
+        val invType = inventoryTypeParam ?: inventoryType
+        val inventoryView = player.openInventory(inventory)
+        inventoryOpenedService.inventoryOpened[player.uniqueId] = InventoryOpened(invType, inventoryView)
     }
 
 }

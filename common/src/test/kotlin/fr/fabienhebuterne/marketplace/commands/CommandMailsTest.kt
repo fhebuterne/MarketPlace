@@ -11,7 +11,6 @@ import io.mockk.*
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.Command
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryView
 import org.junit.jupiter.api.Test
 import org.kodein.di.DI
 import org.kodein.di.bind
@@ -37,14 +36,13 @@ class CommandMailsTest : BaseTest() {
             viewPlayer = playerMock.uniqueId
         )
         val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
 
         every { command.aliases } returns arrayListOf()
         every { playerMock.hasPermission(commandMailPermission) } returns true
         every { marketPlace.isReload } returns false
         every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
         every { mailsInventoryService.initInventory(pagination, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
+        every { mailsInventoryService.openInventory(playerMock, inventory) } just Runs
 
         // WHEN
         val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
@@ -65,7 +63,7 @@ class CommandMailsTest : BaseTest() {
             playerMock.hasPermission(commandMailPermission)
             mailsServiceMock.getPaginated(pagination = pagination)
             mailsInventoryService.initInventory(pagination, playerMock)
-            playerMock.openInventory(inventory)
+            mailsInventoryService.openInventory(playerMock, inventory)
         }
     }
 
@@ -108,7 +106,6 @@ class CommandMailsTest : BaseTest() {
     fun `should open mails inventory as an admin with mails command`() {
         // GIVEN
         val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
         val playerName = "Ergail"
         val offlinePlayer: OfflinePlayer = mockk()
         every { offlinePlayer.uniqueId } returns ergailUuid
@@ -124,7 +121,7 @@ class CommandMailsTest : BaseTest() {
         every { marketPlace.isReload } returns false
         every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
         every { mailsInventoryService.initInventory(pagination, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
+        every { mailsInventoryService.openInventory(playerMock, inventory) } just Runs
 
         // WHEN
         val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
@@ -147,7 +144,7 @@ class CommandMailsTest : BaseTest() {
             mailsServiceMock.findUuidByPseudo(playerName)
             mailsServiceMock.getPaginated(pagination = pagination)
             mailsInventoryService.initInventory(pagination, playerMock)
-            playerMock.openInventory(inventory)
+            mailsInventoryService.openInventory(playerMock, inventory)
         }
     }
 
@@ -155,7 +152,6 @@ class CommandMailsTest : BaseTest() {
     fun `should open mails inventory as an admin with uuid in argument with mails command`() {
         // GIVEN
         val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
         val offlinePlayer: OfflinePlayer = mockk()
         every { offlinePlayer.uniqueId } returns ergailUuid
         val pagination = Pagination<Mails>(
@@ -169,7 +165,7 @@ class CommandMailsTest : BaseTest() {
         every { marketPlace.isReload } returns false
         every { mailsServiceMock.getPaginated(pagination = pagination) } returns pagination
         every { mailsInventoryService.initInventory(pagination, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
+        every { mailsInventoryService.openInventory(playerMock, inventory) } just Runs
 
         // WHEN
         val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
@@ -191,7 +187,7 @@ class CommandMailsTest : BaseTest() {
             playerMock.hasPermission(commandMailOtherPermission)
             mailsServiceMock.getPaginated(pagination = pagination)
             mailsInventoryService.initInventory(pagination, playerMock)
-            playerMock.openInventory(inventory)
+            mailsInventoryService.openInventory(playerMock, inventory)
         }
     }
 

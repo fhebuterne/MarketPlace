@@ -2,6 +2,7 @@ package fr.fabienhebuterne.marketplace.commands
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
+import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.BadArgumentException
@@ -74,7 +75,11 @@ class CommandAdd(kodein: DI) : CallCommand<MarketPlace>("add") {
             listingsService.updateListings(findExistingListings, currentItemStack.amount, player)
         } else {
             val confirmationAddNewItemInventory = listingsInventoryService.confirmationAddNewItem(player, listings)
-            player.openInventory(confirmationAddNewItemInventory)
+            listingsInventoryService.openInventory(
+                player,
+                confirmationAddNewItemInventory,
+                InventoryType.SELL_CONFIRMATION
+            )
         }
     }
 }

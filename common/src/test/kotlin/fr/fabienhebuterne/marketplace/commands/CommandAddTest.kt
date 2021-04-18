@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.commands
 import fr.fabienhebuterne.marketplace.BaseTest
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
+import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
@@ -14,7 +15,6 @@ import io.mockk.*
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import org.junit.jupiter.api.Test
@@ -165,7 +165,6 @@ class CommandAddTest : BaseTest() {
         // GIVEN
         val money = 100.0
         val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
         val playerInventory: PlayerInventory = mockk()
         val secondItemStack: ItemStack = initItemStackMock(Material.DIRT, 1, null, false)
         every { secondItemStack.setAmount(1) } just Runs
@@ -181,7 +180,13 @@ class CommandAddTest : BaseTest() {
         every { playerInventory.itemInMainHand.clone() } returns secondItemStack
         every { listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money) } returns null
         every { listingsInventoryServiceMock.confirmationAddNewItem(playerMock, any()) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
+        every {
+            listingsInventoryServiceMock.openInventory(
+                playerMock,
+                inventory,
+                InventoryType.SELL_CONFIRMATION
+            )
+        } just Runs
 
         // WHEN
         val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
@@ -202,7 +207,7 @@ class CommandAddTest : BaseTest() {
             playerMock.hasPermission(commandAddPermission)
             listingsRepositoryMock.find(playerMock.uniqueId, secondItemStack, money)
             listingsInventoryServiceMock.confirmationAddNewItem(playerMock, any())
-            playerMock.openInventory(inventory)
+            listingsInventoryServiceMock.openInventory(playerMock, inventory, InventoryType.SELL_CONFIRMATION)
         }
     }
 

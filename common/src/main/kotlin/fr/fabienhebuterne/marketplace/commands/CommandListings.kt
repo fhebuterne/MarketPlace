@@ -60,8 +60,8 @@ class CommandListings(kodein: DI) : CallCommand<MarketPlace>("listings") {
         }
 
         val listingsPaginated = listingsService.getPaginated(pagination = pagination)
-        val initListingsInventory = listingsInventoryService.initInventory(listingsPaginated, player)
-        player.openInventory(initListingsInventory)
+        val initInventory = listingsInventoryService.initInventory(listingsPaginated, player)
+        listingsInventoryService.openInventory(player, initInventory)
     }
 
 }

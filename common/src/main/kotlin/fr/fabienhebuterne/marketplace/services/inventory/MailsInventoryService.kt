@@ -2,22 +2,22 @@ package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
-import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
-import fr.fabienhebuterne.marketplace.domain.InventoryType
+import fr.fabienhebuterne.marketplace.domain.InventoryType.MAILS
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
-import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-class MailsInventoryService(private val instance: MarketPlace, mailsService: MailsService) :
-    InventoryTypeService<Mails>(instance, mailsService) {
+class MailsInventoryService(
+    private val instance: MarketPlace,
+    private val mailsService: MailsService,
+    inventoryOpenedService: InventoryOpenedService
+) : InventoryTypeService<Mails>(instance, mailsService, inventoryOpenedService, MAILS) {
     override fun initInventory(pagination: Pagination<Mails>, player: Player): Inventory {
         val currentPlayerName = Bukkit.getOfflinePlayer(pagination.currentPlayer).name
         val inventory = instance.loader.server.createInventory(
@@ -69,17 +69,14 @@ class MailsInventoryService(private val instance: MarketPlace, mailsService: Mai
         return itemStack
     }
 
-    private fun setBottomInventoryLine(
-        inventory: Inventory,
-        pagination: Pagination<out Paginated>
-    ) {
-        super.setBottomInventoryLine(inventory, pagination, InventoryType.MAILS)
-    }
-
-    fun clickOnBottomLineMails(
-        event: InventoryClickEvent,
-        player: Player
-    ) {
-        super.clickOnBottomLine(event, player, InventoryType.MAILS, InventoryLoreEnum.MAIL)
+    fun openMailsInventory(player: Player) {
+        val inventoryPaginated = mailsService.getPaginated(
+            pagination = Pagination(
+                currentPlayer = player.uniqueId,
+                viewPlayer = player.uniqueId
+            )
+        )
+        val mailsInventory = initInventory(inventoryPaginated, player)
+        openInventory(player, mailsInventory)
     }
 }

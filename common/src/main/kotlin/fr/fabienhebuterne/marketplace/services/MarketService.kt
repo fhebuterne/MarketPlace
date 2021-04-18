@@ -91,7 +91,7 @@ class MarketService(
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
         val initInventory = listingsInventoryService.initInventory(refreshInventory, player)
         Bukkit.getScheduler().runTask(marketPlace.loader, Runnable {
-            player.openInventory(initInventory)
+            listingsInventoryService.openInventory(player, initInventory)
         })
     }
 
@@ -147,7 +147,7 @@ class MarketService(
             listingsService.playersView[player.uniqueId]
                 ?: Pagination(currentPlayer = player.uniqueId, viewPlayer = player.uniqueId), player
         )
-        player.openInventory(initInventory)
+        listingsInventoryService.openInventory(player, initInventory)
     }
 
     private fun forwardListingsToMails(
@@ -312,6 +312,6 @@ class MarketService(
 
         val refreshInventory = mailsService.getPaginated(pagination = paginationMails)
         val initInventory = mailsInventoryService.initInventory(refreshInventory, player)
-        player.openInventory(initInventory)
+        mailsInventoryService.openInventory(player, initInventory)
     }
 }

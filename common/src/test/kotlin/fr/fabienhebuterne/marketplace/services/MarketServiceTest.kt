@@ -23,7 +23,6 @@ import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import org.bukkit.scheduler.BukkitScheduler
@@ -226,7 +225,6 @@ class MarketServiceTest : BaseTest() {
         val money = listings.price * quantity
         val economyResponse = EconomyResponse(100.0, 100.0, EconomyResponse.ResponseType.SUCCESS, "")
         val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
         val economy: Economy = mockk()
         val bukkitScheduler: BukkitScheduler = mockk()
         val bukkitTask: BukkitTask = mockk()
@@ -253,7 +251,7 @@ class MarketServiceTest : BaseTest() {
         every { playerMock.sendMessage(finalMessage) } just Runs
         every { listingsService.getPaginated(pagination = playerView) } returns playerView
         every { listingsInventoryService.initInventory(playerView, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
+        every { listingsInventoryService.openInventory(playerMock, inventory) } just Runs
         every { bukkitScheduler.runTask(loader, capture(runnableSlot)) } answers {
             runnableSlot.captured.run()
             bukkitTask
@@ -280,7 +278,7 @@ class MarketServiceTest : BaseTest() {
             listingsService.getPaginated(pagination = playerView)
             listingsInventoryService.initInventory(playerView, playerMock)
             bukkitScheduler.runTask(loader, runnableSlot.captured)
-            playerMock.openInventory(inventory)
+            listingsInventoryService.openInventory(playerMock, inventory)
         }
     }
 
@@ -307,7 +305,6 @@ class MarketServiceTest : BaseTest() {
     fun `should normal player can take limited items quantity from mails to inventory`() {
         // GIVEN
         val inventory: Inventory = mockk()
-        val inventoryView: InventoryView = mockk()
         val playerInventory: PlayerInventory = mockk()
         val playerView = initMails(200)
         val mails: Mails = playerView.results[0]
@@ -328,7 +325,7 @@ class MarketServiceTest : BaseTest() {
         every { mailsRepository.update(mails.copy(quantity = 70)) } returns mails.copy(quantity = 70)
         every { mailsService.getPaginated(pagination = playerView) } returns playerView
         every { mailsInventoryService.initInventory(playerView, playerMock) } returns inventory
-        every { playerMock.openInventory(inventory) } returns inventoryView
+        every { mailsInventoryService.openInventory(playerMock, inventory) } just Runs
 
         // WHEN
         marketService.clickOnMailsInventory(inventoryClickEvent, playerMock)
@@ -343,7 +340,7 @@ class MarketServiceTest : BaseTest() {
             mailsRepository.update(mails.copy(quantity = 70))
             mailsService.getPaginated(pagination = playerView)
             mailsInventoryService.initInventory(playerView, playerMock)
-            playerMock.openInventory(inventory)
+            mailsInventoryService.openInventory(playerMock, inventory)
         }
     }
 }

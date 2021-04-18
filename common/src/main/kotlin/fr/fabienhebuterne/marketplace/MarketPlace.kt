@@ -12,12 +12,14 @@ import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslati
 import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
 import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
 import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
+import fr.fabienhebuterne.marketplace.listeners.InventoryCloseEventListener
 import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.MigrationService
 import fr.fabienhebuterne.marketplace.services.NotificationService
+import fr.fabienhebuterne.marketplace.services.inventory.InventoryOpenedService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
@@ -119,9 +121,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         migrationService.migrateAllEntities()
 
         // TODO : Create factory to init listeners
-        loader.server.pluginManager.registerEvents(InventoryClickEventListener(this.instance, kodein), this.loader)
+        loader.server.pluginManager.registerEvents(InventoryClickEventListener(kodein), this.loader)
         loader.server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this.instance, kodein), this.loader)
         loader.server.pluginManager.registerEvents(PlayerJoinEventListener(kodein), this.loader)
+        loader.server.pluginManager.registerEvents(InventoryCloseEventListener(kodein), this.loader)
 
         // Start tasks to check items expired
         val expirationService: ExpirationService by kodein.instance()
@@ -138,12 +141,19 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(instance, database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(instance, database) }
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(instance, database) }
+            bind<InventoryOpenedService>() with singleton { InventoryOpenedService() }
             bind<NotificationService>() with singleton { NotificationService(instance) }
             bind<ListingsService>() with singleton { ListingsService(instance, instance(), instance(), clock) }
             bind<MailsService>() with singleton { MailsService(instance, instance()) }
             bind<LogsService>() with singleton { LogsService(instance, instance()) }
-            bind<ListingsInventoryService>() with singleton { ListingsInventoryService(instance, instance()) }
-            bind<MailsInventoryService>() with singleton { MailsInventoryService(instance, instance()) }
+            bind<ListingsInventoryService>() with singleton {
+                ListingsInventoryService(
+                    instance,
+                    instance(),
+                    instance()
+                )
+            }
+            bind<MailsInventoryService>() with singleton { MailsInventoryService(instance, instance(), instance()) }
             bind<MarketService>() with singleton {
                 MarketService(
                     instance,

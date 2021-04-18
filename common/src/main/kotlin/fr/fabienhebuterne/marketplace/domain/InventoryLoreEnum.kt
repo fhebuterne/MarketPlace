@@ -41,11 +41,6 @@ enum class InventoryLoreEnum(
     }
 }
 
-enum class InventoryType {
-    MAILS,
-    LISTINGS
-}
-
 fun loadMaterialFilterConfig(filter: String) {
     InventoryLoreEnum.FILTER.itemStack = ItemStack(Material.valueOf(filter))
 }

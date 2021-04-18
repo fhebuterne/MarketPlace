@@ -53,8 +53,8 @@ class CommandMails(kodein: DI) : CallCommand<MarketPlace>("mails") {
             )
         )
 
-        val initListingsInventory = mailsInventoryService.initInventory(mailsPaginated, player)
-        player.openInventory(initListingsInventory)
+        val initInventory = mailsInventoryService.initInventory(mailsPaginated, player)
+        mailsInventoryService.openInventory(player, initInventory)
     }
 
 }

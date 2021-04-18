@@ -2,7 +2,6 @@ package fr.fabienhebuterne.marketplace.services.inventory
 
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
-import fr.fabienhebuterne.marketplace.domain.InventoryLoreEnum
 import fr.fabienhebuterne.marketplace.domain.InventoryType.LISTINGS
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
@@ -22,9 +21,10 @@ import java.util.*
 
 class ListingsInventoryService(
     private val instance: MarketPlace,
-    private val listingsService: ListingsService
+    private val listingsService: ListingsService,
+    inventoryOpenedService: InventoryOpenedService
 ) :
-    InventoryTypeService<Listings>(instance, listingsService) {
+    InventoryTypeService<Listings>(instance, listingsService, inventoryOpenedService, LISTINGS) {
     private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 
     override fun initInventory(pagination: Pagination<Listings>, player: Player): Inventory {
@@ -169,17 +169,14 @@ class ListingsInventoryService(
         player.closeInventory()
     }
 
-    private fun setBottomInventoryLine(
-        inventory: Inventory,
-        pagination: Pagination<out Paginated>
-    ) {
-        super.setBottomInventoryLine(inventory, pagination, LISTINGS)
-    }
-
-    fun clickOnBottomLineListings(
-        event: InventoryClickEvent,
-        player: Player
-    ) {
-        super.clickOnBottomLine(event, player, LISTINGS, InventoryLoreEnum.LISTING)
+    fun openListingsInventory(player: Player) {
+        val inventoryPaginated = listingsService.getPaginated(
+            pagination = Pagination(
+                currentPlayer = player.uniqueId,
+                viewPlayer = player.uniqueId
+            )
+        )
+        val mailsInventory = initInventory(inventoryPaginated, player)
+        openInventory(player, mailsInventory)
     }
 }
