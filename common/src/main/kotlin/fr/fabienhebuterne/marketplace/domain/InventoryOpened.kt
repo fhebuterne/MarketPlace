@@ -4,5 +4,5 @@ import org.bukkit.inventory.InventoryView
 
 data class InventoryOpened(
     val inventoryType: InventoryType,
-    val inventoryView: InventoryView
+    val inventoryView: InventoryView?
 )
