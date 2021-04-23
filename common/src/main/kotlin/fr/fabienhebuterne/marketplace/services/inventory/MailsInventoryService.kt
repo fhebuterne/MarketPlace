@@ -19,7 +19,7 @@ class MailsInventoryService(
     inventoryOpenedService: InventoryOpenedService
 ) : InventoryTypeService<Mails>(instance, mailsService, inventoryOpenedService, MAILS) {
     override fun initInventory(pagination: Pagination<Mails>, player: Player): Inventory {
-        val currentPlayerName: String = Bukkit.getOfflinePlayer(pagination.currentPlayer).name
+        val currentPlayerName: String = Bukkit.getOfflinePlayer(pagination.currentPlayer).name ?: "Unknown"
         val title: String =
             instance.tl.inventoryType[MAILS] ?: "MarketPlace - Mails ${ConfigPlaceholder.PLAYER_PSEUDO.placeholder}"
         val replacedTitle: String = title.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, currentPlayerName)

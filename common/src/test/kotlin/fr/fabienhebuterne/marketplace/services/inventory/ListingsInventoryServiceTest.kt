@@ -73,8 +73,9 @@ class ListingsInventoryServiceTest : BaseTest() {
         val inventory: Inventory = mockk()
         every {
             serverMock.createInventory(
-                playerMock, CommandListings.BIG_CHEST_SIZE,
-                translation.inventoryType[InventoryType.LISTINGS]
+                playerMock,
+                CommandListings.BIG_CHEST_SIZE,
+                translation.inventoryType[InventoryType.LISTINGS] ?: ""
             )
         } returns inventory
         every { itemStack.itemMeta } returns itemMeta
@@ -95,8 +96,9 @@ class ListingsInventoryServiceTest : BaseTest() {
         // THEN
         verify(exactly = 1) {
             serverMock.createInventory(
-                playerMock, CommandListings.BIG_CHEST_SIZE,
-                translation.inventoryType[InventoryType.LISTINGS]
+                playerMock,
+                CommandListings.BIG_CHEST_SIZE,
+                translation.inventoryType[InventoryType.LISTINGS] ?: ""
             )
             itemMeta.lore = loreExcepted
             inventory.setItem(0, itemStack)
