@@ -95,7 +95,7 @@ abstract class InventoryTypeService<T : Paginated>(
         inventory: Inventory,
         pagination: Pagination<out Paginated>
     ) {
-        val emptyItemStack = instance.configService.getSerialization().inventoryLoreMaterial.empty
+        val emptyItemStack = instance.conf.inventoryLoreMaterial.empty
         val emptySlot = parseMaterialConfig(emptyItemStack)
 
         inventory.setItem(47, emptySlot)

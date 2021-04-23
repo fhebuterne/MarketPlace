@@ -1,11 +1,13 @@
 package fr.fabienhebuterne.marketplace.domain.config
 
+import fr.fabienhebuterne.marketplace.domain.InventoryType
 import fr.fabienhebuterne.marketplace.domain.paginated.LogType
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Translation(
     val errors: Errors,
+    val inventoryType: MutableMap<InventoryType, String> = mutableMapOf(),
     val inventoryEnum: InventoryEnum,
     val inventoryFilterEnum: InventoryFilterEnumTranslation,
     val clickMiddleListingInventory: List<String>,

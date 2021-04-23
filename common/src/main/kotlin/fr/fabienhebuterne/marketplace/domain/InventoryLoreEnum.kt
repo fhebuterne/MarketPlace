@@ -18,7 +18,7 @@ const val LISTING_TEXTURE =
     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTlmNGFhY2ZjNjI3ZWU2NGEzMjU3YWQ1Mjc4MzU1NWYyYjM1OGNiN2NjY2I4NjQwNDA5OTc0MDNhNWIxYmQ1MiJ9fX0="
 
 private val defaultItemStack = ItemStack(Material.DIRT)
-private val defaultItem = Item("")
+private val defaultItem = Item("missing translation")
 
 enum class InventoryLoreEnum(
     val rawSlot: Int,

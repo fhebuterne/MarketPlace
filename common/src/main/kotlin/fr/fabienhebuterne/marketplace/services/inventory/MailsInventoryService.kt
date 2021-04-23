@@ -23,7 +23,7 @@ class MailsInventoryService(
         val inventory = instance.loader.server.createInventory(
             player,
             CommandListings.BIG_CHEST_SIZE,
-            "MarketPlace - Mails - $currentPlayerName"
+            instance.tl.inventoryType[MAILS]?.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, currentPlayerName)
         )
 
         pagination.results.forEachIndexed { index, mails ->

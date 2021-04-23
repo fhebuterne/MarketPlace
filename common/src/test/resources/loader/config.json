@@ -22,7 +22,7 @@
   "maxDecimalMoney": 2,
   "maxMoneyToSellItem": 1000000000000,
   "inventoryLoreMaterial": {
-    "empty": "GRAY_STAINED_GLASS_PANE",
+    "empty": "STAINED_GLASS_PANE:7",
     "filter": "COMPARATOR"
   },
   "inventoryValidItem": "GREEN_STAINED_GLASS_PANE",

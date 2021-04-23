@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace.services.inventory
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.commands.CommandListings
 import fr.fabienhebuterne.marketplace.domain.InventoryType.LISTINGS
+import fr.fabienhebuterne.marketplace.domain.InventoryType.SELL_CONFIRMATION
 import fr.fabienhebuterne.marketplace.domain.base.Pagination
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
@@ -23,13 +24,15 @@ class ListingsInventoryService(
     private val instance: MarketPlace,
     private val listingsService: ListingsService,
     inventoryOpenedService: InventoryOpenedService
-) :
-    InventoryTypeService<Listings>(instance, listingsService, inventoryOpenedService, LISTINGS) {
+) : InventoryTypeService<Listings>(instance, listingsService, inventoryOpenedService, LISTINGS) {
     private val playersConfirmation: MutableMap<UUID, Paginated> = mutableMapOf()
 
     override fun initInventory(pagination: Pagination<Listings>, player: Player): Inventory {
         val inventory =
-            instance.loader.server.createInventory(player, CommandListings.BIG_CHEST_SIZE, "MarketPlace - Achat")
+            instance.loader.server.createInventory(
+                player, CommandListings.BIG_CHEST_SIZE,
+                instance.tl.inventoryType[LISTINGS]
+            )
 
         pagination.results.forEachIndexed { index, listings ->
             val itemStack = if (listings.sellerUuid == player.uniqueId) {
@@ -121,7 +124,7 @@ class ListingsInventoryService(
 
     fun confirmationAddNewItem(player: Player, listings: Listings): Inventory {
         playersConfirmation[player.uniqueId] = listings
-        val inventory = Bukkit.createInventory(player, 9, "MarketPlace - Vente - Confirmation")
+        val inventory = Bukkit.createInventory(player, 9, instance.tl.inventoryType[SELL_CONFIRMATION])
 
         val validItem = parseMaterialConfig(instance.conf.inventoryValidItem)
         val validItemMeta = validItem.itemMeta

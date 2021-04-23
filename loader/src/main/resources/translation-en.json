@@ -11,6 +11,11 @@
     "missingPermission": "§8[§6MarketPlace§8] §cYou don't have permission to do this.",
     "playerNotFound": "§8[§6MarketPlace§8] §cPlayer cannot be found or don't have items on market."
   },
+  "inventoryType": {
+    "LISTINGS": "MarketPlace - Buy",
+    "MAILS": "MarketPlace - Mails - {{playerPseudo}}",
+    "SELL_CONFIRMATION": "MarketPlace - Sell - Confirmation"
+  },
   "inventoryEnum": {
     "search": {
       "displayName": "§cSearch...",
@@ -170,7 +175,7 @@
     },
     "message": {
       "BUY": "§6{{playerPseudo}} §abought §6{{quantity}}x{{itemStack}} §afor {{price}}$ at §6{{sellerPseudo}}",
-      "SELL": "§6{{playerPseudo}} §asold §6{{quantity}}x{{itemStack}} §afor {{price}}$",
+      "SELL": "§6{{playerPseudo}} §ahas put on sale §6{{quantity}}x{{itemStack}} §afor {{price}}$",
       "EXPIRED": "§aThe §6{{quantity}}x{{itemStack}} §aof §6{{playerPseudo}} §ahad expired",
       "CANCEL": "§6{{playerPseudo}} §acanceled the sale of §6{{quantity}}x{{itemStack}}",
       "GET": "§6{{playerPseudo}} §acollected §6{{quantity}}x{{itemStack}} §afrom his inbox"

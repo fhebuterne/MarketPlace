@@ -23,10 +23,11 @@ abstract class BaseTest {
     private val resource: URL = this::class.java.classLoader.getResource("loader")
         ?: throw IllegalAccessException("ressource path not exist")
     private val filepath: Path = Paths.get(resource.toURI())
-    private val serverMock: Server = mockk()
     private val javaPluginMock: JavaPlugin = mockk()
+    val serverMock: Server = mockk()
     val marketPlace: MarketPlace = mockk()
     var playerMock: Player = mockk()
+    lateinit var itemFactory: ItemFactory
 
     lateinit var translation: Translation
     lateinit var config: Config
@@ -60,10 +61,9 @@ abstract class BaseTest {
 
         // Mockk only for itemStack
         mockkStatic(Bukkit::class)
-        val itemFactory: ItemFactory = mockk()
+        itemFactory = mockk()
         every { Bukkit.getItemFactory() } returns itemFactory
         every { itemFactory.equals(null, null) } returns false
-        every { itemFactory.getItemMeta(any()) } returns null
     }
 
     @BeforeEach

@@ -11,6 +11,11 @@
     "missingPermission": "§8[§6MarketPlace§8] §cVous n''avez pas la permission de faire ceci.",
     "playerNotFound": "§8[§6MarketPlace§8] §cLe joueur est introuvable ou ne possède pas d'items sur le marché."
   },
+  "inventoryType": {
+    "LISTINGS": "MarketPlace - Achat",
+    "MAILS": "MarketPlace - Mails - {{playerPseudo}}",
+    "SELL_CONFIRMATION": "MarketPlace - Vente - Confirmation"
+  },
   "inventoryEnum": {
     "search": {
       "displayName": "§cRecherche...",
