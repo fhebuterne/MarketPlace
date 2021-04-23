@@ -20,11 +20,12 @@ class MailsInventoryService(
 ) : InventoryTypeService<Mails>(instance, mailsService, inventoryOpenedService, MAILS) {
     override fun initInventory(pagination: Pagination<Mails>, player: Player): Inventory {
         val currentPlayerName = Bukkit.getOfflinePlayer(pagination.currentPlayer).name
+        val title =
+            instance.tl.inventoryType[MAILS] ?: "MarketPlace - Mails ${ConfigPlaceholder.PLAYER_PSEUDO.placeholder}"
         val inventory = instance.loader.server.createInventory(
             player,
             CommandListings.BIG_CHEST_SIZE,
-            instance.tl.inventoryType[MAILS]?.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, currentPlayerName)
-                ?: "MarketPlace - Mails"
+            title.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, currentPlayerName)
         )
 
         pagination.results.forEachIndexed { index, mails ->
