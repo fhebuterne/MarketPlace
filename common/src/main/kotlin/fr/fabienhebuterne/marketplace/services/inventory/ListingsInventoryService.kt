@@ -31,7 +31,7 @@ class ListingsInventoryService(
         val inventory =
             instance.loader.server.createInventory(
                 player, CommandListings.BIG_CHEST_SIZE,
-                instance.tl.inventoryType[LISTINGS]
+                instance.tl.inventoryType[LISTINGS] ?: "MarketPlace - Listings"
             )
 
         pagination.results.forEachIndexed { index, listings ->
@@ -124,7 +124,11 @@ class ListingsInventoryService(
 
     fun confirmationAddNewItem(player: Player, listings: Listings): Inventory {
         playersConfirmation[player.uniqueId] = listings
-        val inventory = Bukkit.createInventory(player, 9, instance.tl.inventoryType[SELL_CONFIRMATION])
+        val inventory = Bukkit.createInventory(
+            player,
+            9,
+            instance.tl.inventoryType[SELL_CONFIRMATION] ?: "MarketPlace - Sell confirmation"
+        )
 
         val validItem = parseMaterialConfig(instance.conf.inventoryValidItem)
         val validItemMeta = validItem.itemMeta

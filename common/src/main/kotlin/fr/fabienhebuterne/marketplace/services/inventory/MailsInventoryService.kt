@@ -24,6 +24,7 @@ class MailsInventoryService(
             player,
             CommandListings.BIG_CHEST_SIZE,
             instance.tl.inventoryType[MAILS]?.replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, currentPlayerName)
+                ?: "MarketPlace - Mails"
         )
 
         pagination.results.forEachIndexed { index, mails ->
