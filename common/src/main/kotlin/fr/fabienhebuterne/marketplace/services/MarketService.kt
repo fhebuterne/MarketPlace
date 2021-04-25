@@ -73,7 +73,7 @@ class MarketService(
 
         val takeQuantity = listingsDatabase.quantity - quantity
 
-        if (listingsDatabase.quantity > 1 && takeQuantity > 1) {
+        if (listingsDatabase.quantity > 0 && takeQuantity > 0) {
             listingsRepository.update(listingsDatabase.copy(quantity = takeQuantity))
         } else {
             listingsDatabase.id?.let { listingsRepository.delete(it) }
@@ -267,6 +267,13 @@ class MarketService(
     private fun takeItem(player: Player, rawSlot: Int, isAdmin: Boolean = false) {
         val paginationMails = mailsService.playersView[player.uniqueId]
         val mail = paginationMails?.results?.get(rawSlot) ?: return
+
+        val mails = mailsService.find(mail.id.toString())
+
+        if (mails == null) {
+            player.sendMessage(marketPlace.tl.errors.itemNotExist)
+            return
+        }
 
         val slotInventoryAvailable = player.inventory.storageContents.clone()
             .filter { it == null || it.type == Material.AIR }

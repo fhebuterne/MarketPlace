@@ -21,6 +21,7 @@ import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -29,7 +30,9 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.scheduler.BukkitTask
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
+import strikt.api.expectThat
 import strikt.assertions.isA
+import strikt.assertions.isEmpty
 import strikt.assertions.isFailure
 import java.util.*
 
@@ -321,6 +324,7 @@ class MarketServiceTest : BaseTest() {
         every { playerInventory.storageContents } returns arrayOf(itemStackDirtInInventory, null, null)
         every { playerInventory.addItem(mails.itemStack) } returns hashMapOf()
 
+        every { mailsService.find(mails.id.toString()) } returns mails
         every { logsService.takeItemLog(playerMock, mails, 130, false) } just Runs
         every { mailsRepository.update(mails.copy(quantity = 70)) } returns mails.copy(quantity = 70)
         every { mailsService.getPaginated(pagination = playerView) } returns playerView
@@ -336,11 +340,73 @@ class MarketServiceTest : BaseTest() {
         }
 
         verify(exactly = 1) {
+            mailsService.find(mails.id.toString())
             logsService.takeItemLog(playerMock, mails, 130, false)
             mailsRepository.update(mails.copy(quantity = 70))
             mailsService.getPaginated(pagination = playerView)
             mailsInventoryService.initInventory(playerView, playerMock)
             mailsInventoryService.openInventory(playerMock, inventory)
         }
+    }
+
+    @Test
+    fun `should player can buy one item with left click from listings inventory click`() {
+        // GIVEN
+        val inventoryClickEvent: InventoryClickEvent = mockk()
+        val inventory: Inventory = mockk()
+        val playerView = initListings(100)
+        val listings: Listings = playerView.results[0]
+        every { listings.itemStack.clone() } returns listings.itemStack
+        val quantity = 1
+        val money = listings.price * quantity
+        val economyResponse = EconomyResponse(100.0, 100.0, EconomyResponse.ResponseType.SUCCESS, "")
+        val economy: Economy = mockk()
+        val bukkitScheduler: BukkitScheduler = mockk()
+        val bukkitTask: BukkitTask = mockk()
+        val runnableSlot = slot<Runnable>()
+        val loader = marketPlace.loader
+        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${money}$."
+
+        every { inventoryClickEvent.rawSlot } returns 0
+        every { inventoryClickEvent.currentItem } returns listings.itemStack
+        every { inventoryClickEvent.isShiftClick } returns false
+        every { inventoryClickEvent.isLeftClick } returns true
+        every { inventoryClickEvent.click } returns ClickType.LEFT
+
+        every { Bukkit.getScheduler() } returns bukkitScheduler
+        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
+        every { marketPlace.getEconomy() } returns economy
+        every { economy.has(fabienOfflinePlayer, money) } returns true
+        every { economy.withdrawPlayer(fabienOfflinePlayer, money) } returns economyResponse
+        every { economy.depositPlayer(ergailOfflinePlayer, money) } returns economyResponse
+        every { listingsRepository.update(listings.copy(quantity = 100 - quantity)) } returns listings.copy(
+            quantity = 100 - quantity
+        )
+        every { mailsService.saveListingsToMail(listings, playerMock, quantity) } just Runs
+        every { logsService.buyItemLog(playerMock, listings, quantity, money) } just Runs
+        every { notificationService.sellerItemNotification(listings, quantity, money) } just Runs
+        every { playerMock.sendMessage(finalMessage) } just Runs
+        every { listingsService.getPaginated(pagination = playerView) } returns playerView
+        every { listingsInventoryService.initInventory(playerView, playerMock) } returns inventory
+        every { listingsInventoryService.openInventory(playerMock, inventory) } just Runs
+        every { bukkitScheduler.runTask(loader, capture(runnableSlot)) } answers {
+            runnableSlot.captured.run()
+            bukkitTask
+        }
+
+        every { playerMock.hasPermission("marketplace.listings.other.remove") } returns false
+
+        // WHEN
+        marketService.playersWaitingDefinedQuantity[playerMock.uniqueId] =
+            WaitingDefinedQuantity(listings, ClickType.LEFT)
+        marketService.clickOnListingsInventory(inventoryClickEvent, playerMock)
+
+        // THEN
+        verify(exactly = 1) {
+            listingsRepository.update(listings.copy(quantity = 99))
+            listingsInventoryService.openInventory(playerMock, inventory)
+        }
+
+        expectThat(marketService.playersWaitingDefinedQuantity).isEmpty()
     }
 }

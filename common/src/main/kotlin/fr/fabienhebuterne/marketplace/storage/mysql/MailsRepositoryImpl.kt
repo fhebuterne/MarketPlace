@@ -116,7 +116,11 @@ class MailsRepositoryImpl(
     }
 
     override fun find(id: String): Mails? {
-        TODO("Not yet implemented")
+        return transaction(marketPlaceDb) {
+            MailsTable
+                .select { MailsTable.id eq UUID.fromString(id) }
+                .limit(1).map { fromRow(it) }.firstOrNull()
+        }
     }
 
     override fun find(playerUuid: UUID, itemStack: ItemStack): Mails? {

@@ -180,7 +180,8 @@ class ListingsInventoryService(
         val inventoryPaginated = listingsService.getPaginated(
             pagination = Pagination(
                 currentPlayer = player.uniqueId,
-                viewPlayer = player.uniqueId
+                viewPlayer = player.uniqueId,
+                showAll = true
             )
         )
         val mailsInventory = initInventory(inventoryPaginated, player)
