@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Mails
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import org.bukkit.Bukkit
 
 class NotificationService(val marketPlace: MarketPlace) {
@@ -19,7 +20,7 @@ class NotificationService(val marketPlace: MarketPlace) {
                     .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, listingsDatabase.sellerUuid.toString())
                     .replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
                     .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
-                    .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
+                    .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(needingMoney))
 
             sendBukkitCommands(commandReplace)
         }
@@ -32,7 +33,7 @@ class NotificationService(val marketPlace: MarketPlace) {
                     .replace(ConfigPlaceholder.PLAYER_UUID.placeholder, it.sellerUuid.toString())
                     .replace(ConfigPlaceholder.QUANTITY.placeholder, it.quantity.toString())
                     .replace(ConfigPlaceholder.ITEM_STACK.placeholder, it.itemStack.type.toString())
-                    .replace(ConfigPlaceholder.PRICE.placeholder, it.price.toString())
+                    .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(it.price))
 
             sendBukkitCommands(commandReplace)
         }

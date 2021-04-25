@@ -6,7 +6,7 @@ import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.initItemStackMock
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import io.mockk.*
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -45,7 +45,7 @@ class ListingsServiceTest : BaseTest() {
         val listingsCreatedMessage =
             translation.listingCreated.replace(ConfigPlaceholder.QUANTITY.placeholder, listings.quantity.toString())
                 .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listings.itemStack.type.toString())
-                .replace(ConfigPlaceholder.UNIT_PRICE.placeholder, convertDoubleToReadeableString(listings.price))
+                .replace(ConfigPlaceholder.UNIT_PRICE.placeholder, convertDoubleToReadableString(listings.price))
 
         every { listingsService.create(listings) } returns listings
         every { logsService.saveListingsLog(playerMock, listings, listings.quantity, listings.price) } just Runs

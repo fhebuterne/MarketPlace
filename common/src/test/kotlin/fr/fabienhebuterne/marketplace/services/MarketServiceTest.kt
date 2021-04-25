@@ -15,6 +15,7 @@ import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import io.mockk.*
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
@@ -233,7 +234,8 @@ class MarketServiceTest : BaseTest() {
         val bukkitTask: BukkitTask = mockk()
         val runnableSlot = slot<Runnable>()
         val loader = marketPlace.loader
-        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${money}$."
+        val finalMessage =
+            "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${convertDoubleToReadableString(money)}$."
 
         every { Bukkit.getScheduler() } returns bukkitScheduler
         every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
@@ -365,7 +367,7 @@ class MarketServiceTest : BaseTest() {
         val bukkitTask: BukkitTask = mockk()
         val runnableSlot = slot<Runnable>()
         val loader = marketPlace.loader
-        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${money}$."
+        val finalMessage = "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour 10$."
 
         every { inventoryClickEvent.rawSlot } returns 0
         every { inventoryClickEvent.currentItem } returns listings.itemStack

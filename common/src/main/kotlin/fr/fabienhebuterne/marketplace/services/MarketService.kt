@@ -12,7 +12,7 @@ import fr.fabienhebuterne.marketplace.services.pagination.LogsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
-import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -85,7 +85,7 @@ class MarketService(
 
         val itemBuyMessage = marketPlace.tl.itemBuy.replace(ConfigPlaceholder.QUANTITY.placeholder, quantity.toString())
             .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listingsDatabase.itemStack.type.toString())
-            .replace(ConfigPlaceholder.PRICE.placeholder, needingMoney.toString())
+            .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(needingMoney))
 
         player.sendMessage(itemBuyMessage)
         val refreshInventory = listingsService.getPaginated(pagination = paginationListings)
@@ -201,7 +201,7 @@ class MarketService(
             marketPlace.tl.clickMiddleListingInventory
                 .map {
                     it.replace(ConfigPlaceholder.QUANTITY.placeholder, listings.quantity.toString())
-                        .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadeableString(listings.price))
+                        .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(listings.price))
                         .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listings.itemStack.type.toString())
                 }
                 .forEach {

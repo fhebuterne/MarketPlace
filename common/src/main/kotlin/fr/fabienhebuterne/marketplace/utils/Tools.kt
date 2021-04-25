@@ -29,8 +29,12 @@ fun intIsValid(number: String): Boolean {
     return number.toInt() > 0 && number.toInt() < Integer.MAX_VALUE
 }
 
-fun convertDoubleToReadeableString(double: Double): String {
-    val df = DecimalFormat("#")
+fun convertDoubleToReadableString(double: Double?): String {
+    if (double == null) {
+        return ""
+    }
+
+    val df = DecimalFormat("#,###.##")
     df.maximumFractionDigits = 2
     return df.format(double)
 }

@@ -9,7 +9,7 @@ import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.domain.paginated.Paginated
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
-import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
 import org.bukkit.Bukkit
@@ -59,7 +59,7 @@ class ListingsInventoryService(
 
         loreItem.addAll(instance.tl.listingItemBottomLoreSeller.toMutableList())
         loreItem.replaceAll {
-            it.replace(ConfigPlaceholder.PRICE.placeholder, paginated.price.toString())
+            it.replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(paginated.price))
                 .replace(ConfigPlaceholder.QUANTITY.placeholder, paginated.quantity.toString())
         }
 
@@ -89,7 +89,7 @@ class ListingsInventoryService(
         loreItem.addAll(instance.tl.listingItemBottomLorePlayer.toMutableList())
         loreItem.replaceAll {
             it.replace(ConfigPlaceholder.SELLER_PSEUDO.placeholder, paginated.sellerPseudo)
-                .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadeableString(paginated.price))
+                .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(paginated.price))
                 .replace(ConfigPlaceholder.QUANTITY.placeholder, paginated.quantity.toString())
         }
 

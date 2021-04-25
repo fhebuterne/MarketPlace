@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Logs
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.services.pagination.LogsService
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import fr.fabienhebuterne.marketplace.utils.intIsValid
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -129,14 +130,14 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
                 .replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, logs.playerPseudo)
                 .replace(ConfigPlaceholder.QUANTITY.placeholder, logs.quantity.toString())
                 .replace(ConfigPlaceholder.ITEM_STACK.placeholder, logs.itemStack.type?.name.orEmpty())
-                .replace(ConfigPlaceholder.PRICE.placeholder, logs.price.toString())
+                .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(logs.price))
                 .replace(ConfigPlaceholder.SELLER_PSEUDO.placeholder, logs.sellerPseudo.orEmpty())
         } else {
             instance.tl.logs.message[logs.logType].orEmpty()
                 .replace(ConfigPlaceholder.PLAYER_PSEUDO.placeholder, logs.playerPseudo)
                 .replace(ConfigPlaceholder.QUANTITY.placeholder, logs.quantity.toString())
                 .replace(ConfigPlaceholder.ITEM_STACK.placeholder, logs.itemStack.type?.name.orEmpty())
-                .replace(ConfigPlaceholder.PRICE.placeholder, logs.price.toString())
+                .replace(ConfigPlaceholder.PRICE.placeholder, convertDoubleToReadableString(logs.price))
                 .replace(ConfigPlaceholder.SELLER_PSEUDO.placeholder, logs.sellerPseudo.orEmpty())
         }
     }

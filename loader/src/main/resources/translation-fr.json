@@ -12,7 +12,7 @@
     "playerNotFound": "§8[§6MarketPlace§8] §cLe joueur est introuvable ou ne possède pas d'items sur le marché."
   },
   "inventoryType": {
-    "LISTINGS": "MarketPlace - Achat",
+    "LISTINGS": "MarketPlace - Achats",
     "MAILS": "MarketPlace - Mails - {{playerPseudo}}",
     "SELL_CONFIRMATION": "MarketPlace - Vente - Confirmation"
   },
@@ -181,8 +181,8 @@
       "GET": "§6{{playerPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade sa boite de réception"
     },
     "adminMessage": {
-      "CANCEL": "§6{{adminPseudo}} §aa annulé la vente du joueur {{playerPseudo}} pour §6{{quantity}}x{{itemStack}}",
-      "GET": "§6{{adminPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade la boite de réception du joueur {{playerPseudo}}"
+      "CANCEL": "§6{{adminPseudo}} §aa annulé la vente du joueur §6{{playerPseudo}} §apour §6{{quantity}}x{{itemStack}}",
+      "GET": "§6{{adminPseudo}} §aa récupéré §6{{quantity}}x{{itemStack}} §ade la boite de réception du joueur §6{{playerPseudo}}"
     }
   }
 }

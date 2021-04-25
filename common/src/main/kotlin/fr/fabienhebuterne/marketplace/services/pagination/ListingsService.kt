@@ -4,7 +4,7 @@ import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.config.ConfigPlaceholder
 import fr.fabienhebuterne.marketplace.domain.paginated.Listings
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
-import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadeableString
+import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -61,7 +61,7 @@ class ListingsService(
         val listingsCreatedMessage =
             marketPlace.tl.listingCreated.replace(ConfigPlaceholder.QUANTITY.placeholder, listings.quantity.toString())
                 .replace(ConfigPlaceholder.ITEM_STACK.placeholder, listings.itemStack.type.toString())
-                .replace(ConfigPlaceholder.UNIT_PRICE.placeholder, convertDoubleToReadeableString(listings.price))
+                .replace(ConfigPlaceholder.UNIT_PRICE.placeholder, convertDoubleToReadableString(listings.price))
 
         player.sendMessage(listingsCreatedMessage)
         player.inventory.setItemInMainHand(ItemStack(Material.AIR))
