@@ -22,6 +22,7 @@ import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
@@ -62,13 +63,13 @@ class MarketServiceTest : BaseTest() {
         notificationService
     )
 
-    private fun initListings(quantity: Int = 31): Pagination<Listings> {
+    private fun initListings(quantity: Int = 31, currentPlayerUuid: UUID = fabienUuid): Pagination<Listings> {
         val itemStack: ItemStack = mockk()
         every { itemStack.type } returns Material.DIRT
 
         val listings = mutableMapOf(
             Pair(
-                fabienUuid,
+                currentPlayerUuid,
                 Pagination(
                     results = listOf(
                         Listings(
@@ -83,8 +84,8 @@ class MarketServiceTest : BaseTest() {
                             version = 1343
                         )
                     ),
-                    currentPlayer = fabienUuid,
-                    viewPlayer = fabienUuid
+                    currentPlayer = currentPlayerUuid,
+                    viewPlayer = currentPlayerUuid
                 )
             )
         )
@@ -93,7 +94,7 @@ class MarketServiceTest : BaseTest() {
         every { Bukkit.getOfflinePlayer(fabienUuid) } returns fabienOfflinePlayer
         every { Bukkit.getOfflinePlayer(ergailUuid) } returns ergailOfflinePlayer
 
-        return listings[fabienUuid] ?: throw IllegalAccessException("listings not found")
+        return listings[currentPlayerUuid] ?: throw IllegalAccessException("listings not found")
     }
 
     private fun initMails(quantity: Int = 31): Pagination<Mails> {
@@ -410,5 +411,51 @@ class MarketServiceTest : BaseTest() {
         }
 
         expectThat(marketService.playersWaitingDefinedQuantity).isEmpty()
+    }
+
+    @Test
+    fun `should seller can remove items with shift and left click from listings inventory to mails inventory`() {
+        // GIVEN
+        val inventoryClickEvent: InventoryClickEvent = mockk()
+        val inventory: Inventory = mockk()
+        val playerView = initListings(100, ergailUuid)
+        val listings: Listings = playerView.results[0]
+        every { listings.itemStack.clone() } returns listings.itemStack
+
+        val sellerMock: Player = mockk()
+        every { sellerMock.uniqueId } returns ergailUuid
+        every { sellerMock.name } returns "Ergail"
+        every { sellerMock.world.name } returns "world"
+
+        every { inventoryClickEvent.rawSlot } returns 0
+        every { inventoryClickEvent.currentItem } returns listings.itemStack
+        every { inventoryClickEvent.isShiftClick } returns true
+        every { inventoryClickEvent.isLeftClick } returns true
+        every { inventoryClickEvent.click } returns ClickType.SHIFT_LEFT
+
+        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
+        every { logsService.listingsToMailsLog(sellerMock, listings, false) } just Runs
+        every { listingsRepository.delete(UUID.fromString(listings.id.toString())) } just Runs
+        every { mailsService.saveListingsToMail(listings) } just Runs
+        every {
+            listingsInventoryService.initInventory(
+                playerView.copy(results = listOf()),
+                sellerMock
+            )
+        } returns inventory
+        every { listingsInventoryService.openInventory(sellerMock, inventory) } just Runs
+
+        // WHEN
+        marketService.clickOnListingsInventory(inventoryClickEvent, sellerMock)
+
+        // THEN
+        verify(exactly = 1) {
+            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            logsService.listingsToMailsLog(sellerMock, listings, false)
+            listingsRepository.delete(UUID.fromString(listings.id.toString()))
+            mailsService.saveListingsToMail(listings)
+            listingsInventoryService.initInventory(playerView.copy(results = listOf()), sellerMock)
+            listingsInventoryService.openInventory(sellerMock, inventory)
+        }
     }
 }
