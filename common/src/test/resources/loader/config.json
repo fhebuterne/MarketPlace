@@ -25,6 +25,6 @@
     "empty": "STAINED_GLASS_PANE:7",
     "filter": "COMPARATOR"
   },
-  "inventoryValidItem": "GREEN_STAINED_GLASS_PANE",
-  "inventoryCancelItem": "RED_STAINED_GLASS_PANE"
+  "inventoryValidItem": "STAINED_GLASS_PANE:13",
+  "inventoryCancelItem": "STAINED_GLASS_PANE:14"
 }

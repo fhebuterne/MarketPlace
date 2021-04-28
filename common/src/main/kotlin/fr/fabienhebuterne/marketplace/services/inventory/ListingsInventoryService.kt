@@ -12,7 +12,6 @@ import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
 import fr.fabienhebuterne.marketplace.utils.formatInterval
 import fr.fabienhebuterne.marketplace.utils.parseMaterialConfig
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
@@ -124,7 +123,7 @@ class ListingsInventoryService(
 
     fun confirmationAddNewItem(player: Player, listings: Listings): Inventory {
         playersConfirmation[player.uniqueId] = listings
-        val inventory = Bukkit.createInventory(
+        val inventory = instance.loader.server.createInventory(
             player,
             9,
             instance.tl.inventoryType[SELL_CONFIRMATION] ?: "MarketPlace - Sell confirmation"
@@ -132,13 +131,15 @@ class ListingsInventoryService(
 
         val validItem = parseMaterialConfig(instance.conf.inventoryValidItem)
         val validItemMeta = validItem.itemMeta
-        validItemMeta?.setDisplayName("§aValider")
+        validItemMeta?.setDisplayName(instance.tl.inventoryEnum.validateConfirmation.displayName)
+        validItemMeta?.lore = instance.tl.inventoryEnum.validateConfirmation.lore
         validItem.itemMeta = validItemMeta
         inventory.setItem(2, validItem)
 
         val cancelItem = parseMaterialConfig(instance.conf.inventoryCancelItem)
         val cancelItemMeta = cancelItem.itemMeta
-        cancelItemMeta?.setDisplayName("§cAnnuler")
+        cancelItemMeta?.setDisplayName(instance.tl.inventoryEnum.cancelConfirmation.displayName)
+        cancelItemMeta?.lore = instance.tl.inventoryEnum.cancelConfirmation.lore
         cancelItem.itemMeta = cancelItemMeta
         inventory.setItem(6, cancelItem)
         return inventory

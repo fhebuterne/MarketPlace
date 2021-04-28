@@ -42,6 +42,14 @@
         "§cPage : {{currentPage}}/{{maxPage}}",
         "§cTotal items : {{total}}"
       ]
+    },
+    "validateConfirmation": {
+      "displayName": "§aValidate",
+      "lore": []
+    },
+    "cancelConfirmation": {
+      "displayName": "§cCancel",
+      "lore": []
     }
   },
   "inventoryFilterEnum": {

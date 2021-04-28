@@ -51,7 +51,9 @@ data class InventoryEnum(
     val listings: Item,
     val mails: Item,
     val previousPage: Item,
-    val nextPage: Item
+    val nextPage: Item,
+    val validateConfirmation: Item,
+    val cancelConfirmation: Item
 )
 
 @Serializable
