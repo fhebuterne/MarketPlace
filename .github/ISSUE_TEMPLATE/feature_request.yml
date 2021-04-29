@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest an idea for this project
+title: ""
+labels: [ enhancement ]
+assignees: ''
+body:
+  - type: textarea
+    id: feature-issue
+    attributes:
+      label: Feature related to a problem ?
+      description: Is your feature request related to a problem? Please describe.
+    validations:
+      required: false
+  - type: textarea
+    id: describe-solution
+    attributes:
+      label: Describe the solution you'd like
+      description: Describe the solution you'd like
+    validations:
+      required: false

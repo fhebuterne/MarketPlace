@@ -1,0 +1,12 @@
+name: Question request
+description: Any question that not a feature request or bug report
+title: ""
+labels: [ question ]
+assignees: ''
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true
