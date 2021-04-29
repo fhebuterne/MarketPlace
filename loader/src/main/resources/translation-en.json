@@ -104,7 +104,7 @@
     "§6Total available: §e{{quantity}} article(s)",
     "%expiration%§6Expiration dans: §e{{expiration}}",
     "",
-    "§c► Vous ne pouvez pas acheter vos articles",
+    "§c► You can't buy your items",
     "§6► Shift + Left click to remove your items",
     ""
   ],
@@ -156,11 +156,11 @@
   ],
   "commandHelp": [
     "§8-----------------<§6§lMarketPlace§8>-----------------",
-    "§6/mp add <prix>: §aMettre l'item en main en vente, le prix est unitaire.",
-    "§6/mp listings [player]: §aOuvrir la liste des articles en vente.",
-    "§6/mp mails [player]: §aOuvrir la boîte de réception.",
-    "§6/mp logs: §aAfficher les logs.",
-    "§6/mp reload: §aRecharger le plugin.",
+    "§6/mp add <price>: §aSell items in player right hand with unit price defined in argument.",
+    "§6/mp listings [player]: §aOpen the items list on sale.",
+    "§6/mp mails [player]: §aOpen the inbox.",
+    "§6/mp logs: §aShow logs.",
+    "§6/mp reload: §aReload plugin.",
     "§8-------------------------------------------------"
   ],
   "logs": {
