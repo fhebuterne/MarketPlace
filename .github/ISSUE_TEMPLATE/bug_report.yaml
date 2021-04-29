@@ -1,0 +1,79 @@
+name: Bug Report
+description: Create a report to help us improve
+title: ""
+labels: [ bug ]
+assignees: ''
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: how-reproduce
+    attributes:
+      label: How To Reproduce
+      description: Also tell us, what did you expect to happen?
+      value: |
+        Steps to reproduce the behavior:
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: false
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: false
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+      description: What version of MarketPlace are you running?
+      placeholder: ex. 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: core-software
+    attributes:
+      label: Minecraft Server
+      description: What type of minecraft server are you running?
+      options:
+        - Spigot
+        - Paper
+        - Other (please indicate in next input)
+    validations:
+      required: true
+  - type: input
+    id: custom-minecraft-server-software
+    attributes:
+      label: Custom minecraft server
+      description: Please indicate here if you using custom minecraft server like custom fork
+    validations:
+      required: false
+  - type: dropdown
+    id: minecraft-version
+    attributes:
+    label: What version of minecraft are you running?
+    options:
+      - 1.16.5
+      - 1.15.2
+      - 1.14.2
+      - 1.13.2
+      - 1.12.2
+      - Other ?
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+
