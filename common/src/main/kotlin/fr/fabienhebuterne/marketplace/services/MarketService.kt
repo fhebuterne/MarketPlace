@@ -254,7 +254,7 @@ class MarketService(
                 return
             }
 
-            if (event.isShiftClick && event.isRightClick && player.hasPermission("marketplace.mails.other.take")) {
+            if (event.isShiftClick && event.isRightClick && player.hasPermission("marketplace.mails.other.remove")) {
                 takeItem(player, event.rawSlot, true)
             }
 
