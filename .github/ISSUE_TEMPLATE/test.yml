@@ -1,0 +1,21 @@
+name: Bug report - TEST
+description: test template
+labels: 'bug'
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        test
+        test second line
+
+  - type: dropdown
+    attributes:
+      label: label test
+      description: description test
+      multiple: false
+      options:
+        - Paper
+        - Spigot
+    validations:
+      required: true
