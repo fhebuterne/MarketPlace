@@ -1,8 +1,7 @@
 name: Bug Report
 description: Create a report to help us improve
-title: ""
 labels: [ bug ]
-assignees: ''
+
 body:
   - type: textarea
     id: description
@@ -11,6 +10,7 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+
   - type: textarea
     id: how-reproduce
     attributes:
@@ -22,15 +22,13 @@ body:
         2. Click on '....'
         3. Scroll down to '....'
         4. See error
-    validations:
-      required: false
+
   - type: textarea
     id: expected-behavior
     attributes:
       label: Expected behavior
       description: A clear and concise description of what you expected to happen.
-    validations:
-      required: false
+
   - type: input
     id: plugin-version
     attributes:
@@ -39,6 +37,7 @@ body:
       placeholder: ex. 1.0.0
     validations:
       required: true
+
   - type: dropdown
     id: core-software
     attributes:
@@ -50,13 +49,13 @@ body:
         - Other (please indicate in next input)
     validations:
       required: true
+
   - type: input
     id: custom-minecraft-server-software
     attributes:
       label: Custom minecraft server
       description: Please indicate here if you using custom minecraft server like custom fork
-    validations:
-      required: false
+
   - type: dropdown
     id: minecraft-version
     attributes:
@@ -68,8 +67,7 @@ body:
       - 1.13.2
       - 1.12.2
       - Other ?
-    validations:
-      required: false
+
   - type: textarea
     id: logs
     attributes:
