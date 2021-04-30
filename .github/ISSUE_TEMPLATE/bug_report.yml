@@ -59,14 +59,14 @@ body:
   - type: dropdown
     id: minecraft-version
     attributes:
-    label: What version of minecraft are you running?
-    options:
-      - 1.16.5
-      - 1.15.2
-      - 1.14.2
-      - 1.13.2
-      - 1.12.2
-      - Other ?
+      label: What version of minecraft are you running?
+      options:
+        - 1.16.5
+        - 1.15.2
+        - 1.14.2
+        - 1.13.2
+        - 1.12.2
+        - Other ?
 
   - type: textarea
     id: logs
