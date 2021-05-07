@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Config(
+    val language: String = "en",
     val database: Database,
     val expiration: Expiration,
     val sellerItemNotifCommand: List<String>,

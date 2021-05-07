@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
+import fr.fabienhebuterne.marketplace.COLLATION
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Filter
@@ -35,13 +36,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 object LogsTable : UUIDTable("marketplace_logs") {
-    val playerUuid = LogsTable.varchar("player_uuid", 36).nullable()
-    val playerPseudo = LogsTable.varchar("player_pseudo", 16)
-    val sellerUuid = LogsTable.varchar("seller_uuid", 36).nullable()
-    val sellerPseudo = LogsTable.varchar("seller_pseudo", 16).nullable()
-    val adminUuid = LogsTable.varchar("admin_uuid", 36).nullable()
-    val adminPseudo = LogsTable.varchar("admin_pseudo", 16).nullable()
-    val itemStack = LogsTable.text("item_stack")
+    val playerUuid = LogsTable.varchar("player_uuid", 36, COLLATION).nullable()
+    val playerPseudo = LogsTable.varchar("player_pseudo", 16, COLLATION)
+    val sellerUuid = LogsTable.varchar("seller_uuid", 36, COLLATION).nullable()
+    val sellerPseudo = LogsTable.varchar("seller_pseudo", 16, COLLATION).nullable()
+    val adminUuid = LogsTable.varchar("admin_uuid", 36, COLLATION).nullable()
+    val adminPseudo = LogsTable.varchar("admin_pseudo", 16, COLLATION).nullable()
+    val itemStack = LogsTable.text("item_stack", COLLATION)
     val quantity = LogsTable.integer("quantity")
     val price = LogsTable.double("price").nullable()
     val logType = LogsTable.enumerationByName("log_type", 100, LogType::class)

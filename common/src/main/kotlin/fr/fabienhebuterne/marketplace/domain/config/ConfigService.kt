@@ -16,7 +16,7 @@ class ConfigService<T : Any>(
 
     private var file: File = File(instance.loader.dataFolder, "$fileName.json")
     private lateinit var obj: T
-    private val json = Json { prettyPrint = true }
+    private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
     @UnsafeSerializationApi
     fun createAndLoadConfig(copyFromRessource: Boolean) {
@@ -35,6 +35,10 @@ class ConfigService<T : Any>(
     @UnsafeSerializationApi
     fun loadConfig() {
         obj = json.decodeFromString(kClass.serializer(), file.readText(Charsets.UTF_8))
+
+        // TODO : Add method to check missing key/value in current file (compare with resource jar file)
+        // We save after load to add missing key if config is updated
+        save()
     }
 
     fun getSerialization(): T {

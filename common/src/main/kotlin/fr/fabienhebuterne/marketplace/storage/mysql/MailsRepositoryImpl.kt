@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.storage.mysql
 
+import fr.fabienhebuterne.marketplace.COLLATION
 import fr.fabienhebuterne.marketplace.MarketPlace
 import fr.fabienhebuterne.marketplace.domain.base.AuditData
 import fr.fabienhebuterne.marketplace.domain.base.Filter
@@ -27,9 +28,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 object MailsTable : UUIDTable("marketplace_mails") {
-    val playerUuid = MailsTable.varchar("player_uuid", 36)
-    val playerPseudo = MailsTable.varchar("player_pseudo", 16)
-    val itemStack = MailsTable.text("item_stack")
+    val playerUuid = MailsTable.varchar("player_uuid", 36, COLLATION)
+    val playerPseudo = MailsTable.varchar("player_pseudo", 16, COLLATION)
+    val itemStack = MailsTable.text("item_stack", COLLATION)
     val quantity = MailsTable.integer("quantity")
     val createdAt = MailsTable.long("created_at")
     val updatedAt = MailsTable.long("updated_at")

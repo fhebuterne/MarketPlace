@@ -41,12 +41,15 @@ import org.bukkit.plugin.RegisteredServiceProvider
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 import java.time.Clock
+
+const val COLLATION = "utf8mb4_0900_ai_ci"
 
 class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
@@ -80,12 +83,11 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return
         }
 
-        // TODO : Add method to check missing key/value in current file (compare with resource jar file)
         configService = ConfigService(this.instance, "config", Config::class)
         configService.createAndLoadConfig(true)
         conf = configService.getSerialization()
 
-        translation = ConfigService(this.instance, "translation-fr", Translation::class)
+        translation = ConfigService(this.instance, "translation-${conf.language}", Translation::class)
         translation.createAndLoadConfig(true)
         tl = translation.getSerialization()
 
@@ -101,7 +103,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
 
         val database = Database.connect(
-            url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC",
+            url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC",
             driver = "fr.fabienhebuterne.marketplace.libs.mysql.cj.jdbc.Driver",
             user = conf.database.username,
             password = conf.database.password
@@ -109,6 +111,9 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
 
         transaction {
             SchemaUtils.create(ListingsTable, MailsTable, LogsTable)
+            exec(convertTableToUtf8(ListingsTable))
+            exec(convertTableToUtf8(MailsTable))
+            exec(convertTableToUtf8(LogsTable))
         }
 
         initDependencyInjection(database)
@@ -132,6 +137,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         expirationService.startTaskExpirationMailsToDelete()
 
         isReload = false
+    }
+
+    private fun convertTableToUtf8(table: Table): String {
+        return "ALTER TABLE " + table.tableName + " CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
     }
 
     private fun initDependencyInjection(database: Database) {
