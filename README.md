@@ -15,6 +15,7 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 
 - Java 8
 - MySQL 8.0
+- Vault
 
 ## Build
 
@@ -39,6 +40,7 @@ sh ./buildtools.sh 1.16.5
 ## Wiki
 
 [Commands and Permissions](https://github.com/fhebuterne/MarketPlace/wiki/Commands-and-Permissions)
+[Configuration](https://github.com/fhebuterne/MarketPlace/wiki/Configuration)
 
 ## Community Discord
 

@@ -1,4 +1,5 @@
 {
+  "language": "en",
   "database": {
     "hostname": "localhost",
     "database": "minecraft",
