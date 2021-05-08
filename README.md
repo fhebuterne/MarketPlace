@@ -39,7 +39,7 @@ sh ./buildtools.sh 1.16.5
 
 ## Wiki
 
-[Commands and Permissions](https://github.com/fhebuterne/MarketPlace/wiki/Commands-and-Permissions)
+[Commands and Permissions](https://github.com/fhebuterne/MarketPlace/wiki/Commands-and-Permissions)  
 [Configuration](https://github.com/fhebuterne/MarketPlace/wiki/Configuration)
 
 ## Community Discord
