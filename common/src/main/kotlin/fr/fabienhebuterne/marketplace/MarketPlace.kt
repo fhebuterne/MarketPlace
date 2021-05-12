@@ -10,10 +10,7 @@ import fr.fabienhebuterne.marketplace.domain.loadMaterialFilterConfig
 import fr.fabienhebuterne.marketplace.domain.loadSkull
 import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
 import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
-import fr.fabienhebuterne.marketplace.listeners.AsyncPlayerChatEventListener
-import fr.fabienhebuterne.marketplace.listeners.InventoryClickEventListener
-import fr.fabienhebuterne.marketplace.listeners.InventoryCloseEventListener
-import fr.fabienhebuterne.marketplace.listeners.PlayerJoinEventListener
+import fr.fabienhebuterne.marketplace.listeners.*
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import fr.fabienhebuterne.marketplace.services.ExpirationService
 import fr.fabienhebuterne.marketplace.services.MarketService
@@ -37,6 +34,12 @@ import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.event.Event
+import org.bukkit.event.EventPriority
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.RegisteredServiceProvider
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
@@ -126,10 +129,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         migrationService.migrateAllEntities()
 
         // TODO : Create factory to init listeners
-        loader.server.pluginManager.registerEvents(InventoryClickEventListener(kodein), this.loader)
-        loader.server.pluginManager.registerEvents(AsyncPlayerChatEventListener(this.instance, kodein), this.loader)
-        loader.server.pluginManager.registerEvents(PlayerJoinEventListener(kodein), this.loader)
-        loader.server.pluginManager.registerEvents(InventoryCloseEventListener(kodein), this.loader)
+        registerEvent(InventoryClickEvent::class.java, InventoryClickEventListener(kodein))
+        registerEvent(AsyncPlayerChatEvent::class.java, AsyncPlayerChatEventListener(this.instance, kodein))
+        registerEvent(PlayerJoinEvent::class.java, PlayerJoinEventListener(kodein))
+        registerEvent(InventoryCloseEvent::class.java, InventoryCloseEventListener(kodein))
 
         // Start tasks to check items expired
         val expirationService: ExpirationService by kodein.instance()
@@ -137,6 +140,17 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         expirationService.startTaskExpirationMailsToDelete()
 
         isReload = false
+    }
+
+    // We need to use registerEvent with more parameters because we use generic abstract class to init try catch
+    private fun registerEvent(eventClass: Class<out Event>, listener: BaseListener<*>) {
+        loader.server.pluginManager.registerEvent(
+            eventClass,
+            listener,
+            EventPriority.NORMAL,
+            listener,
+            this.loader
+        )
     }
 
     private fun convertTableToUtf8(table: Table): String {

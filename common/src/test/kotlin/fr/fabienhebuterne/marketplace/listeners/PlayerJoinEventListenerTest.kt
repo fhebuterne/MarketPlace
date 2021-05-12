@@ -4,6 +4,7 @@ import fr.fabienhebuterne.marketplace.BaseTest
 import fr.fabienhebuterne.marketplace.services.pagination.ListingsService
 import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import io.mockk.*
+import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.junit.jupiter.api.Test
 import org.kodein.di.DI
@@ -23,12 +24,13 @@ class PlayerJoinEventListenerTest : BaseTest() {
     fun `should update pseudo on listings and mails when player join`() {
         // GIVEN
         val playerJointEvent: PlayerJoinEvent = mockk()
+        val listener: Listener = mockk()
         every { playerJointEvent.player } returns playerMock
         every { listingsService.updatePseudo(playerMock) } just Runs
         every { mailsService.updatePseudo(playerMock) } just Runs
 
         // WHEN
-        PlayerJoinEventListener(kodein).onEvent(playerJointEvent)
+        PlayerJoinEventListener(kodein).execute(listener, playerJointEvent)
 
         // THEN
         verify(exactly = 1) {

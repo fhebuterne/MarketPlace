@@ -7,7 +7,6 @@ import fr.fabienhebuterne.marketplace.services.inventory.InventoryOpenedService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.kodein.di.DI
 import org.kodein.di.instance
@@ -20,7 +19,6 @@ class InventoryClickEventListener(kodein: DI) :
     private val mailsInventoryService: MailsInventoryService by kodein.instance<MailsInventoryService>()
     private val inventoryOpenedService: InventoryOpenedService by kodein.instance<InventoryOpenedService>()
 
-    @EventHandler
     override fun execute(event: InventoryClickEvent) {
         val player: Player = event.view.player as Player
         val inventoryOpened = inventoryOpenedService.inventoryOpened[player.uniqueId]

@@ -6,7 +6,6 @@ import fr.fabienhebuterne.marketplace.services.MarketService
 import fr.fabienhebuterne.marketplace.services.inventory.ListingsInventoryService
 import fr.fabienhebuterne.marketplace.services.inventory.MailsInventoryService
 import fr.fabienhebuterne.marketplace.utils.intIsValid
-import org.bukkit.event.EventHandler
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.kodein.di.DI
 import org.kodein.di.instance
@@ -19,7 +18,6 @@ class AsyncPlayerChatEventListener(private val marketPlace: MarketPlace, kodein:
     private val listingsInventoryService: ListingsInventoryService by kodein.instance<ListingsInventoryService>()
     private val mailsInventoryService: MailsInventoryService by kodein.instance<MailsInventoryService>()
 
-    @EventHandler
     override fun execute(event: AsyncPlayerChatEvent) {
         // Buy custom quantity
         val rawSlot = marketService.playersWaitingCustomQuantity[event.player.uniqueId]
