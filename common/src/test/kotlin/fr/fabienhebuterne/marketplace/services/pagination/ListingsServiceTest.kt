@@ -52,6 +52,9 @@ class ListingsServiceTest : BaseTest() {
         every { playerMock.sendMessage(listingsCreatedMessage) } just Runs
         val playerInventory: PlayerInventory = mockk()
         every { playerMock.inventory } returns playerInventory
+        every { playerInventory.itemInMainHand } returns listings.itemStack
+        every { playerInventory.itemInMainHand.clone() } returns listings.itemStack
+        every { listings.itemStack.amount = 1 } just Runs
 
         val slot = slot<ItemStack>()
 
@@ -66,10 +69,10 @@ class ListingsServiceTest : BaseTest() {
             .isEqualTo(Material.AIR)
 
         verify(exactly = 1) {
+            playerInventory.setItemInMainHand(any())
             listingsService.create(listings)
             logsService.saveListingsLog(playerMock, listings, listings.quantity, listings.price)
             playerMock.sendMessage(listingsCreatedMessage)
-            playerInventory.setItemInMainHand(any())
         }
     }
 

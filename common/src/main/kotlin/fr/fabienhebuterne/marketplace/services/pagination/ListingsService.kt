@@ -49,6 +49,16 @@ class ListingsService(
     }
 
     fun create(player: Player, listings: Listings) {
+        val itemStackClone = player.inventory.itemInMainHand.clone()
+        itemStackClone.amount = 1
+
+        if (itemStackClone != listings.itemStack) {
+            player.sendMessage(marketPlace.tl.errors.operationNotAllowed)
+            return
+        }
+
+        player.inventory.setItemInMainHand(ItemStack(Material.AIR))
+
         create(listings)
 
         logsService.saveListingsLog(
@@ -64,7 +74,6 @@ class ListingsService(
                 .replace(ConfigPlaceholder.UNIT_PRICE.placeholder, convertDoubleToReadableString(listings.price))
 
         player.sendMessage(listingsCreatedMessage)
-        player.inventory.setItemInMainHand(ItemStack(Material.AIR))
     }
 
     fun findUUIDBySellerPseudo(sellerPseudo: String): UUID? = listingsRepository.findUUIDBySellerPseudo(sellerPseudo)

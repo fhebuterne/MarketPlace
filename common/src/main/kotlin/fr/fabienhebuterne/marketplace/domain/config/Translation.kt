@@ -42,7 +42,8 @@ data class Errors(
     val inventoryFull: String,
     val reloadNotAvailable: String,
     val missingPermission: String,
-    val playerNotFound: String
+    val playerNotFound: String,
+    val operationNotAllowed: String = "§8[§6MarketPlace§8] &cOperation not allowed."
 )
 
 @Serializable

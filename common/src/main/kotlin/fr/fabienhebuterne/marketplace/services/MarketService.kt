@@ -300,7 +300,7 @@ class MarketService(
         }
 
         if (mail.playerUuid != player.uniqueId && !isAdmin) {
-            player.sendMessage("§cOperation not allowed ...")
+            player.sendMessage(marketPlace.tl.errors.operationNotAllowed)
             return
         }
 

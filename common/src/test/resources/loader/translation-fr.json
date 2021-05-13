@@ -9,7 +9,8 @@
     "inventoryFull": "§8[§6MarketPlace§8] §cL'inventaire est plein.",
     "reloadNotAvailable": "§8[§6MarketPlace§8] §cLe plugin n'est pas disponible, merci de patienter...",
     "missingPermission": "§8[§6MarketPlace§8] §cVous n''avez pas la permission de faire ceci.",
-    "playerNotFound": "§8[§6MarketPlace§8] §cLe joueur est introuvable ou ne possède pas d'items sur le marché."
+    "playerNotFound": "§8[§6MarketPlace§8] §cLe joueur est introuvable ou ne possède pas d'items sur le marché.",
+    "operationNotAllowed": "§8[§6MarketPlace§8] &cOpération non autorisée."
   },
   "inventoryType": {
     "LISTINGS": "MarketPlace - Achats",
