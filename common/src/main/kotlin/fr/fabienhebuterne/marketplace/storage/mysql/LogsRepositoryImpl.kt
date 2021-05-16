@@ -141,7 +141,13 @@ class LogsRepositoryImpl(
     }
 
     override fun find(id: String): Logs? {
-        TODO("Not yet implemented")
+        return transaction(marketPlaceDb) {
+            LogsTable
+                .select { LogsTable.id eq UUID.fromString(id) }
+                .limit(1)
+                .map { fromRow(it) }
+                .firstOrNull()
+        }
     }
 
     override fun findByUUID(playerUuid: UUID): List<Logs> {

@@ -120,7 +120,9 @@ class MailsRepositoryImpl(
         return transaction(marketPlaceDb) {
             MailsTable
                 .select { MailsTable.id eq UUID.fromString(id) }
-                .limit(1).map { fromRow(it) }.firstOrNull()
+                .limit(1)
+                .map { fromRow(it) }
+                .firstOrNull()
         }
     }
 

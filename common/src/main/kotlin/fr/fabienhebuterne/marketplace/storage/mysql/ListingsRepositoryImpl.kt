@@ -128,7 +128,13 @@ class ListingsRepositoryImpl(
     }
 
     override fun find(id: String): Listings? {
-        TODO("Not yet implemented")
+        return transaction(marketPlaceDb) {
+            ListingsTable
+                .select { ListingsTable.id eq UUID.fromString(id) }
+                .limit(1)
+                .map { fromRow(it) }
+                .firstOrNull()
+        }
     }
 
     override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Double): Listings? {

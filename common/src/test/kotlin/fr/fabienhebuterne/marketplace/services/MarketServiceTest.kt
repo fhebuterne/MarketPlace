@@ -139,7 +139,7 @@ class MarketServiceTest : BaseTest() {
 
         // THEN
         verify(exactly = 0) {
-            listingsRepository.find(any(), any(), any())
+            listingsRepository.find(any())
         }
 
         verify(exactly = 1) {
@@ -153,14 +153,14 @@ class MarketServiceTest : BaseTest() {
         val playerView = initListings()
         val listings: Listings = playerView.results[0]
         every { playerMock.sendMessage(translation.errors.itemNotExist) } just Runs
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns null
+        every { listingsRepository.find(listings.id.toString()) } returns null
 
         // WHEN
         marketService.buyItem(playerMock, 0, 1, false)
 
         // THEN
         verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            listingsRepository.find(listings.id.toString())
             playerMock.sendMessage(translation.errors.itemNotExist)
         }
     }
@@ -172,14 +172,14 @@ class MarketServiceTest : BaseTest() {
         val listings: Listings = playerView.results[0]
         val listingsQte = listings.copy(quantity = 30)
         every { playerMock.sendMessage(translation.errors.quantityNotAvailable) } just Runs
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsQte
+        every { listingsRepository.find(listings.id.toString()) } returns listingsQte
 
         // WHEN
         marketService.buyItem(playerMock, 0, 31, false)
 
         // THEN
         verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            listingsRepository.find(listings.id.toString())
             playerMock.sendMessage(translation.errors.quantityNotAvailable)
         }
     }
@@ -193,7 +193,7 @@ class MarketServiceTest : BaseTest() {
         val listingsQte = listings.copy(quantity = quantity)
         val money = listings.price * quantity
 
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listingsQte
+        every { listingsRepository.find(listings.id.toString()) } returns listingsQte
         every { marketPlace.getEconomy().has(fabienOfflinePlayer, money) } returns false
         loadNotEnoughMoneyExceptionTranslation(translation.errors.notEnoughMoney)
         every { playerMock.sendMessage(translation.errors.notEnoughMoney) } just Runs
@@ -205,7 +205,7 @@ class MarketServiceTest : BaseTest() {
 
         // THEN
         verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            listingsRepository.find(listings.id.toString())
             playerMock.sendMessage(translation.errors.notEnoughMoney)
         }
     }
@@ -239,7 +239,7 @@ class MarketServiceTest : BaseTest() {
             "§8[§6MarketPlace§8] §aVous venez d'acheter ${quantity}xDIRT pour ${convertDoubleToReadableString(money)}$."
 
         every { Bukkit.getScheduler() } returns bukkitScheduler
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
+        every { listingsRepository.find(listings.id.toString()) } returns listings
         every { marketPlace.getEconomy() } returns economy
         every { economy.has(fabienOfflinePlayer, money) } returns true
         every { economy.withdrawPlayer(fabienOfflinePlayer, money) } returns economyResponse
@@ -268,7 +268,7 @@ class MarketServiceTest : BaseTest() {
 
         // THEN
         verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            listingsRepository.find(listings.id.toString())
             economy.has(fabienOfflinePlayer, money)
             economy.withdrawPlayer(fabienOfflinePlayer, money)
             economy.depositPlayer(ergailOfflinePlayer, money)
@@ -377,7 +377,7 @@ class MarketServiceTest : BaseTest() {
         every { inventoryClickEvent.click } returns ClickType.LEFT
 
         every { Bukkit.getScheduler() } returns bukkitScheduler
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
+        every { listingsRepository.find(listings.id.toString()) } returns listings
         every { marketPlace.getEconomy() } returns economy
         every { economy.has(fabienOfflinePlayer, money) } returns true
         every { economy.withdrawPlayer(fabienOfflinePlayer, money) } returns economyResponse
@@ -433,7 +433,7 @@ class MarketServiceTest : BaseTest() {
         every { inventoryClickEvent.isLeftClick } returns true
         every { inventoryClickEvent.click } returns ClickType.SHIFT_LEFT
 
-        every { listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price) } returns listings
+        every { listingsRepository.find(listings.id.toString()) } returns listings
         every { logsService.listingsToMailsLog(sellerMock, listings, false) } just Runs
         every { listingsRepository.delete(UUID.fromString(listings.id.toString())) } just Runs
         every { mailsService.saveListingsToMail(listings) } just Runs
@@ -450,7 +450,7 @@ class MarketServiceTest : BaseTest() {
 
         // THEN
         verify(exactly = 1) {
-            listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+            listingsRepository.find(listings.id.toString())
             logsService.listingsToMailsLog(sellerMock, listings, false)
             listingsRepository.delete(UUID.fromString(listings.id.toString()))
             mailsService.saveListingsToMail(listings)

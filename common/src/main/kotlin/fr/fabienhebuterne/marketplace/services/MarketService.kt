@@ -53,7 +53,7 @@ class MarketService(
             return
         }
 
-        val listingsDatabase = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+        val listingsDatabase = listingsRepository.find(listings.id.toString())
 
         // TODO : custom exception
         if (listingsDatabase == null) {
@@ -156,7 +156,7 @@ class MarketService(
         event: InventoryClickEvent,
         isAdmin: Boolean
     ) {
-        val listingsFind = listingsRepository.find(listings.sellerUuid, listings.itemStack, listings.price)
+        val listingsFind = listingsRepository.find(listings.id.toString())
 
         if (listingsFind == null) {
             player.sendMessage(marketPlace.tl.errors.itemNotExist)
