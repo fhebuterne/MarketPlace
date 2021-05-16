@@ -186,7 +186,23 @@ class LogsRepositoryImpl(
         }
     }
 
-    // TODO : Common method
+    override fun findUUIDByPseudo(playerPseudo: String): UUID? {
+        val log = transaction(marketPlaceDb) {
+            LogsTable.select {
+                (LogsTable.playerPseudo eq playerPseudo) or
+                        (LogsTable.sellerPseudo eq playerPseudo) or
+                        (LogsTable.adminPseudo eq playerPseudo)
+            }.limit(1).map { fromRow(it) }.firstOrNull()
+        } ?: return null
+
+        return when {
+            log.adminPseudo == playerPseudo -> log.adminUuid
+            log.playerPseudo == playerPseudo -> log.playerUuid
+            log.sellerPseudo == playerPseudo -> log.sellerUuid
+            else -> null
+        }
+    }
+
     private fun buildSelect(uuid: UUID?, searchKeyword: String?): Query {
         return if (uuid == null) {
             if (searchKeyword == null) {
@@ -199,7 +215,9 @@ class LogsRepositoryImpl(
         } else {
             if (searchKeyword == null) {
                 LogsTable.select {
-                    sellerUuid eq uuid.toString()
+                    (sellerUuid eq uuid.toString()) or
+                            (playerUuid eq uuid.toString()) or
+                            (adminUuid eq uuid.toString())
                 }
             } else {
                 LogsTable.select {

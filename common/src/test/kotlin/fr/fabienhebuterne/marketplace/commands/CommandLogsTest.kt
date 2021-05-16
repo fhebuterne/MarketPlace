@@ -36,7 +36,7 @@ class CommandLogsTest : BaseTest() {
     }
 
     @Test
-    fun `should see logs with one page`() {
+    fun `should see all logs with one page`() {
         // GIVEN
         val pagination = Pagination<Logs>(
             currentPage = 1,
@@ -48,7 +48,89 @@ class CommandLogsTest : BaseTest() {
 
         val itemStack = initItemStackMock(Material.DIAMOND, 10)
         val createdAt = System.currentTimeMillis()
-        val logs = Logs(
+        val logOne = Logs(
+            id = UUID.randomUUID(),
+            playerUuid = ergailUuid,
+            playerPseudo = "Ergail",
+            itemStack = itemStack,
+            logType = LogType.EXPIRED,
+            fromLocation = Location.MAIL_INVENTORY,
+            toLocation = Location.NONE,
+            auditData = AuditData(createdAt = createdAt),
+            version = 1343
+        )
+
+        val logTwo = Logs(
+            id = UUID.randomUUID(),
+            playerUuid = UUID.randomUUID(),
+            playerPseudo = "random",
+            itemStack = itemStack,
+            logType = LogType.EXPIRED,
+            fromLocation = Location.MAIL_INVENTORY,
+            toLocation = Location.NONE,
+            auditData = AuditData(createdAt = createdAt),
+            version = 1343
+        )
+
+        val playerSpigot: Player.Spigot = mockk()
+
+        every { command.aliases } returns arrayListOf()
+        every { playerMock.hasPermission(commandLogsPermission) } returns true
+        every { marketPlace.isReload } returns false
+        every { logsServiceMock.getPaginated(pagination) } returns pagination.copy(results = listOf(logOne, logTwo))
+        every { playerMock.sendMessage(translation.logs.header) } just Runs
+        every { itemStackReflectionMock.serializeItemStack(itemStack) } returns "DIAMOND"
+        every { playerMock.spigot() } returns playerSpigot
+
+        val slots = mutableListOf<TextComponent>()
+        every { playerSpigot.sendMessage(capture(slots)) } just Runs
+
+        // WHEN
+        val callCommandFactoryInit = CallCommandFactoryInit(marketPlace, "marketplace")
+        callCommandFactoryInit.onCommand(
+            playerMock,
+            command,
+            "marketplace",
+            arrayOf("logs"),
+            MarketPlace::class.java.classLoader,
+            commandPath,
+            permissionPrefix,
+            true,
+            kodein
+        )
+
+        // THEN
+
+        verify(exactly = 1) {
+            playerMock.hasPermission(commandLogsPermission)
+            logsServiceMock.getPaginated(pagination)
+            playerMock.sendMessage(translation.logs.header)
+            playerSpigot.sendMessage(slots[0])
+            playerSpigot.sendMessage(slots[1])
+            playerSpigot.sendMessage(slots[2])
+        }
+
+        expect {
+            that(slots[0].toLegacyText()).isEqualTo("§f§8[§6Expiration§8] §f§aLes §61xDIAMOND §ade §6Ergail §aont expirées")
+            that(slots[1].toLegacyText()).isEqualTo("§f§8[§6Expiration§8] §f§aLes §61xDIAMOND §ade §6random §aont expirées")
+            that(slots[2].toLegacyText()).isEqualTo("§f§8-----§f§8---§8---------<§6§lPage 1/1§8>---------§f§8---§f§8-----")
+        }
+    }
+
+    @Test
+    fun `should see one player logs with one page`() {
+        // GIVEN
+        val pagination = Pagination<Logs>(
+            currentPage = 1,
+            resultPerPage = 10,
+            currentPlayer = ergailUuid,
+            viewPlayer = fabienUuid,
+            showAll = false
+        )
+
+        val itemStack = initItemStackMock(Material.DIAMOND, 10)
+        val createdAt = System.currentTimeMillis()
+        val logOne = Logs(
             id = UUID.randomUUID(),
             playerUuid = ergailUuid,
             playerPseudo = "Ergail",
@@ -65,7 +147,8 @@ class CommandLogsTest : BaseTest() {
         every { command.aliases } returns arrayListOf()
         every { playerMock.hasPermission(commandLogsPermission) } returns true
         every { marketPlace.isReload } returns false
-        every { logsServiceMock.getPaginated(pagination) } returns pagination.copy(results = listOf(logs))
+        every { logsServiceMock.findUUIDByPseudo("Ergail") } returns ergailUuid
+        every { logsServiceMock.getPaginated(pagination) } returns pagination.copy(results = listOf(logOne))
         every { playerMock.sendMessage(translation.logs.header) } just Runs
         every { itemStackReflectionMock.serializeItemStack(itemStack) } returns "DIAMOND"
         every { playerMock.spigot() } returns playerSpigot
@@ -79,7 +162,7 @@ class CommandLogsTest : BaseTest() {
             playerMock,
             command,
             "marketplace",
-            arrayOf("logs"),
+            arrayOf("logs", "Ergail"),
             MarketPlace::class.java.classLoader,
             commandPath,
             permissionPrefix,

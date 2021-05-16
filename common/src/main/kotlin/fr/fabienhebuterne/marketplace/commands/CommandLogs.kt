@@ -26,6 +26,10 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
     private val logsService: LogsService by kodein.instance<LogsService>()
     private val itemStackReflection: IItemStackReflection by kodein.instance<IItemStackReflection>()
 
+    companion object {
+        const val ALL_PLAYER = "&all"
+    }
+
     override fun runFromPlayer(
         server: Server,
         player: Player,
@@ -33,19 +37,44 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         cmd: Command,
         args: Array<String>
     ) {
-        val currentPage = if (args.size == 2 && intIsValid(args[1])) {
-            args[1].toInt()
+        val currentPlayer: String = if (args.size >= 2) {
+            val uuidOrPseudoArg = args[1]
+
+            val uuid: UUID? = if (uuidOrPseudoArg.length == 36) {
+                UUID.fromString(uuidOrPseudoArg)
+            } else {
+                logsService.findUUIDByPseudo(args[1])
+            }
+
+            if (uuid == null) {
+                player.sendMessage(instance.tl.errors.playerNotFound)
+                return
+            }
+
+            uuid.toString()
+        } else {
+            ALL_PLAYER
+        }
+
+        val currentPage = if (args.size >= 3 && intIsValid(args[2])) {
+            args[2].toInt()
         } else {
             1
+        }
+
+        val currentPlayerPagination = if (currentPlayer == ALL_PLAYER) {
+            player.uniqueId
+        } else {
+            UUID.fromString(currentPlayer)
         }
 
         val logsPaginated = logsService.getPaginated(
             pagination = Pagination(
                 currentPage = currentPage,
                 resultPerPage = 10,
-                currentPlayer = player.uniqueId,
+                currentPlayer = currentPlayerPagination,
                 viewPlayer = player.uniqueId,
-                showAll = true
+                showAll = currentPlayer == ALL_PLAYER
             )
         )
 
@@ -61,7 +90,8 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
             val previousPage = TextComponent(instance.tl.logs.previousPageExist)
             previousPage.hoverEvent =
                 HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.previousPage).create())
-            previousPage.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs ${currentPage - 1}")
+            previousPage.clickEvent =
+                ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs $currentPlayer ${currentPage - 1}")
             message.addExtra(previousPage)
         } else {
             message.addExtra(instance.tl.logs.previousPageNotExist)
@@ -81,7 +111,8 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
             val nextPage = TextComponent(instance.tl.logs.nextPageExist)
             nextPage.hoverEvent =
                 HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(instance.tl.logs.nextPage).create())
-            nextPage.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs ${currentPage + 1}")
+            nextPage.clickEvent =
+                ClickEvent(ClickEvent.Action.RUN_COMMAND, "/marketplace logs $currentPlayer ${currentPage + 1}")
             message.addExtra(nextPage)
         } else {
             message.addExtra(instance.tl.logs.nextPageNotExist)

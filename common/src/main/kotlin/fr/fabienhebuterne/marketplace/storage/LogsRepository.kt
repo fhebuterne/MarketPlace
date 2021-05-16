@@ -5,4 +5,5 @@ import java.util.*
 
 interface LogsRepository : PaginationRepository<Logs> {
     fun findByUUID(playerUuid: UUID): List<Logs>
+    fun findUUIDByPseudo(playerPseudo: String): UUID?
 }

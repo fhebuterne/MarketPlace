@@ -7,6 +7,7 @@ import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import java.util.*
 
 class LogsService(
     private val marketPlace: MarketPlace,
@@ -158,6 +159,10 @@ class LogsService(
         }
 
         logsRepository.create(logs)
+    }
+
+    fun findUUIDByPseudo(playerPseudo: String): UUID? {
+        return logsRepository.findUUIDByPseudo(playerPseudo)
     }
 
 }
