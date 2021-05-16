@@ -37,7 +37,9 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         cmd: Command,
         args: Array<String>
     ) {
-        val currentPlayer: String = if (args.size >= 2) {
+        var currentPlayer: String = ALL_PLAYER
+
+        if (args.size >= 2 && args[1] != ALL_PLAYER) {
             val uuidOrPseudoArg = args[1]
 
             val uuid: UUID? = if (uuidOrPseudoArg.length == 36) {
@@ -51,9 +53,7 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
                 return
             }
 
-            uuid.toString()
-        } else {
-            ALL_PLAYER
+            currentPlayer = uuid.toString()
         }
 
         val currentPage = if (args.size >= 3 && intIsValid(args[2])) {
