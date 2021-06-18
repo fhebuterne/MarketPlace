@@ -25,7 +25,7 @@ dependencies {
     implementation("me.lucko:jar-relocator:${Versions.jarRelocator}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     // Spigot doesn't have this dependency
-    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-api:1.7.31")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
     // Plugin dependency
