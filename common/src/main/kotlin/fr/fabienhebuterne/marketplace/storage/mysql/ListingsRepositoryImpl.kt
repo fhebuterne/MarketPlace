@@ -49,7 +49,7 @@ class ListingsRepositoryImpl(
     private val json = Json
 
     override fun fromRow(row: ResultRow): Listings {
-        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
+        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance, row[version]), row[itemStack])
 
         return Listings(
             id = row[id].value,
@@ -64,12 +64,12 @@ class ListingsRepositoryImpl(
                 updatedAt = row[updatedAt],
                 expiredAt = row[expiredAt]
             ),
-            version = instance.itemStackReflection.getVersion()
+            version = row[version]
         )
     }
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Listings): UpdateBuilder<Number> {
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance, entity.version), entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
 
         entity.id?.let { insertTo[id] = EntityID(it, ListingsTable) }
         insertTo[sellerUuid] = entity.sellerUuid.toString()
@@ -85,7 +85,7 @@ class ListingsRepositoryImpl(
         if (entity.auditData.expiredAt != null) {
             insertTo[expiredAt] = entity.auditData.expiredAt
         }
-        insertTo[version] = entity.version
+        insertTo[version] = instance.itemStackReflection.getVersion()
         return insertTo
     }
 
@@ -138,7 +138,7 @@ class ListingsRepositoryImpl(
     }
 
     override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Double): Listings? {
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance), itemStack)
+        val itemStackString = instance.itemStackReflection.serializeItemStack(itemStack)
 
         return transaction(marketPlaceDb) {
             ListingsTable.select {

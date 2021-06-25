@@ -59,7 +59,7 @@ class LogsRepositoryImpl(
     private val json = Json
 
     override fun fromRow(row: ResultRow): Logs {
-        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
+        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance, row[version]), row[itemStack])
 
         return Logs(
             id = row[id].value,
@@ -78,7 +78,7 @@ class LogsRepositoryImpl(
             auditData = AuditData(
                 createdAt = row[createdAt]
             ),
-            version = instance.itemStackReflection.getVersion()
+            version = row[version]
         )
     }
 
@@ -90,7 +90,7 @@ class LogsRepositoryImpl(
         entity.adminUuid?.let { insertTo[adminUuid] = it.toString() }
         entity.adminPseudo?.let { insertTo[adminPseudo] = it }
 
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance, entity.version), entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
         insertTo[itemStack] = itemStackString
         insertTo[playerUuid] = entity.playerUuid.toString()
         insertTo[playerPseudo] = entity.playerPseudo
@@ -99,7 +99,7 @@ class LogsRepositoryImpl(
         insertTo[toLocation] = entity.toLocation
         insertTo[fromLocation] = entity.fromLocation
         insertTo[createdAt] = entity.auditData.createdAt
-        insertTo[version] = entity.version
+        insertTo[version] = instance.itemStackReflection.getVersion()
         return insertTo
     }
 
