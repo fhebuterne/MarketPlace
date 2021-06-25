@@ -45,7 +45,7 @@ class MailsRepositoryImpl(
     private val json = Json
 
     override fun fromRow(row: ResultRow): Mails {
-        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance), row[itemStack])
+        val itemStack: ItemStack = json.decodeFromString(ItemStackSerializer(instance, row[version]), row[itemStack])
 
         return Mails(
             id = row[id].value,
@@ -58,12 +58,12 @@ class MailsRepositoryImpl(
                 updatedAt = row[updatedAt],
                 expiredAt = row[expiredAt]
             ),
-            version = instance.itemStackReflection.getVersion()
+            version = row[version]
         )
     }
 
     override fun fromEntity(insertTo: UpdateBuilder<Number>, entity: Mails): UpdateBuilder<Number> {
-        val itemStackString = json.encodeToString(ItemStackSerializer(instance, entity.version), entity.itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), entity.itemStack)
 
         entity.id?.let { insertTo[id] = EntityID(it, MailsTable) }
         entity.auditData.updatedAt?.let { insertTo[updatedAt] = it }
@@ -74,7 +74,7 @@ class MailsRepositoryImpl(
         insertTo[itemStack] = itemStackString
         insertTo[quantity] = entity.quantity
         insertTo[createdAt] = entity.auditData.createdAt
-        insertTo[version] = entity.version
+        insertTo[version] = instance.itemStackReflection.getVersion()
         return insertTo
     }
 

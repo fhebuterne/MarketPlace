@@ -25,7 +25,7 @@ dependencies {
     implementation("me.lucko:jar-relocator:${Versions.jarRelocator}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     // Spigot doesn't have this dependency
-    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-api:1.7.31")
     implementation("org.slf4j:slf4j-simple:1.7.31")
 
     // Plugin dependency
@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":nms:v1_14_R1"))
     implementation(project(":nms:v1_15_R1"))
     implementation(project(":nms:v1_16_R3"))
+    implementation(project(":nms:v1_17_R1"))
     // Needed to get Versions object in Dependency class
     compileOnly(fileTree("${project.rootDir}/buildSrc/build/"))
 }

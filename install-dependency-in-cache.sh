@@ -44,7 +44,13 @@ done
 
 # for latest version we use only private ci because it is recommended to use buildtools to download latest version and not CDN
 if [ -n "$1" ]; then
-  echo "info : using private cache ci url for latest version"
+  echo "info : using private cache ci url for 1.16.5 version"
   curl -O --silent "$1"common/spigot-1.16.5.jar -u "$2:$3"
   echo "Download spigot 1.16.5 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for latest version"
+  curl -O --silent "$1"common/spigot-1.17.jar -u "$2:$3"
+  echo "Download spigot 1.17 - OK"
 fi
