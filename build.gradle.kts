@@ -45,7 +45,6 @@ allprojects {
         reports {
             xml.isEnabled = true
             csv.isEnabled = true
-            //html.destination = file("${buildDir}/jacocoHtml")
         }
     }
 
