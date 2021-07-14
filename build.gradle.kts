@@ -15,14 +15,13 @@ allprojects {
     }
 
     group = "fr.fabienhebuterne"
-    version = "1.2.0"
+    version = "1.2.1"
 
     repositories {
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://jitpack.io")
-        jcenter()
     }
 
     defaultDependencies()
