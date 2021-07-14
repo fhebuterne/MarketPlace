@@ -19,11 +19,12 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 
 ## Build
 
-MarketPlace use Gradle 6, to build use these commands :
+MarketPlace use Gradle 7, to build use these commands :
 
 ```
 bash ./install-dependency-in-cache.sh
 sh ./buildtools.sh 1.16.5
+sh ./buildtools.sh 1.17.1 (be careful you need java 16 to execute buildtools for 1.17)
 ./gradlew clean build
 ```
 
@@ -31,6 +32,7 @@ sh ./buildtools.sh 1.16.5
 
 | MC Version     | Supported    |
 |:----------------:|:--------------:|
+| 1.17.1         |✅            |
 | 1.16.5         |✅            |
 | 1.15.2         |✅            |
 | 1.14.4         |✅            |
