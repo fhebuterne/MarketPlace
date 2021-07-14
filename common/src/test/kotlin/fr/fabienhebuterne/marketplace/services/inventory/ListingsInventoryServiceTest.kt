@@ -170,11 +170,11 @@ class ListingsInventoryServiceTest : BaseTest() {
             version = 1343
         )
 
-        val validItemStack: ItemStack = initItemStackMock(Material.STAINED_GLASS_PANE)
+        val validItemStack: ItemStack = initItemStackMock(Material.GRASS)
         every { inventory.setItem(2, any()) } just Runs
         every { inventory.getItem(2) } returns validItemStack
 
-        val cancelItemStack: ItemStack = initItemStackMock(Material.STAINED_GLASS_PANE)
+        val cancelItemStack: ItemStack = initItemStackMock(Material.STONE)
         every { inventory.setItem(6, any()) } just Runs
         every { inventory.getItem(6) } returns cancelItemStack
 
@@ -184,11 +184,11 @@ class ListingsInventoryServiceTest : BaseTest() {
         // THEN
         expect {
             that(inventoryReturn.getItem(2)).get {
-                this.type
-            }.isEqualTo(Material.STAINED_GLASS_PANE)
+                this?.type
+            }.isEqualTo(Material.GRASS)
             that(inventoryReturn.getItem(6)).get {
-                this.type
-            }.isEqualTo(Material.STAINED_GLASS_PANE)
+                this?.type
+            }.isEqualTo(Material.STONE)
         }
 
     }
