@@ -3,6 +3,7 @@ package fr.fabienhebuterne.marketplace
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
 import fr.fabienhebuterne.marketplace.domain.config.Config
 import fr.fabienhebuterne.marketplace.domain.config.ConfigService
+import fr.fabienhebuterne.marketplace.domain.config.DatabaseType
 import fr.fabienhebuterne.marketplace.domain.config.Translation
 import fr.fabienhebuterne.marketplace.domain.loadInventoryFilterTranslation
 import fr.fabienhebuterne.marketplace.domain.loadInventoryLoreTranslation
@@ -29,6 +30,7 @@ import fr.fabienhebuterne.marketplace.storage.mysql.*
 import fr.fabienhebuterne.marketplace.utils.BootstrapLoader
 import fr.fabienhebuterne.marketplace.utils.CustomClassloaderAppender
 import fr.fabienhebuterne.marketplace.utils.Dependency
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.serialization.UnsafeSerializationApi
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
@@ -45,6 +47,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.bind
@@ -57,7 +60,7 @@ import java.time.Clock
 // Used only to include slf4j for spigot and include with gradle shadowJar minimize()
 var logger: Logger = LoggerFactory.getLogger(MarketPlace::class.java)
 
-const val COLLATION = "utf8mb4_0900_ai_ci"
+var COLLATION = "utf8mb4_0900_ai_ci"
 
 class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
@@ -116,6 +119,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             user = conf.database.username,
             password = conf.database.password
         )
+
+        if (conf.database.type == DatabaseType.MARIADB) {
+            COLLATION = "utf8mb4_unicode_ci"
+        }
 
         transaction {
             SchemaUtils.create(ListingsTable, MailsTable, LogsTable)

@@ -27,8 +27,13 @@ data class Database(
     val database: String = "minecraft",
     val port: Int = 3306,
     val username: String = "minecraft",
-    val password: String = ""
+    val password: String = "",
+    val type: DatabaseType = DatabaseType.MYSQL
 )
+
+enum class DatabaseType {
+    MYSQL, MARIADB
+}
 
 @Serializable
 data class Expiration(
