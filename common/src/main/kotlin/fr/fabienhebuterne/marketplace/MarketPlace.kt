@@ -242,6 +242,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return fr.fabienhebuterne.marketplace.nms.v1_17_R1.ItemStackReflection
         }
 
+        if (clazzVersion.contains("v1_18_R1")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_18_R1.ItemStackReflection
+        }
+
         return null
     }
 

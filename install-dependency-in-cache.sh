@@ -50,7 +50,32 @@ if [ -n "$1" ]; then
 fi
 
 if [ -n "$1" ]; then
-  echo "info : using private cache ci url for latest version"
+  echo "info : using private cache ci url for 1.17 version"
   curl -O --silent "$1"common/spigot-1.17.jar -u "$2:$3"
   echo "Download spigot 1.17 - OK"
+fi
+
+# spigot has separate NMS and API in 2 jars and put libs in external folder, so we need to download missing libs
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.18 - spigot NMS version"
+  curl -O --silent "$1"common/1.18/spigot-1.18.jar -u "$2:$3"
+  echo "Download spigot NMS 1.18 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.18 - spigot API version"
+  curl -O --silent "$1"common/1.18/spigot-api-1.18.jar -u "$2:$3"
+  echo "Download spigot API 1.18 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.18 - authlib 3.2.38"
+  curl -O --silent "$1"common/1.18/authlib-3.2.38.jar -u "$2:$3"
+  echo "Download spigot authlib 3.2.38 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.18 - datafixerupper 4.0.26"
+  curl -O --silent "$1"common/1.18/datafixerupper-4.0.26.jar -u "$2:$3"
+  echo "Download spigot datafixerupper 4.0.26 - OK"
 fi
