@@ -58,7 +58,7 @@ fi
 # spigot has separate NMS and API in 2 jars and put libs in external folder, so we need to download missing libs
 if [ -n "$1" ]; then
   echo "info : using private cache ci url for 1.18 - spigot NMS version"
-  curl -O --silent "$1"common/1.18/spigot-1.18.jar -u "$2:$3"
+  curl -O --silent "$1"common/1.18/spigot-1.18-R0.1-SNAPSHOT.jar -u "$2:$3"
   echo "Download spigot NMS 1.18 - OK"
 fi
 
