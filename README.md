@@ -32,6 +32,7 @@ sh ./buildtools.sh 1.17.1 (be careful you need java 16 to execute buildtools for
 
 | MC Version     | Supported    |
 |:----------------:|:--------------:|
+| 1.18           |✅            |
 | 1.17.1         |✅            |
 | 1.16.5         |✅            |
 | 1.15.2         |✅            |
