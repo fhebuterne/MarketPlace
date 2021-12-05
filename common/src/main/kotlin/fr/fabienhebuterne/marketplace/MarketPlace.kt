@@ -148,8 +148,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
 
         // Start tasks to check items expired
         val expirationService: ExpirationService by kodein.instance()
-        expirationService.startTaskExpirationListingsToMails()
-        expirationService.startTaskExpirationMailsToDelete()
+        expirationService.startTaskExpiration()
 
         isReload = false
     }

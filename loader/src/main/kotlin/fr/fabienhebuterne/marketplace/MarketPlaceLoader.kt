@@ -27,9 +27,6 @@ package fr.fabienhebuterne.marketplace
 
 import fr.fabienhebuterne.marketplace.utils.BootstrapLoader
 import fr.fabienhebuterne.marketplace.utils.CustomClassloader
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
@@ -47,19 +44,11 @@ class MarketPlaceLoader : JavaPlugin() {
     }
 
     override fun onLoad() {
-        GlobalScope.launch {
-            coroutineScope {
-                instance.onLoad()
-            }
-        }
+        instance.onLoad()
     }
 
     override fun onEnable() {
-        GlobalScope.launch {
-            coroutineScope {
-                instance.onEnable()
-            }
-        }
+        instance.onEnable()
     }
 
     override fun onDisable() {
