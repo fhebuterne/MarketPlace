@@ -103,7 +103,7 @@
     "",
     "§6Unit price: §e{{price}}$",
     "§6Total available: §e{{quantity}} article(s)",
-    "%expiration%§6Expiration dans: §e{{expiration}}",
+    "%expiration%§6Expiration in: §e{{expiration}}",
     "",
     "§c► You can't buy your items",
     "§6► Shift + Left click to remove your items",
