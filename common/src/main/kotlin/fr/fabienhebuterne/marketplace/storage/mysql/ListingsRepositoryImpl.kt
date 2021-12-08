@@ -138,7 +138,7 @@ class ListingsRepositoryImpl(
     }
 
     override fun find(sellerUuid: UUID, itemStack: ItemStack, price: Double): Listings? {
-        val itemStackString = instance.itemStackReflection.serializeItemStack(itemStack)
+        val itemStackString = json.encodeToString(ItemStackSerializer(instance), itemStack)
 
         return transaction(marketPlaceDb) {
             ListingsTable.select {
