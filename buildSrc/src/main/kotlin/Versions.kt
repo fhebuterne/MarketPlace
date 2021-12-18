@@ -3,15 +3,18 @@ object Versions {
     const val kotlinJvm = kotlin
     const val kotlinSerialization = kotlin
     const val kotlinReflect = kotlin
-    const val kotlinxCoroutines = "1.4.3"
+    const val kotlinxCoroutines = "1.5.2"
     const val kotlinx = "1.0-M1-1.4.0-rc"
-    const val kodein = "7.3.1"
-    const val mockk = "1.11.0"
-    const val strikt = "0.31.0"
-    const val junit = "5.7.1"
+    const val kodein = "7.9.0"
+    const val mockk = "1.12.1"
+    const val strikt = "0.33.0"
+    const val junit = "5.8.2"
     const val shadowJar = "7.0.0"
-    const val exposed = "0.32.1"
-    const val mysqlDriver = "8.0.23"
+    const val exposed = "0.36.2"
+    const val mysqlDriver = "8.0.27"
     const val vault = "1.7"
-    const val jodaTime = "2.10.10"
+    const val jodaTime = "2.10.13"
+    const val slf4j = "1.7.32"
+    const val exposedGradlePlugin = "0.2.1"
+    const val jacoco = "0.8.7"
 }

@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version Versions.kotlinJvm
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     id("jacoco")
-    id("com.jetbrains.exposed.gradle.plugin") version "0.2.1"
+    id("com.jetbrains.exposed.gradle.plugin") version Versions.exposedGradlePlugin
 }
 
 allprojects {
@@ -12,7 +12,7 @@ allprojects {
     apply(plugin = "jacoco")
 
     jacoco {
-        toolVersion = "0.8.7"
+        toolVersion = Versions.jacoco
     }
 
     group = "fr.fabienhebuterne"

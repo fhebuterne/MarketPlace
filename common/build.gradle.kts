@@ -1,4 +1,3 @@
-import com.jetbrains.exposed.gradle.plugin.shadowjar.kotlinRelocate
 import kotlin.system.exitProcess
 
 plugins {
@@ -26,8 +25,8 @@ dependencies {
     implementation("org.kodein.di:kodein-di-jvm:${Versions.kodein}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     // Spigot doesn't have this dependency
-    implementation("org.slf4j:slf4j-api:1.7.31")
-    implementation("org.slf4j:slf4j-simple:1.7.31")
+    implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
+    implementation("org.slf4j:slf4j-simple:${Versions.slf4j}")
 
     // Plugin dependency
     if (buildVersion == null) {
@@ -53,8 +52,6 @@ dependencies {
     implementation(project(":nms:v1_16_R3"))
     implementation(project(":nms:v1_17_R1"))
     implementation(project(":nms:v1_18_R1"))
-    // Needed to get Versions object in Dependency class
-    compileOnly(fileTree("${project.rootDir}/buildSrc/build/"))
 }
 
 tasks.shadowJar {
