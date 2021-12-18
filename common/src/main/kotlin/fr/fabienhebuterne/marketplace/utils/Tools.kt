@@ -4,6 +4,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.joda.time.Interval
 import org.joda.time.Period
+import org.joda.time.PeriodType
 import java.math.BigDecimal
 import java.text.DecimalFormat
 
@@ -45,7 +46,7 @@ fun formatInterval(currentTimestamp: Long): String? {
     }
 
     val interval = Interval(System.currentTimeMillis(), currentTimestamp)
-    val period: Period = interval.toPeriod()
+    val period: Period = interval.toPeriod(PeriodType.yearMonthDayTime())
 
     var formattedText = ""
 
