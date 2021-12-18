@@ -283,7 +283,7 @@ class MarketService(
             .filterNotNull()
             .filter { it.isSimilar(mail.itemStack) }
             .filter { it.amount < it.maxStackSize }
-            .sumBy { it.maxStackSize - it.amount }
+            .sumOf { it.maxStackSize - it.amount }
 
         val itemStack = mail.itemStack.clone()
         val maxQuantityInventoryAvailable = slotInventoryAvailable * itemStack.maxStackSize + itemPresentSlotAvailable

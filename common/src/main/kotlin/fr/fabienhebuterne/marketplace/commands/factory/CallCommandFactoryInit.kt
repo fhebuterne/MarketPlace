@@ -30,7 +30,7 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
             return true
         }
         val commandLowercase: String = if (!loadWithArgs) {
-            command.name.toLowerCase()
+            command.name.lowercase()
         } else {
             if (args.isEmpty()) {
                 val commandClassPathHelp = "$commandPath.CommandHelp"
@@ -47,11 +47,11 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
                 )
                 return true
             }
-            args[0].toLowerCase()
+            args[0].lowercase()
         }
         val commandName = commandLowercase.replaceFirst(
             commandLowercase[0].toString().toRegex(),
-            commandLowercase[0].toString().toUpperCase()
+            commandLowercase[0].toString().uppercase()
         )
         val commandClassPath = "$commandPath.Command$commandName"
         try {
@@ -103,7 +103,7 @@ class CallCommandFactoryInit<T : BootstrapLoader>(private val instance: T, priva
         val cmd: ICallCommand<BootstrapLoader> = classLoader.loadClass(commandClassPath).getConstructor(DI::class.java)
             .newInstance(kodein) as ICallCommand<BootstrapLoader>
         cmd.instance = instance
-        cmd.permission = permissionPrefix + commandName.toLowerCase()
+        cmd.permission = permissionPrefix + commandName.lowercase()
         if (commandSender is Player) {
             cmd.runAsPlayer(instance.loader.server, commandSender, commandLabel, command, args)
         } else {
