@@ -1,10 +1,6 @@
 name: MarketPlace CI - Java 8 with Kotlin
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   build:
