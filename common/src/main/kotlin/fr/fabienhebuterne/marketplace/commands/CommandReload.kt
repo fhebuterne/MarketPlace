@@ -7,7 +7,6 @@ import fr.fabienhebuterne.marketplace.domain.loadInventoryLoreTranslation
 import fr.fabienhebuterne.marketplace.domain.loadMaterialFilterConfig
 import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
 import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
-import kotlinx.serialization.UnsafeSerializationApi
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.command.Command
@@ -16,7 +15,6 @@ import org.kodein.di.DI
 
 class CommandReload(kodein: DI) : CallCommand<MarketPlace>("reload") {
 
-    @UnsafeSerializationApi
     override fun runFromPlayer(
         server: Server,
         player: Player,

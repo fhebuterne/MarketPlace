@@ -1,24 +1,19 @@
 package fr.fabienhebuterne.marketplace.domain.config
 
 import fr.fabienhebuterne.marketplace.MarketPlace
-import kotlinx.serialization.UnsafeSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import java.io.File
 import java.io.IOException
-import kotlin.reflect.KClass
 
-class ConfigService<T : Any>(
+abstract class ConfigService<T : ConfigType>(
     private val instance: MarketPlace,
-    private val fileName: String,
-    private val kClass: KClass<T>
+    private val fileName: String
 ) {
 
-    private var file: File = File(instance.loader.dataFolder, "$fileName.json")
-    private lateinit var obj: T
-    private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
+    protected var file: File = File(instance.loader.dataFolder, "$fileName.json")
+    protected lateinit var obj: T
+    protected val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
-    @UnsafeSerializationApi
     fun createAndLoadConfig(copyFromRessource: Boolean) {
         if (!file.exists()) {
             file.parentFile.mkdirs()
@@ -32,9 +27,8 @@ class ConfigService<T : Any>(
         loadConfig()
     }
 
-    @UnsafeSerializationApi
     fun loadConfig() {
-        obj = json.decodeFromString(kClass.serializer(), file.readText(Charsets.UTF_8))
+        obj = decodeFromString()
 
         // TODO : Add method to check missing key/value in current file (compare with resource jar file)
         // We save after load to add missing key if config is updated
@@ -49,12 +43,15 @@ class ConfigService<T : Any>(
         this.obj = obj
     }
 
-    @UnsafeSerializationApi
-    fun save() {
+    private fun save() {
         try {
-            file.writeText(json.encodeToString(kClass.serializer(), obj), Charsets.UTF_8)
+            file.writeText(encodeToString(), Charsets.UTF_8)
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
+
+    abstract fun decodeFromString(): T
+
+    abstract fun encodeToString(): String
 }

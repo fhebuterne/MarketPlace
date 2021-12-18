@@ -1,10 +1,7 @@
 package fr.fabienhebuterne.marketplace
 
 import fr.fabienhebuterne.marketplace.commands.factory.CallCommandFactoryInit
-import fr.fabienhebuterne.marketplace.domain.config.Config
-import fr.fabienhebuterne.marketplace.domain.config.ConfigService
-import fr.fabienhebuterne.marketplace.domain.config.DatabaseType
-import fr.fabienhebuterne.marketplace.domain.config.Translation
+import fr.fabienhebuterne.marketplace.domain.config.*
 import fr.fabienhebuterne.marketplace.domain.loadInventoryFilterTranslation
 import fr.fabienhebuterne.marketplace.domain.loadInventoryLoreTranslation
 import fr.fabienhebuterne.marketplace.domain.loadMaterialFilterConfig
@@ -28,10 +25,6 @@ import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.*
 import fr.fabienhebuterne.marketplace.utils.BootstrapLoader
-import fr.fabienhebuterne.marketplace.utils.CustomClassloaderAppender
-import fr.fabienhebuterne.marketplace.utils.Dependency
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.serialization.UnsafeSerializationApi
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -47,7 +40,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.bind
@@ -65,9 +57,9 @@ var COLLATION = "utf8mb4_0900_ai_ci"
 class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
     private var econ: Economy? = null
-    lateinit var translation: ConfigService<Translation>
+    lateinit var translation: TranslationConfigService
     lateinit var tl: Translation
-    lateinit var configService: ConfigService<Config>
+    lateinit var configService: DefaultConfigService
     lateinit var conf: Config
     lateinit var kodein: DI
     lateinit var instance: MarketPlace
@@ -75,15 +67,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     override var isReload: Boolean = false
     override lateinit var missingPermissionMessage: String
     override lateinit var reloadNotAvailableMessage: String
-    var customClassloaderAppender = CustomClassloaderAppender(javaClass.classLoader)
 
-    init {
-        val dependency = Dependency(this)
-        dependency.downloadDependencies()
-        dependency.loadDependencies()
-    }
-
-    @UnsafeSerializationApi
     override fun onEnable() {
         isReload = true
         instance = this
@@ -94,11 +78,11 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return
         }
 
-        configService = ConfigService(this.instance, "config", Config::class)
+        configService = DefaultConfigService(this.instance, "config")
         configService.createAndLoadConfig(true)
         conf = configService.getSerialization()
 
-        translation = ConfigService(this.instance, "translation-${conf.language}", Translation::class)
+        translation = TranslationConfigService(this.instance, "translation-${conf.language}")
         translation.createAndLoadConfig(true)
         tl = translation.getSerialization()
 

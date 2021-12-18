@@ -29,7 +29,7 @@ data class Translation(
     val mailItemBottomLorePlayerAdmin: List<String>,
     val commandHelp: List<String>,
     val logs: LogsTranslation
-)
+) : ConfigType
 
 @Serializable
 data class Errors(

@@ -34,10 +34,9 @@ import org.bukkit.plugin.java.JavaPlugin
 // Thanks LuckPerms for jarinjar system to load external dependencies
 class MarketPlaceLoader : JavaPlugin() {
 
-    private val jarName = "marketplace.jarinjar"
     private val bootstrapClass = "fr.fabienhebuterne.marketplace.MarketPlace"
     var instance: BootstrapLoader
-    var loader: CustomClassloader = CustomClassloader(javaClass.classLoader, jarName)
+    var loader: CustomClassloader = CustomClassloader(javaClass.classLoader)
 
     init {
         this.instance = loader.instantiatePlugin(bootstrapClass, JavaPlugin::class.java, this)

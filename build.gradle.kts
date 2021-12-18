@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version Versions.kotlinJvm
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     id("jacoco")
+    id("com.jetbrains.exposed.gradle.plugin") version "0.2.1"
 }
 
 allprojects {
@@ -11,7 +12,7 @@ allprojects {
     apply(plugin = "jacoco")
 
     jacoco {
-        toolVersion = "0.8.6"
+        toolVersion = "0.8.7"
     }
 
     group = "fr.fabienhebuterne"
@@ -27,7 +28,7 @@ allprojects {
     defaultDependencies()
 
     dependencies {
-        implementation("${Artefacts.kotlinGroup}:kotlin-reflect:${Versions.kotlinReflect}")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinReflect}")
         testImplementation("io.mockk:mockk:${Versions.mockk}")
         testImplementation("io.strikt:strikt-core:${Versions.strikt}")
         testImplementation("org.junit.jupiter:junit-jupiter:${Versions.junit}")
@@ -42,8 +43,8 @@ allprojects {
     tasks.jacocoTestReport {
         dependsOn(tasks.test)
         reports {
-            xml.isEnabled = true
-            csv.isEnabled = true
+            xml.required.set(true)
+            csv.required.set(true)
         }
     }
 

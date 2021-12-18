@@ -1,8 +1,6 @@
 package fr.fabienhebuterne.marketplace
 
-import fr.fabienhebuterne.marketplace.domain.config.Config
-import fr.fabienhebuterne.marketplace.domain.config.ConfigService
-import fr.fabienhebuterne.marketplace.domain.config.Translation
+import fr.fabienhebuterne.marketplace.domain.config.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -38,14 +36,13 @@ abstract class BaseTest {
     val commandLabel = "marketplace"
     val permissionPrefix = "marketplace."
 
-    @UnsafeSerializationApi
     @BeforeEach
     fun initDefault() {
         every { marketPlace.loader } returns javaPluginMock
         every { marketPlace.loader.dataFolder } returns filepath.toFile()
         every { marketPlace.loader.server } returns serverMock
 
-        val configTranslationService = ConfigService(marketPlace, "translation-fr", Translation::class)
+        val configTranslationService = TranslationConfigService(marketPlace, "translation-fr")
         configTranslationService.loadConfig()
         translation = configTranslationService.getSerialization()
 
@@ -53,7 +50,7 @@ abstract class BaseTest {
         every { marketPlace.missingPermissionMessage } returns translation.errors.missingPermission
         every { marketPlace.reloadNotAvailableMessage } returns translation.errors.reloadNotAvailable
 
-        val configService = ConfigService(marketPlace, "config", Config::class)
+        val configService = DefaultConfigService(marketPlace, "config")
         configService.loadConfig()
         config = configService.getSerialization()
 

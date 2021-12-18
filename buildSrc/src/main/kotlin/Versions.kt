@@ -1,5 +1,5 @@
 object Versions {
-    private const val kotlin = "1.4.31"
+    private const val kotlin = "1.6.10"
     const val kotlinJvm = kotlin
     const val kotlinSerialization = kotlin
     const val kotlinReflect = kotlin
@@ -13,6 +13,5 @@ object Versions {
     const val exposed = "0.32.1"
     const val mysqlDriver = "8.0.23"
     const val vault = "1.7"
-    const val jarRelocator = "1.3"
     const val jodaTime = "2.10.10"
 }

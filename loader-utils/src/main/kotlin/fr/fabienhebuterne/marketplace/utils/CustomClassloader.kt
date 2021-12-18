@@ -25,29 +25,14 @@
 
 package fr.fabienhebuterne.marketplace.utils
 
-import java.io.IOException
 import java.lang.reflect.Constructor
-import java.net.MalformedURLException
-import java.net.URL
 import java.net.URLClassLoader
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
 
 // Thanks LuckPerms for jarinjar system to load external dependencies
-class CustomClassloader(parent: ClassLoader, jarResourcePath: String) : URLClassLoader(
-    arrayOf(
-        extractJar(
-            parent,
-            jarResourcePath
-        )
-    ),
+class CustomClassloader(parent: ClassLoader) : URLClassLoader(
+    arrayOf(),
     parent
 ) {
-
-    fun addJar(url: URL) {
-        super.addURL(url)
-    }
 
     fun <T> instantiatePlugin(bootstrapClass: String, loaderPluginType: Class<T>, loaderPlugin: T): BootstrapLoader {
         val plugin: Class<out BootstrapLoader>
@@ -69,35 +54,4 @@ class CustomClassloader(parent: ClassLoader, jarResourcePath: String) : URLClass
         }
     }
 
-    companion object {
-        private fun extractJar(loaderClassLoader: ClassLoader, jarResourcePath: String): URL {
-            // get the jar-in-jar resource
-            val jarInJar =
-                loaderClassLoader.getResource(jarResourcePath)
-                    ?: throw IllegalAccessException("Could not locate jar-in-jar")
-
-            // create a temporary file
-            // on posix systems by default this is only read/writable by the process owner
-            val path: Path = try {
-                Files.createTempFile("marketplace-jarinjar", ".jar.tmp")
-            } catch (e: IOException) {
-                throw IllegalAccessException("Unable to create a temporary file")
-            }
-
-            // mark that the file should be deleted on exit
-            path.toFile().deleteOnExit()
-
-            // copy the jar-in-jar to the temporary file path
-            try {
-                jarInJar.openStream().use { `in` -> Files.copy(`in`, path, StandardCopyOption.REPLACE_EXISTING) }
-            } catch (e: IOException) {
-                throw IllegalAccessException("Unable to copy jar-in-jar to temporary path")
-            }
-            return try {
-                path.toUri().toURL()
-            } catch (e: MalformedURLException) {
-                throw IllegalAccessException("Unable to get URL from path")
-            }
-        }
-    }
 }

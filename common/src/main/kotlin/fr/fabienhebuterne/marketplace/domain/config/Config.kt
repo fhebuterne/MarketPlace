@@ -13,7 +13,7 @@ data class Config(
     val inventoryLoreMaterial: InventoryLoreMaterial,
     val inventoryValidItem: String,
     val inventoryCancelItem: String
-)
+): ConfigType
 
 @Serializable
 data class InventoryLoreMaterial(

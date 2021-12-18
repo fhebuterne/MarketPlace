@@ -1,3 +1,4 @@
+import com.jetbrains.exposed.gradle.plugin.shadowjar.kotlinRelocate
 import kotlin.system.exitProcess
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("com.jetbrains.exposed.gradle.plugin")
 }
 
 sourceSets["main"].compileClasspath += files("${project.rootDir}/buildSrc/build/")
@@ -15,14 +17,13 @@ val buildVersion: String? by project
 
 dependencies {
     // Tech Stack dependency
-    compileOnly("${Artefacts.exposedGroup}:exposed-core:${Versions.exposed}")
-    compileOnly("${Artefacts.exposedGroup}:exposed-dao:${Versions.exposed}")
-    compileOnly("${Artefacts.exposedGroup}:exposed-jdbc:${Versions.exposed}")
-    compileOnly("mysql:mysql-connector-java:${Versions.mysqlDriver}")
-    compileOnly("${Artefacts.kotlinxGroup}:kotlinx-serialization-runtime:${Versions.kotlinx}")
+    implementation("org.jetbrains.exposed:exposed-core:${Versions.exposed}")
+    implementation("org.jetbrains.exposed:exposed-dao:${Versions.exposed}")
+    implementation("org.jetbrains.exposed:exposed-jdbc:${Versions.exposed}")
+    implementation("mysql:mysql-connector-java:${Versions.mysqlDriver}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinx}")
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.vault}")
     implementation("org.kodein.di:kodein-di-jvm:${Versions.kodein}")
-    implementation("me.lucko:jar-relocator:${Versions.jarRelocator}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
     // Spigot doesn't have this dependency
     implementation("org.slf4j:slf4j-api:1.7.31")
@@ -57,18 +58,26 @@ dependencies {
 }
 
 tasks.shadowJar {
-    minimize()
+    mergeServiceFiles()
 
-    archiveFileName.set("marketplace.jarinjar")
-
-    dependencies {
-        exclude(dependency("${Artefacts.exposedGroup}:*"))
-        exclude(dependency("${Artefacts.kotlinxGroup}:*"))
-        exclude(dependency("com.mysql:*"))
+    // relocate kotlin libs
+    relocate("kotlinx", "fr.fabienhebuterne.marketplace.libs.kotlinx")
+    relocate("kotlin", "fr.fabienhebuterne.marketplace.libs.kotlin") {
+        include("%regex[^kotlin/.*]")
     }
+    relocate("org.kodein", "fr.fabienhebuterne.marketplace.libs.org.kodein")
+    relocate("org.jetbrains.exposed", "fr.fabienhebuterne.marketplace.libs.org.jetbrains.exposed")
 
+    // relocate java libs
+    relocate("org.intellij", "fr.fabienhebuterne.marketplace.libs.org.intellij")
+    relocate("org.jetbrains.annotations", "fr.fabienhebuterne.marketplace.libs.org.jetbrains.annotations")
+    relocate("org.joda.time", "fr.fabienhebuterne.marketplace.libs.org.joda.time")
     relocate("com.mysql", "fr.fabienhebuterne.marketplace.libs.mysql")
-    relocate(Artefacts.kotlinxGroup, "fr.fabienhebuterne.marketplace.libs.kotlinx")
+    relocate("org.slf4j", "fr.fabienhebuterne.marketplace.libs.org.slf4j")
+    relocate("com.google", "fr.fabienhebuterne.marketplace.libs.com.google")
+
+    exclude("DebugProbesKt.bin")
+    exclude("module-info.class")
 }
 
 tasks.build {
