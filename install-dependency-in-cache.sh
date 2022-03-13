@@ -70,7 +70,7 @@ fi
 
 if [ -n "$1" ]; then
   echo "info : using private cache ci url for 1.18 - authlib 3.2.38"
-  curl -O --silent "$1"common/1.18/authlib-3.2.38.jar -u "$2:$3" --output-dir ./1.18.2
+  curl -O --silent "$1"common/1.18/authlib-3.2.38.jar -u "$2:$3"
   echo "Download spigot authlib 3.2.38 - OK"
 fi
 
