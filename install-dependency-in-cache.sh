@@ -90,7 +90,7 @@ fi
 
 if [ -n "$1" ]; then
   echo "info : using private cache ci url for 1.18.2 - spigot 1.18.2"
-  curl -O --silent "$1"common/1.18.2/spigot-1.18.2.jar -u "$2:$3" --output-dir ./1.18.2
+  curl -O --silent "$1"common/1.18.2/spigot-1.18.2-R0.1-SNAPSHOT.jar -u "$2:$3" --output-dir ./1.18.2
   echo "Download spigot 1.18.2 - OK"
 fi
 
