@@ -81,7 +81,7 @@ if [ -n "$1" ]; then
 fi
 
 ## 1.18.2
-mkdir 1.18.2
+mkdir 1.18.2 && cd 1.18.2 || exit
 
 if [ -n "$1" ]; then
   echo "info : using private cache ci url for 1.18.2 - authlib 3.3.39"
