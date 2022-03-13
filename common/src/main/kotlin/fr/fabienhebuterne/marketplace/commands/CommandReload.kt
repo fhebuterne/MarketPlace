@@ -5,6 +5,7 @@ import fr.fabienhebuterne.marketplace.commands.factory.CallCommand
 import fr.fabienhebuterne.marketplace.domain.loadInventoryFilterTranslation
 import fr.fabienhebuterne.marketplace.domain.loadInventoryLoreTranslation
 import fr.fabienhebuterne.marketplace.domain.loadMaterialFilterConfig
+import fr.fabienhebuterne.marketplace.domain.loadSkull
 import fr.fabienhebuterne.marketplace.exceptions.loadEmptyHandExceptionTranslation
 import fr.fabienhebuterne.marketplace.exceptions.loadNotEnoughMoneyExceptionTranslation
 import org.bukkit.Bukkit
@@ -40,6 +41,7 @@ class CommandReload(kodein: DI) : CallCommand<MarketPlace>("reload") {
         loadEmptyHandExceptionTranslation(instance.tl.errors.handEmpty)
         loadNotEnoughMoneyExceptionTranslation(instance.tl.errors.notEnoughMoney)
         loadMaterialFilterConfig(instance.conf.inventoryLoreMaterial.filter)
+        loadSkull(instance.itemStackReflection)
 
         player.sendMessage(instance.tl.commandReloadFinish)
         instance.isReload = false

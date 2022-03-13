@@ -3,10 +3,12 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.project
 
-fun Project.nmsDependencies(version: String) {
+fun Project.nmsDependencies(version: String, customPath: String? = null) {
+    val path = customPath ?: "../../tmp"
+
     dependencies {
         "implementation"(project(":nms:Interfaces"))
-        "compileOnly"(files("../../tmp/spigot-$version.jar"))
+        "compileOnly"(files("$path/spigot-$version.jar"))
     }
 }
 

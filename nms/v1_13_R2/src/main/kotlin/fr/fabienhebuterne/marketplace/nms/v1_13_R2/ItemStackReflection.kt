@@ -32,11 +32,12 @@ object ItemStackReflection : IItemStackReflection {
         return CraftItemStack.asBukkitCopy(itemStackNMS)
     }
 
-    override fun getSkull(textureEncoded: String): ItemStack {
+    override fun getSkull(textureUrl: String): ItemStack {
+        val encodedTexture = Base64.getEncoder().encodeToString("{\"textures\":{\"SKIN\":{\"url\":\"$textureUrl\"}}}".toByteArray())
         val head = ItemStack(Material.PLAYER_HEAD, 1)
         val headMeta = head.itemMeta as SkullMeta
         val profile = GameProfile(UUID.randomUUID(), null)
-        profile.properties.put("textures", Property("textures", textureEncoded))
+        profile.properties.put("textures", Property("textures", encodedTexture))
         val profileField: Field
         try {
             profileField = headMeta.javaClass.getDeclaredField("profile");

@@ -155,7 +155,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private fun initDependencyInjection(database: Database) {
         val clock = Clock.systemDefaultZone()
         kodein = DI {
-            bind<IItemStackReflection>() with singleton { initItemStackNms() ?: throw Exception() }
+            bind<IItemStackReflection>() with singleton { initItemStackNms() }
             bind<ListingsRepository>() with singleton { ListingsRepositoryImpl(instance, database) }
             bind<MailsRepository>() with singleton { MailsRepositoryImpl(instance, database) }
             bind<LogsRepository>() with singleton { LogsRepositoryImpl(instance, database) }
@@ -198,7 +198,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         }
     }
 
-    private fun initItemStackNms(): IItemStackReflection? {
+    private fun initItemStackNms(): IItemStackReflection {
         val clazzVersion = Bukkit.getServer().javaClass.getPackage().name
 
         if (clazzVersion.contains("v1_12_R1")) {
@@ -229,7 +229,11 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return fr.fabienhebuterne.marketplace.nms.v1_18_R1.ItemStackReflection
         }
 
-        return null
+        if (clazzVersion.contains("v1_18_R2")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_18_R2.ItemStackReflection
+        }
+
+        throw IllegalStateException("current server version is not supported by MarketPlace")
     }
 
     override fun onDisable() {
