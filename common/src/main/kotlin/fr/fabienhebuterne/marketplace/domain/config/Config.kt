@@ -32,7 +32,7 @@ data class Database(
 )
 
 enum class DatabaseType {
-    MYSQL, MARIADB
+    MYSQL, MARIADB, SQLITE
 }
 
 @Serializable

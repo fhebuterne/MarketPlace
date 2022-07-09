@@ -19,6 +19,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:${Versions.exposed}")
     implementation("org.jetbrains.exposed:exposed-dao:${Versions.exposed}")
     implementation("org.jetbrains.exposed:exposed-jdbc:${Versions.exposed}")
+    implementation("org.xerial:sqlite-jdbc:${Versions.sqlite}")
     implementation("mysql:mysql-connector-java:${Versions.mysqlDriver}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinx}")
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.vault}")

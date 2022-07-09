@@ -52,7 +52,7 @@ import java.time.Clock
 // Used only to include slf4j for spigot and include with gradle shadowJar minimize()
 var logger: Logger = LoggerFactory.getLogger(MarketPlace::class.java)
 
-var COLLATION = "utf8mb4_0900_ai_ci"
+var COLLATION: String? = "utf8mb4_unicode_ci"
 
 class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
     private lateinit var callCommandFactoryInit: CallCommandFactoryInit<BootstrapLoader>
@@ -97,22 +97,28 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
 
         callCommandFactoryInit = CallCommandFactoryInit(this, "marketplace")
 
-        val database = Database.connect(
-            url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC",
-            driver = "fr.fabienhebuterne.marketplace.libs.mysql.cj.jdbc.Driver",
-            user = conf.database.username,
-            password = conf.database.password
-        )
-
-        if (conf.database.type == DatabaseType.MARIADB) {
-            COLLATION = "utf8mb4_unicode_ci"
+        val database = if (conf.database.type == DatabaseType.SQLITE) {
+            COLLATION = null
+            Database.connect(
+                url = "jdbc:sqlite:${this.loader.dataFolder.toPath().resolve("data.db").toUri()}",
+                driver = "org.sqlite.JDBC"
+            )
+        } else {
+            Database.connect(
+                url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC",
+                driver = "fr.fabienhebuterne.marketplace.libs.mysql.cj.jdbc.Driver",
+                user = conf.database.username,
+                password = conf.database.password
+            )
         }
 
         transaction {
             SchemaUtils.create(ListingsTable, MailsTable, LogsTable)
-            exec(convertTableToUtf8(ListingsTable))
-            exec(convertTableToUtf8(MailsTable))
-            exec(convertTableToUtf8(LogsTable))
+            if (conf.database.type != DatabaseType.SQLITE) {
+                exec(convertTableToUtf8(ListingsTable))
+                exec(convertTableToUtf8(MailsTable))
+                exec(convertTableToUtf8(LogsTable))
+            }
         }
 
         initDependencyInjection(database)

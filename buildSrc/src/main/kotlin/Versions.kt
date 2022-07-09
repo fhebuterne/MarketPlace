@@ -17,4 +17,5 @@ object Versions {
     const val slf4j = "1.7.32"
     const val exposedGradlePlugin = "0.2.1"
     const val jacoco = "0.8.7"
+    const val sqlite = "3.30.1"
 }
