@@ -14,7 +14,7 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 ## Requirements
 
 - Java 8
-- MySQL 8.0
+- MySQL 8.0 (Optional now, since MarketPlace 1.6.0 has SQLite support)
 - Vault
 
 ## Build
@@ -32,7 +32,8 @@ sh ./buildtools.sh 1.17.1 (be careful you need java 16 to execute buildtools for
 
 | MC Version     | Supported    |
 |:----------------:|:--------------:|
-| 1.18           |✅            |
+| 1.19           |✅            |
+| 1.18.2         |✅            |
 | 1.17.1         |✅            |
 | 1.16.5         |✅            |
 | 1.15.2         |✅            |
