@@ -4,10 +4,10 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-nmsDependencies("1.18-R0.1-SNAPSHOT")
+nmsDependencies("1.18-R0.1-SNAPSHOT", "../../tmp/1.18")
 
 dependencies {
-    "compileOnly"(files("../../tmp/spigot-api-1.18.jar"))
-    "compileOnly"(files("../../tmp/authlib-3.2.38.jar"))
-    "compileOnly"(files("../../tmp/datafixerupper-4.0.26.jar"))
+    "compileOnly"(files("../../tmp/1.18/spigot-api-1.18.jar"))
+    "compileOnly"(files("../../tmp/1.18/authlib-3.2.38.jar"))
+    "compileOnly"(files("../../tmp/1.18/datafixerupper-4.0.26.jar"))
 }

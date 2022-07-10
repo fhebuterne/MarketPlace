@@ -55,6 +55,9 @@ if [ -n "$1" ]; then
   echo "Download spigot 1.17 - OK"
 fi
 
+## 1.18.2
+mkdir 1.18 && cd 1.18 || exit
+
 # spigot has separate NMS and API in 2 jars and put libs in external folder, so we need to download missing libs
 if [ -n "$1" ]; then
   echo "info : using private cache ci url for 1.18 - spigot NMS version"
@@ -81,6 +84,7 @@ if [ -n "$1" ]; then
 fi
 
 ## 1.18.2
+cd ..
 mkdir 1.18.2 && cd 1.18.2 || exit
 
 if [ -n "$1" ]; then
@@ -99,4 +103,26 @@ if [ -n "$1" ]; then
   echo "info : using private cache ci url for 1.18.2 - datafixerupper 4.1.27"
   curl -O --silent "$1"common/1.18.2/datafixerupper-4.1.27.jar -u "$2:$3"
   echo "Download spigot datafixerupper 4.1.27 - OK"
+fi
+
+## 1.19
+cd ..
+mkdir 1.19 && cd 1.19 || exit
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.19 - authlib 3.5.41"
+  curl -O --silent "$1"common/1.19/authlib-3.5.41.jar -u "$2:$3"
+  echo "Download spigot authlib 3.5.41 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.19 - spigot 1.19"
+  curl -O --silent "$1"common/1.19/spigot-1.19-R0.1-SNAPSHOT.jar -u "$2:$3"
+  echo "Download spigot 1.19 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.19 - datafixerupper 5.0.28"
+  curl -O --silent "$1"common/1.19/datafixerupper-5.0.28.jar -u "$2:$3"
+  echo "Download spigot datafixerupper 5.0.28 - OK"
 fi

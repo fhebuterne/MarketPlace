@@ -11,5 +11,6 @@ include(
     "nms:v1_16_R3",
     "nms:v1_17_R1",
     "nms:v1_18_R1",
-    "nms:v1_18_R2"
+    "nms:v1_18_R2",
+    "nms:v1_19_R1"
 )
