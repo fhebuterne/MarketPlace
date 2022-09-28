@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version Versions.kotlinJvm
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     id("jacoco")
-    id("com.jetbrains.exposed.gradle.plugin") version Versions.exposedGradlePlugin
+    id("com.jetbrains.exposed.gradle.plugin") version 0.2.1
 }
 
 allprojects {
