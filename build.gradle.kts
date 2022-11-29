@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version Versions.shadowJar
     kotlin("jvm") version Versions.kotlinJvm
-    kotlin("plugin.serialization") version Versions.kotlinSerialization
+    kotlin("plugin.serialization") version 1.7.22
     id("jacoco")
     id("com.jetbrains.exposed.gradle.plugin") version Versions.exposedGradlePlugin
 }
