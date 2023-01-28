@@ -5,7 +5,8 @@
     "database": "minecraft",
     "port": 3306,
     "username": "minecraft",
-    "password": ""
+    "password": "",
+    "type": "SQLITE"
   },
   "expiration": {
     "playerToListings": 604800,
