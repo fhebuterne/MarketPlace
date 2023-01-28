@@ -45,8 +45,6 @@ object ItemStackReflection : IItemStackReflection {
         val ownerProfile = headMeta.ownerProfile
         val texture = ownerProfile?.textures
 
-        Bukkit.getVersion()
-
         texture?.skin = URL(textureUrl)
         ownerProfile?.setTextures(texture)
         headMeta.ownerProfile = ownerProfile
