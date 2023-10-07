@@ -1,4 +1,4 @@
-package fr.fabienhebuterne.marketplace.nms.v1_20_R1
+package fr.fabienhebuterne.marketplace.nms.v1_20_R2
 
 import com.mojang.serialization.Dynamic
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
@@ -10,7 +10,7 @@ import net.minecraft.util.datafix.DataConverterRegistry
 import net.minecraft.util.datafix.fixes.DataConverterTypes
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.net.URL
@@ -18,8 +18,8 @@ import java.net.URL
 
 object ItemStackReflection : IItemStackReflection {
 
-    private const val DATA_VERSION_V1_19_R3 = 3337
     private const val DATA_VERSION_V1_20_R1 = 3465
+    private const val DATA_VERSION_V1_20_R2 = 3578
 
     override fun serializeItemStack(itemStack: ItemStack): String {
         val nbtTagSerialized = NBTTagCompound()
@@ -53,17 +53,17 @@ object ItemStackReflection : IItemStackReflection {
     }
 
     private fun updateToLatestMinecraft(item: NBTTagCompound, currentItemVersion: Int?): NBTTagCompound {
-        val itemVersion: Int = currentItemVersion ?: DATA_VERSION_V1_19_R3
+        val itemVersion: Int = currentItemVersion ?: DATA_VERSION_V1_20_R1
         val input: Dynamic<NBTBase> = Dynamic(DynamicOpsNBT.a, item)
         val result: Dynamic<NBTBase> = DataConverterRegistry.a().update(
             DataConverterTypes.m,
             input,
             itemVersion,
-            DATA_VERSION_V1_20_R1
+            DATA_VERSION_V1_20_R2
         )
         return result.value as NBTTagCompound
     }
 
-    override fun getVersion(): Int = DATA_VERSION_V1_20_R1
+    override fun getVersion(): Int = DATA_VERSION_V1_20_R2
 
 }

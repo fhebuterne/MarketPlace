@@ -255,6 +255,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return fr.fabienhebuterne.marketplace.nms.v1_20_R1.ItemStackReflection
         }
 
+        if (clazzVersion.contains("v1_20_R2")) {
+            return fr.fabienhebuterne.marketplace.nms.v1_20_R2.ItemStackReflection
+        }
+
         throw IllegalStateException("current server version is not supported by MarketPlace")
     }
 

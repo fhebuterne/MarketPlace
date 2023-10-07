@@ -189,3 +189,24 @@ if [ -n "$1" ]; then
   curl -O --silent "$1"common/1.20.1/datafixerupper-6.0.8.jar -u "$2:$3"
   echo "Download spigot datafixerupper 6.0.8 - OK"
 fi
+
+cd ..
+mkdir 1.20.2 && cd 1.20.2 || exit
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.20.2 - authlib 5.0.47"
+  curl -O --silent "$1"common/1.20.2/authlib-5.0.47.jar -u "$2:$3"
+  echo "Download spigot authlib 5.0.47 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.20.2 - spigot 1.20.2"
+  curl -O --silent "$1"common/1.20.2/spigot-1.20.2-R0.1-SNAPSHOT.jar -u "$2:$3"
+  echo "Download spigot 1.20.2 - OK"
+fi
+
+if [ -n "$1" ]; then
+  echo "info : using private cache ci url for 1.20.2 - datafixerupper 6.0.8"
+  curl -O --silent "$1"common/1.20.2/datafixerupper-6.0.8.jar -u "$2:$3"
+  echo "Download spigot datafixerupper 6.0.8 - OK"
+fi

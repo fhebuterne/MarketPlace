@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":nms:v1_19_R2"))
     implementation(project(":nms:v1_19_R3"))
     implementation(project(":nms:v1_20_R1"))
+    implementation(project(":nms:v1_20_R2"))
 }
 
 tasks.shadowJar {
