@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version Versions.shadowJar
+    id("com.github.johnrengelman.shadow") version 8.1.0
     kotlin("jvm") version Versions.kotlinJvm
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     id("jacoco")
