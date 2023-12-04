@@ -1,6 +1,7 @@
 package fr.fabienhebuterne.marketplace.domain.config
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class Config(
@@ -38,7 +39,12 @@ enum class DatabaseType {
 @Serializable
 data class Expiration(
     val playerToListings: Long = 604800,
+    val listingsToMailsEnabled: Boolean = true,
     val listingsToMails: Long = 604800,
     val listingsToMailsNotifCommand: List<String>,
+    val mailsToDeleteEnabled: Boolean = true,
     val mailsToDeleteNotifCommand: List<String>
-)
+) {
+    @Transient
+    val allExpirationsDisabled = !listingsToMailsEnabled && !mailsToDeleteEnabled
+}

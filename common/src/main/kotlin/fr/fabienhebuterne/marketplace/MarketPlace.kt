@@ -197,7 +197,8 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
                     instance(),
                     instance(),
                     instance(),
-                    instance()
+                    instance(),
+                    configService
                 )
             }
             bind<MigrationService>() with singleton { MigrationService(instance, instance(), instance(), instance()) }

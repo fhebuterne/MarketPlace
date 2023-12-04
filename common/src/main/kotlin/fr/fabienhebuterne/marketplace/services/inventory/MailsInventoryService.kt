@@ -57,14 +57,18 @@ class MailsInventoryService(
             it.replace(ConfigPlaceholder.QUANTITY.placeholder, paginated.quantity.toString())
         }
 
-        paginated.auditData.expiredAt?.let { expiredAt ->
-            formatInterval(expiredAt)?.let { interval ->
-                loreItem?.replaceAll { it.replace(ConfigPlaceholder.EXPIRATION.placeholder, interval) }
-            }
-        } ?: loreItem?.removeIf { it.contains(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder) }
+        if (instance.conf.expiration.mailsToDeleteEnabled) {
+            paginated.auditData.expiredAt?.let { expiredAt ->
+                formatInterval(expiredAt)?.let { interval ->
+                    loreItem?.replaceAll { it.replace(ConfigPlaceholder.EXPIRATION.placeholder, interval) }
+                }
+            } ?: loreItem?.removeIf { it.contains(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder) }
 
-        loreItem?.replaceAll {
-            it.replace(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder, "")
+            loreItem?.replaceAll {
+                it.replace(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder, "")
+            }
+        } else {
+            loreItem?.removeIf { it.contains(ConfigPlaceholder.EXPIRATION_BOOLEAN.placeholder) }
         }
 
         itemMeta?.lore = loreItem
