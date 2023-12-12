@@ -16,7 +16,7 @@ allprojects {
     }
 
     group = "fr.fabienhebuterne"
-    version = "1.12.0"
+    version = System.getProperty("tagVersion") ?: "SNAPSHOT"
 
     repositories {
         mavenCentral()

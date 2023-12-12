@@ -14,12 +14,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Get the tag version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Install spigot nms dependencies
         run: bash ./install-dependency-in-cache.sh ${{ secrets.CI_URL }} ${{ secrets.CI_USER }} ${{ secrets.CI_PASSWORD }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle - Compile plugin with 1.12.2
-        run: ./gradlew clean build -PbuildVersion=1.12.2
+        run: ./gradlew clean build -PbuildVersion=1.12.2 -DtagVersion=${{ steps.get_version.outputs.VERSION }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -30,9 +33,6 @@ jobs:
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Get the tag version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Upload Release Jar
         id: upload-release-jar
         uses: actions/upload-release-asset@v1
