@@ -18,12 +18,11 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 
 ## Build
 
-MarketPlace use Gradle 7, to build use these commands :
+MarketPlace use Gradle, to build use these commands :
+Use Bash (like git base on Windows) to install dependencies
 
 ```
-bash ./install-dependency-in-cache.sh
-sh ./buildtools.sh 1.16.5
-sh ./buildtools.sh 1.17.1 (be careful you need java 16 to execute buildtools for 1.17)
+./install-dependency-in-cache.sh
 ./gradlew clean build
 ```
 
