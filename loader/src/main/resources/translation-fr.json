@@ -126,7 +126,7 @@
     "§6Total disponible: §e{{quantity}} article(s)",
     "",
     "§6► Clique gauche pour acheter 1 article",
-    "%middle%§6► Clique molette pour acheter une quantité personnalisée d'articles",
+    "%middle%§6► Appuyez sur votre touche de drop pour acheter une quantité personnalisée d'articles",
     "%right%§6► Clique droit pour acheter 64 articles",
     "",
     "%expiration%§6Expiration dans {{expiration}}",

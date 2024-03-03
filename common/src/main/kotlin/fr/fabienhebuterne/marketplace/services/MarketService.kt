@@ -13,6 +13,7 @@ import fr.fabienhebuterne.marketplace.services.pagination.MailsService
 import fr.fabienhebuterne.marketplace.storage.ListingsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.utils.convertDoubleToReadableString
+import net.md_5.bungee.api.chat.Keybinds
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -196,7 +197,7 @@ class MarketService(
             marketPlace.tl.listingItemBottomLoreSellerConfirmationRightClick
         )
 
-        if (event.click == ClickType.MIDDLE) {
+        if (event.click == ClickType.DROP) {
             playersWaitingCustomQuantity[player.uniqueId] = event.rawSlot
             marketPlace.tl.clickMiddleListingInventory
                 .map {

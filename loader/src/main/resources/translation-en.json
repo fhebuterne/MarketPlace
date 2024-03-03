@@ -126,7 +126,7 @@
     "§6Total available: §e{{quantity}} items",
     "",
     "§6► Left click to buy 1 item",
-    "%middle%§6► Middle click to buy custom quantity items",
+    "%middle%§6► Press your drop key to buy custom quantity items",
     "%right%§6► Right click to buy 64 items",
     "",
     "%expiration%§6Expiration in {{expiration}}",
