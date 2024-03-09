@@ -105,7 +105,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             )
         } else {
             Database.connect(
-                url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC",
+                url = "jdbc:mysql://${conf.database.hostname}:${conf.database.port}/${conf.database.database}?${conf.database.options}",
                 driver = "fr.fabienhebuterne.marketplace.libs.mysql.cj.jdbc.Driver",
                 user = conf.database.username,
                 password = conf.database.password

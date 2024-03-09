@@ -29,7 +29,8 @@ data class Database(
     val port: Int = 3306,
     val username: String = "minecraft",
     val password: String = "",
-    val type: DatabaseType = DatabaseType.MYSQL
+    val type: DatabaseType = DatabaseType.MYSQL,
+    val options: String = "useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC"
 )
 
 enum class DatabaseType {
