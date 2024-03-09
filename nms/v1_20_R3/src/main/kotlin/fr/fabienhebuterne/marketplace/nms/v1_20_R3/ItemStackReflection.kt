@@ -1,5 +1,6 @@
 package fr.fabienhebuterne.marketplace.nms.v1_20_R3
 
+import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Dynamic
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import net.minecraft.nbt.DynamicOpsNBT
@@ -10,10 +11,15 @@ import net.minecraft.util.datafix.DataConverterRegistry
 import net.minecraft.util.datafix.fixes.DataConverterTypes
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_20_R3.profile.CraftPlayerProfile
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.profile.PlayerProfile
+import org.bukkit.profile.PlayerTextures
 import java.net.URL
+import java.util.*
 
 
 object ItemStackReflection : IItemStackReflection {
@@ -38,16 +44,12 @@ object ItemStackReflection : IItemStackReflection {
     override fun getSkull(textureUrl: String): ItemStack {
         val head = ItemStack(Material.PLAYER_HEAD, 1)
         val headMeta = head.itemMeta as SkullMeta
-
-        // Add random GamePlayer on any Skull and next define skin on it
-        headMeta.owningPlayer = Bukkit.getOfflinePlayers()[0]
-
-        val ownerProfile = headMeta.ownerProfile
-        val texture = ownerProfile?.textures
-
-        texture?.skin = URL(textureUrl)
-        ownerProfile?.setTextures(texture)
-        headMeta.ownerProfile = ownerProfile
+        val headUUID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+        val playerProfile = Bukkit.createPlayerProfile(UUID.fromString(headUUID), "MarketPlace")
+        val texture = playerProfile.textures
+        texture.skin = URL(textureUrl)
+        playerProfile.setTextures(texture)
+        headMeta.ownerProfile = playerProfile
         head.itemMeta = headMeta
         return head
     }
