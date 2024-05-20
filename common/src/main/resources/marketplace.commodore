@@ -1,0 +1,16 @@
+marketplace {
+  add {
+    unit_price brigadier:double;
+  }
+  listings {
+    player_or_uuid brigadier:string single_word;
+  }
+  mails {
+    player_or_uuid brigadier:string single_word;
+  }
+  logs {
+    player_or_uuid brigadier:string single_word;
+  }
+  reload;
+  help;
+}

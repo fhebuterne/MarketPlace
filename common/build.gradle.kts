@@ -28,6 +28,8 @@ dependencies {
     // Spigot doesn't have this dependency
     implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
     implementation("org.slf4j:slf4j-simple:${Versions.slf4j}")
+    implementation("me.lucko:commodore:${Versions.commodore}")
+    compileOnly("com.mojang:brigadier:${Versions.brigadier}")
 
     // Plugin dependency
     if (buildVersion == null) {
@@ -81,8 +83,15 @@ tasks.shadowJar {
     relocate("org.slf4j", "fr.fabienhebuterne.marketplace.libs.org.slf4j")
     relocate("com.google", "fr.fabienhebuterne.marketplace.libs.com.google")
 
+    // relocate mc libs
+    relocate("me.lucko.commodore", "fr.fabienhebuterne.marketplace.libs.commodore")
+
     exclude("DebugProbesKt.bin")
     exclude("module-info.class")
+
+    dependencies {
+        exclude(dependency("com.mojang:brigadier"))
+    }
 }
 
 tasks.build {

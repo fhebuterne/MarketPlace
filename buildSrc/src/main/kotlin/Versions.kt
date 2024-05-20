@@ -18,4 +18,6 @@ object Versions {
     const val exposedGradlePlugin = "0.2.1"
     const val jacoco = "0.8.7"
     const val sqlite = "3.30.1"
+    const val commodore = "2.2"
+    const val brigadier = "1.0.18"
 }

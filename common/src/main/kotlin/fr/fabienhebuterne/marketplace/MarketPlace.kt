@@ -25,6 +25,8 @@ import fr.fabienhebuterne.marketplace.storage.LogsRepository
 import fr.fabienhebuterne.marketplace.storage.MailsRepository
 import fr.fabienhebuterne.marketplace.storage.mysql.*
 import fr.fabienhebuterne.marketplace.utils.BootstrapLoader
+import fr.fabienhebuterne.marketplace.utils.CommodoreService
+import me.lucko.commodore.CommodoreProvider
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -48,6 +50,7 @@ import org.kodein.di.singleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Clock
+
 
 // Used only to include slf4j for spigot and include with gradle shadowJar minimize()
 var logger: Logger = LoggerFactory.getLogger(MarketPlace::class.java)
@@ -139,6 +142,11 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
         // Start tasks to check items expired
         val expirationService: ExpirationService by kodein.instance()
         expirationService.startTaskExpiration()
+
+        if (CommodoreProvider.isSupported()) {
+            val marketPlaceCommand = this.loader.getCommand("marketplace")
+            CommodoreService().init(this.loader, marketPlaceCommand)
+        }
 
         isReload = false
     }
