@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("com.jetbrains.exposed.gradle.plugin")
+    id("org.sonarqube")
 }
 
 sourceSets["main"].compileClasspath += files("${project.rootDir}/buildSrc/build/")

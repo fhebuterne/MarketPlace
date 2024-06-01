@@ -20,4 +20,5 @@ object Versions {
     const val sqlite = "3.30.1"
     const val commodore = "2.2"
     const val brigadier = "1.0.18"
+    const val sonarQube = "5.0.0.4638"
 }

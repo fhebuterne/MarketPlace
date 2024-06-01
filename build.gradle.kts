@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     id("jacoco")
     id("com.jetbrains.exposed.gradle.plugin") version Versions.exposedGradlePlugin
+    id("org.sonarqube") version Versions.sonarQube
 }
 
 allprojects {
