@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -122,7 +123,7 @@ class ListingsRepositoryImpl(
     override fun findByLowerVersion(version: Int): List<Listings> {
         return transaction(marketPlaceDb) {
             ListingsTable
-                .select { ListingsTable.version less version }
+                .selectAll().where { ListingsTable.version less version }
                 .map { fromRow(it) }
         }
     }
@@ -130,7 +131,7 @@ class ListingsRepositoryImpl(
     override fun find(id: String): Listings? {
         return transaction(marketPlaceDb) {
             ListingsTable
-                .select { ListingsTable.id eq UUID.fromString(id) }
+                .selectAll().where { ListingsTable.id eq UUID.fromString(id) }
                 .limit(1)
                 .map { fromRow(it) }
                 .firstOrNull()
@@ -141,7 +142,7 @@ class ListingsRepositoryImpl(
         val itemStackString = json.encodeToString(ItemStackSerializer(instance), itemStack)
 
         return transaction(marketPlaceDb) {
-            ListingsTable.select {
+            ListingsTable.selectAll().where {
                 (ListingsTable.sellerUuid eq sellerUuid.toString()) and
                         (ListingsTable.itemStack eq itemStackString) and
                         (ListingsTable.price eq price)
@@ -151,7 +152,7 @@ class ListingsRepositoryImpl(
 
     override fun findByUUID(sellerUuid: UUID): List<Listings> {
         return transaction(marketPlaceDb) {
-            ListingsTable.select {
+            ListingsTable.selectAll().where {
                 ListingsTable.sellerUuid eq sellerUuid.toString()
             }.map { fromRow(it) }
         }
@@ -159,7 +160,7 @@ class ListingsRepositoryImpl(
 
     override fun findUUIDBySellerPseudo(sellerPseudo: String): UUID? {
         return transaction(marketPlaceDb) {
-            ListingsTable.select {
+            ListingsTable.selectAll().where {
                 ListingsTable.sellerPseudo eq sellerPseudo
             }.limit(1).map { fromRow(it) }.firstOrNull()?.sellerUuid
         }
@@ -200,17 +201,17 @@ class ListingsRepositoryImpl(
             if (searchKeyword == null) {
                 ListingsTable.selectAll()
             } else {
-                ListingsTable.select {
+                ListingsTable.selectAll().where {
                     itemStack like "%$searchKeyword%"
                 }
             }
         } else {
             if (searchKeyword == null) {
-                ListingsTable.select {
+                ListingsTable.selectAll().where {
                     sellerUuid eq uuid.toString()
                 }
             } else {
-                ListingsTable.select {
+                ListingsTable.selectAll().where {
                     sellerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
                 }
             }

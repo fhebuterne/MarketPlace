@@ -56,9 +56,19 @@ allprojects {
         }
     }
 
+    tasks.compileJava {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+
     tasks.compileTestKotlin {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+    }
+
+    tasks.compileTestJava {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
     }
 }

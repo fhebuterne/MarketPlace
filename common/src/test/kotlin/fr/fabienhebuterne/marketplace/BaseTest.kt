@@ -4,7 +4,6 @@ import fr.fabienhebuterne.marketplace.domain.config.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import kotlinx.serialization.UnsafeSerializationApi
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.entity.Player

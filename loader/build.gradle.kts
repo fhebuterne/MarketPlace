@@ -10,7 +10,7 @@ plugins {
 
 dependencies {
     implementation(project(":loader-utils"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinx}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinx}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinxCoroutines}")
     compileOnly(project(":common"))
     compileOnly(files("../tmp/spigot-1.12.2.jar"))
@@ -55,4 +55,24 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn("shadowJar")
+}
+
+tasks.compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+tasks.compileJava {
+    targetCompatibility = "1.8"
+}
+
+tasks.compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+tasks.compileTestJava {
+    targetCompatibility = "1.8"
 }

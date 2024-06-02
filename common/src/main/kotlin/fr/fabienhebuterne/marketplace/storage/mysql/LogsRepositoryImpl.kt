@@ -135,7 +135,7 @@ class LogsRepositoryImpl(
     override fun findByLowerVersion(version: Int): List<Logs> {
         return transaction(marketPlaceDb) {
             LogsTable
-                .select { LogsTable.version less version }
+                .selectAll().where { LogsTable.version less version }
                 .map { fromRow(it) }
         }
     }
@@ -143,7 +143,7 @@ class LogsRepositoryImpl(
     override fun find(id: String): Logs? {
         return transaction(marketPlaceDb) {
             LogsTable
-                .select { LogsTable.id eq UUID.fromString(id) }
+                .selectAll().where { LogsTable.id eq UUID.fromString(id) }
                 .limit(1)
                 .map { fromRow(it) }
                 .firstOrNull()
@@ -152,7 +152,7 @@ class LogsRepositoryImpl(
 
     override fun findByUUID(playerUuid: UUID): List<Logs> {
         return transaction(marketPlaceDb) {
-            LogsTable.select {
+            LogsTable.selectAll().where {
                 LogsTable.playerUuid eq playerUuid.toString()
             }.map { fromRow(it) }
         }
@@ -188,7 +188,7 @@ class LogsRepositoryImpl(
 
     override fun findUUIDByPseudo(playerPseudo: String): UUID? {
         val log = transaction(marketPlaceDb) {
-            LogsTable.select {
+            LogsTable.selectAll().where {
                 (LogsTable.playerPseudo eq playerPseudo) or
                         (LogsTable.sellerPseudo eq playerPseudo) or
                         (LogsTable.adminPseudo eq playerPseudo)
@@ -208,19 +208,19 @@ class LogsRepositoryImpl(
             if (searchKeyword == null) {
                 LogsTable.selectAll()
             } else {
-                LogsTable.select {
+                LogsTable.selectAll().where {
                     itemStack like "%$searchKeyword%"
                 }
             }
         } else {
             if (searchKeyword == null) {
-                LogsTable.select {
+                LogsTable.selectAll().where {
                     (sellerUuid eq uuid.toString()) or
                             (playerUuid eq uuid.toString()) or
                             (adminUuid eq uuid.toString())
                 }
             } else {
-                LogsTable.select {
+                LogsTable.selectAll().where {
                     sellerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
                 }
             }

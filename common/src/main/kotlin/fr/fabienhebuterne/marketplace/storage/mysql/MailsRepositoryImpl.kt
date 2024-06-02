@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -111,7 +112,8 @@ class MailsRepositoryImpl(
     override fun findByLowerVersion(version: Int): List<Mails> {
         return transaction(marketPlaceDb) {
             MailsTable
-                .select { MailsTable.version less version }
+                .selectAll()
+                .where { MailsTable.version less version }
                 .map { fromRow(it) }
         }
     }
@@ -119,7 +121,8 @@ class MailsRepositoryImpl(
     override fun find(id: String): Mails? {
         return transaction(marketPlaceDb) {
             MailsTable
-                .select { MailsTable.id eq UUID.fromString(id) }
+                .selectAll()
+                .where { MailsTable.id eq UUID.fromString(id) }
                 .limit(1)
                 .map { fromRow(it) }
                 .firstOrNull()
@@ -130,7 +133,7 @@ class MailsRepositoryImpl(
         val itemStackString = json.encodeToString(ItemStackSerializer(instance), itemStack)
 
         return transaction(marketPlaceDb) {
-            MailsTable.select {
+            MailsTable.selectAll().where {
                 (MailsTable.playerUuid eq playerUuid.toString()) and
                         (MailsTable.itemStack eq itemStackString)
             }.map { fromRow(it) }.firstOrNull()
@@ -139,7 +142,7 @@ class MailsRepositoryImpl(
 
     override fun findByUUID(playerUuid: UUID): List<Mails> {
         return transaction(marketPlaceDb) {
-            MailsTable.select {
+            MailsTable.selectAll().where {
                 MailsTable.playerUuid eq playerUuid.toString()
             }.map { fromRow(it) }
         }
@@ -180,11 +183,11 @@ class MailsRepositoryImpl(
             MailsTable.selectAll()
         } else {
             if (searchKeyword == null) {
-                MailsTable.select {
+                MailsTable.selectAll().where {
                     playerUuid eq uuid.toString()
                 }
             } else {
-                MailsTable.select {
+                MailsTable.selectAll().where {
                     playerUuid eq uuid.toString() and (itemStack like "%$searchKeyword%")
                 }
             }
@@ -193,7 +196,7 @@ class MailsRepositoryImpl(
 
     override fun findUuidByPseudo(playerPseudo: String): UUID? {
         val transaction = transaction(marketPlaceDb) {
-            MailsTable.select {
+            MailsTable.selectAll().where {
                 MailsTable.playerPseudo eq playerPseudo
             }.limit(1).firstOrNull()
         }
