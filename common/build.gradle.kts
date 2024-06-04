@@ -64,38 +64,5 @@ dependencies {
     implementation(project(":nms:v1_20_R1"))
     implementation(project(":nms:v1_20_R2"))
     implementation(project(":nms:v1_20_R3"))
-}
-
-tasks.shadowJar {
-    mergeServiceFiles()
-
-    // relocate kotlin libs
-    relocate("kotlinx", "fr.fabienhebuterne.marketplace.libs.kotlinx")
-    relocate("kotlin", "fr.fabienhebuterne.marketplace.libs.kotlin") {
-        include("%regex[^kotlin/.*]")
-    }
-    relocate("org.kodein", "fr.fabienhebuterne.marketplace.libs.org.kodein")
-    relocate("org.jetbrains.exposed", "fr.fabienhebuterne.marketplace.libs.org.jetbrains.exposed")
-
-    // relocate java libs
-    relocate("org.intellij", "fr.fabienhebuterne.marketplace.libs.org.intellij")
-    relocate("org.jetbrains.annotations", "fr.fabienhebuterne.marketplace.libs.org.jetbrains.annotations")
-    relocate("org.joda.time", "fr.fabienhebuterne.marketplace.libs.org.joda.time")
-    relocate("com.mysql", "fr.fabienhebuterne.marketplace.libs.mysql")
-    relocate("org.slf4j", "fr.fabienhebuterne.marketplace.libs.org.slf4j")
-    relocate("com.google", "fr.fabienhebuterne.marketplace.libs.com.google")
-
-    // relocate mc libs
-    relocate("me.lucko.commodore", "fr.fabienhebuterne.marketplace.libs.commodore")
-
-    exclude("DebugProbesKt.bin")
-    exclude("module-info.class")
-
-    dependencies {
-        exclude(dependency("com.mojang:brigadier"))
-    }
-}
-
-tasks.build {
-    dependsOn("shadowJar")
+    implementation(project(":nms:v1_20_R4"))
 }

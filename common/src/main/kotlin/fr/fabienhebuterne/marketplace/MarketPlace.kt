@@ -272,6 +272,12 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return fr.fabienhebuterne.marketplace.nms.v1_20_R3.ItemStackReflection
         }
 
+        val minecraftVersion: String = Bukkit.getServer().bukkitVersion
+
+        if (minecraftVersion == "1.20.6-R0.1-SNAPSHOT") {
+            return fr.fabienhebuterne.marketplace.nms.v1_20_R4.ItemStackReflection
+        }
+
         throw IllegalStateException("current server version is not supported by MarketPlace")
     }
 

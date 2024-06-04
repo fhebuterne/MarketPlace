@@ -3,7 +3,6 @@ object Versions {
     const val kotlinJvm = kotlin
     const val kotlinSerialization = kotlin
     const val kotlinReflect = kotlin
-    const val kotlinxCoroutines = "1.8.1"
     const val kotlinx = "1.6.3"
     const val kodein = "7.21.2"
     const val mockk = "1.13.11"

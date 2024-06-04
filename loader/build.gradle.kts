@@ -1,5 +1,3 @@
-import com.jetbrains.exposed.gradle.plugin.shadowjar.kotlinRelocate
-
 plugins {
     id("java")
     kotlin("jvm")
@@ -10,15 +8,13 @@ plugins {
 
 dependencies {
     implementation(project(":loader-utils"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinx}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinxCoroutines}")
     compileOnly(project(":common"))
     compileOnly(files("../tmp/spigot-1.12.2.jar"))
 }
 
 tasks.processResources {
     filesMatching("**/**.yml") {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         expand(project.properties)
     }
 }
@@ -37,14 +33,6 @@ tasks.shadowJar {
         archiveFileName.set("MarketPlace.jar")
     }
 
-    relocate("kotlinx", "fr.fabienhebuterne.marketplace.libs.kotlinx")
-    relocate("kotlin", "fr.fabienhebuterne.marketplace.libs.kotlin") {
-        include("%regex[^kotlin/.*]")
-    }
-
-    relocate("org.intellij", "fr.fabienhebuterne.marketplace.libs.org.intellij")
-    relocate("org.jetbrains.annotations", "fr.fabienhebuterne.marketplace.libs.org.jetbrains.annotations")
-
     exclude("DebugProbesKt.bin")
     exclude("module-info.class")
 
@@ -55,24 +43,4 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn("shadowJar")
-}
-
-tasks.compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-tasks.compileJava {
-    targetCompatibility = "1.8"
-}
-
-tasks.compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-tasks.compileTestJava {
-    targetCompatibility = "1.8"
 }
