@@ -1,0 +1,197 @@
+{
+  "errors": {
+    "numberNotValid": "§8[§6MarketPlace§8] §6§l{0} §c不是有效数字.",
+    "numberTooBig": "§8[§6MarketPlace§8] §6§l{0} §c数值过大.",
+    "handEmpty": "§8[§6MarketPlace§8] §c你的手中需要持有物品.",
+    "notEnoughMoney": "§8[§6MarketPlace§8] §c你没有足够的钱这么做.",
+    "quantityNotAvailable": "§8[§6MarketPlace§8] §c输入的购买数量已不再有效.",
+    "itemNotExist": "§8[§6MarketPlace§8] §c购买的物品不存在.",
+    "inventoryFull": "§8[§6MarketPlace§8] §c背包已满.",
+    "reloadNotAvailable": "§8[§6MarketPlace§8] §c插件正在载入, 请稍候...",
+    "missingPermission": "§8[§6MarketPlace§8] §c你没有权限这么做.",
+    "playerNotFound": "§8[§6MarketPlace§8] §c玩家不存在或未在市场上挂售物品.",
+    "operationNotAllowed": "§8[§6MarketPlace§8] &c禁止进行该操作."
+  },
+  "inventoryType": {
+    "LISTINGS": "交易市场 - 购买",
+    "MAILS": "交易市场 - 收件箱 - {{playerPseudo}}",
+    "SELL_CONFIRMATION": "交易市场 - 出售 - 确认操作"
+  },
+  "inventoryEnum": {
+    "search": {
+      "displayName": "§c搜索...",
+      "lore": []
+    },
+    "listings": {
+      "displayName": "§6商品列表",
+      "lore": []
+    },
+    "mails": {
+      "displayName": "§6收件箱",
+      "lore": []
+    },
+    "previousPage": {
+      "displayName": "§c上一页",
+      "lore": [
+        "§c第 {{currentPage}}/{{maxPage}} 页",
+        "§c物品总数: {{total}}"
+      ]
+    },
+    "nextPage": {
+      "displayName": "§c下一页",
+      "lore": [
+        "§c第 {{currentPage}}/{{maxPage}} 页",
+        "§c物品总数: {{total}}"
+      ]
+    },
+    "validateConfirmation": {
+      "displayName": "§a验证操作",
+      "lore": []
+    },
+    "cancelConfirmation": {
+      "displayName": "§c取消",
+      "lore": []
+    }
+  },
+  "inventoryFilterEnum": {
+    "createdAt": {
+      "asc": {
+        "displayName": "§c上架日期 - 升序",
+        "lore": []
+      },
+      "desc": {
+        "displayName": "§c上架日期 - 降序",
+        "lore": []
+      }
+    },
+    "expiredAt": {
+      "asc": {
+        "displayName": "§c到期时间 - 升序",
+        "lore": []
+      },
+      "desc": {
+        "displayName": "§c到期时间 - 降序",
+        "lore": []
+      }
+    },
+    "price": {
+      "asc": {
+        "displayName": "§c物品售价 - 升序",
+        "lore": []
+      },
+      "desc": {
+        "displayName": "§c物品售价 - 降序",
+        "lore": []
+      }
+    }
+  },
+  "clickMiddleListingInventory": [
+    "§8[§6MarketPlace§8] §a请输入购买物品的数量 (最多可输入: {{quantity}}).",
+    "§8[§6MarketPlace§8] §a物品: §6{{itemStack}} §a单价: §6{{price}}$",
+    "§8[§6MarketPlace§8] §8[§6MarketPlace§8] §a若要取消购买操作, 请在聊天栏中输入 '§6§lcancel§a'."
+  ],
+  "commandAddUsage": "§8[§6MarketPlace§8] §c用法: /marketplace add <售价>",
+  "commandReloadStart": "§8[§6MarketPlace§8] §a插件正在重载...",
+  "commandReloadFinish": "§8[§6MarketPlace§8] §a插件重载完毕...",
+  "listingCreated": "§8[§6MarketPlace§8] §a你以 {{unitPrice}}$ 的价格将 {{itemStack}}x{{quantity}} 上架了.",
+  "listingUpdated": "§8[§6MarketPlace§8] §a你为物品 {{itemStack}} 补货 {{addedQuantity}} 份, 当前共 {{totalQuantity}} 份物品正在出售.",
+  "itemBuy": "§8[§6MarketPlace§8] §a你花费 {{price}}$ 购买了 {{itemStack}}x{{quantity}}.",
+  "cancelBuying": "§8[§6MarketPlace§8] §a你已取消购买操作.",
+  "cancelSelling": "§8[§6MarketPlace§8] §a你已取消出售操作.",
+  "searchWaiting": "§8[§6MarketPlace§8] §a请输入物品类型 (示例: DIRT) 或物品名称/描述的关键词...",
+  "listingItemBottomLoreSeller": [
+    "",
+    "§6单价: §e{{price}}$",
+    "§6剩余: §e{{quantity}} 份物品",
+    "%expiration%§6到期时间: §e{{expiration}}",
+    "",
+    "§c► 你不能购买自己的物品",
+    "§6► Shift + 鼠标左键点击下架商品",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmationLeftClick": [
+    "",
+    "§6► 左键点击确认购买单个物品",
+    ""
+  ],
+  "listingItemBottomLoreSellerConfirmationRightClick": [
+    "",
+    "§6► 右键点击确认购买一组物品",
+    ""
+  ],
+  "listingItemBottomLorePlayer": [
+    "",
+    "§6卖家: §e{{sellerPseudo}}",
+    "§6单价: §e{{price}}$",
+    "§6剩余: §e{{quantity}} 份物品",
+    "",
+    "§6► 左键点击购买一个物品",
+    "%middle%§6► 按 Q 键自行决定购买数量",
+    "%right%§6► 右键点击购买一组物品",
+    "",
+    "%expiration%§6将在 {{expiration}} 过期",
+    ""
+  ],
+  "listingItemBottomLorePlayerAdmin": [
+    "",
+    "§c► Shift + 右键点击将物品下架并发回卖家收件箱",
+    ""
+  ],
+  "mailItemBottomLorePlayer": [
+    "",
+    "§6剩余: §e{{quantity}} 份物品",
+    "",
+    "§6► 左键点击取回所有剩余物品",
+    "",
+    "%expiration%§6将在 {{expiration}} 过期",
+    "%expiration%"
+  ],
+  "mailItemBottomLorePlayerAdmin": [
+    "",
+    "§6剩余: §e{{quantity}} 份物品",
+    "",
+    "§c► Shift + 右键点击取回剩余物品.",
+    "",
+    "%expiration%§6将在 {{expiration}} 过期",
+    "%expiration%"
+  ],
+  "commandHelp": [
+    "§8-----------------<§6§l交易市场§8>-----------------",
+    "§6/mp add <价格>: §a以指定单价将手中物品上架.",
+    "§6/mp listings [玩家名称]: §a打开在售物品列表.",
+    "§6/mp mails [玩家名称]: §a打开收件箱.",
+    "§6/mp logs: §a显示日志.",
+    "§6/mp reload: §a重载插件.",
+    "§8-------------------------------------------------"
+  ],
+  "logs": {
+    "header": "§8---------------<§6§lMarketPlace§8>---------------",
+    "footer": "§8-----%previousPage%§8---------<§6§l第 {{currentPage}}/{{maxPage}} 页§8>---------%nextPage%§8-----",
+    "previousPageExist": "§8[§6§l<§8]",
+    "previousPageNotExist": "§8---",
+    "nextPageExist": "§8[§6§l>§8]",
+    "nextPageNotExist": "§8---",
+    "previousPage": "上一页",
+    "nextPage": "下一页",
+    "prefix": "§8[§6{{logType}}§8] ",
+    "prefixHover": "{{fromLocation}} -> {{toLocation}}\n日期: {{createdAt}}",
+    "type": {
+      "BUY": "购买",
+      "SELL": "出售",
+      "EXPIRED": "已过期",
+      "CANCEL": "取消",
+      "GET": "获取"
+    },
+    "message": {
+      "BUY": "§6{{playerPseudo}} §a在 §6{{sellerPseudo}} 处以 {{price}}$ 的价格购买了 §6{{itemStack}}x{{quantity}}",
+      "SELL": "§6{{playerPseudo}} §a以 {{price}}$ 的价格上架了 §6{{itemStack}}x{{quantity}}",
+      "EXPIRED": "§6{{playerPseudo}} §a出售的 §6{{itemStack}}x{{quantity}} §a已过期",
+      "CANCEL": "§6{{playerPseudo}} §a下架了 §6{{itemStack}}x{{quantity}}",
+      "GET": "§6{{playerPseudo}} §a从收件箱中取走了 §6{{itemStack}}x{{quantity}}"
+    },
+    "adminMessage": {
+      "CANCEL": "§6{{adminPseudo}} §a下架了玩家 §6{{playerPseudo}} §a出售的 §6{{itemStack}}x{{quantity}}",
+      "GET": "§6{{adminPseudo}} §a取走了玩家 §6{{playerPseudo}} 收件箱中的 §6{{itemStack}}x{{quantity}}"
+    }
+  }
+}
