@@ -278,7 +278,7 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return fr.fabienhebuterne.marketplace.nms.v1_20_R4.ItemStackReflection
         }
 
-        if (minecraftVersion == "1.21-R0.1-SNAPSHOT") {
+        if (minecraftVersion == "1.21-R0.1-SNAPSHOT" || minecraftVersion == "1.21.1-R0.1-SNAPSHOT") {
             return fr.fabienhebuterne.marketplace.nms.v1_21_R1.ItemStackReflection
         }
 
