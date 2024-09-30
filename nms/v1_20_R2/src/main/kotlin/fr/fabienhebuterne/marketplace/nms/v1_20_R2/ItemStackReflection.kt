@@ -53,7 +53,7 @@ object ItemStackReflection : IItemStackReflection {
         val itemVersion: Int = currentItemVersion ?: DATA_VERSION_V1_20_R1
         val input: Dynamic<NBTBase> = Dynamic(DynamicOpsNBT.a, item)
         val result: Dynamic<NBTBase> = DataConverterRegistry.a().update(
-            DataConverterTypes.m,
+            DataConverterTypes.t,
             input,
             itemVersion,
             DATA_VERSION_V1_20_R2

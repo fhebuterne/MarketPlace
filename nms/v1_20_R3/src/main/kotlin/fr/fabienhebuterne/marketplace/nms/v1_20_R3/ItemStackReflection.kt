@@ -1,6 +1,5 @@
 package fr.fabienhebuterne.marketplace.nms.v1_20_R3
 
-import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Dynamic
 import fr.fabienhebuterne.marketplace.nms.interfaces.IItemStackReflection
 import net.minecraft.nbt.DynamicOpsNBT
@@ -11,13 +10,9 @@ import net.minecraft.util.datafix.DataConverterRegistry
 import net.minecraft.util.datafix.fixes.DataConverterTypes
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack
-import org.bukkit.craftbukkit.v1_20_R3.profile.CraftPlayerProfile
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
-import org.bukkit.profile.PlayerProfile
-import org.bukkit.profile.PlayerTextures
 import java.net.URL
 import java.util.*
 
@@ -58,7 +53,7 @@ object ItemStackReflection : IItemStackReflection {
         val itemVersion: Int = currentItemVersion ?: DATA_VERSION_V1_20_R2
         val input: Dynamic<NBTBase> = Dynamic(DynamicOpsNBT.a, item)
         val result: Dynamic<NBTBase> = DataConverterRegistry.a().update(
-            DataConverterTypes.m,
+            DataConverterTypes.t,
             input,
             itemVersion,
             DATA_VERSION_V1_20_R3
