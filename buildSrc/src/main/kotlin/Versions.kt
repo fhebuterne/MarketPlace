@@ -13,7 +13,6 @@ object Versions {
     const val mysqlDriver = "8.4.0"
     const val vault = "1.7.1"
     const val jodaTime = "2.12.7"
-    const val slf4j = "1.7.36"
     const val exposedGradlePlugin = "0.2.1"
     const val jacoco = "0.8.12"
     const val sqlite = "3.46.0.0"

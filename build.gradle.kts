@@ -94,7 +94,6 @@ allprojects {
         //relocate("org.jetbrains.annotations", "fr.fabienhebuterne.marketplace.libs.org.jetbrains.annotations")
         relocate("org.joda.time", "fr.fabienhebuterne.marketplace.libs.org.joda.time")
         relocate("com.mysql", "fr.fabienhebuterne.marketplace.libs.mysql")
-        relocate("org.slf4j", "fr.fabienhebuterne.marketplace.libs.org.slf4j")
         relocate("com.google", "fr.fabienhebuterne.marketplace.libs.com.google")
         relocate("org.yaml", "fr.fabienhebuterne.marketplace.libs.org.yaml")
         // relocate mc libs

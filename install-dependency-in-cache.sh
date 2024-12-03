@@ -50,6 +50,12 @@ versionsMd5=(
   '1.21:spigot-1.21-R0.1-SNAPSHOT.jar:9961507a636e6704086c0cf5705d8443'
   '1.21:authlib-6.0.54.jar:8d5cc32d757f204ed369e6b27ff99469'
   '1.21:datafixerupper-8.0.16.jar:d932ac637b6d83e6c45a8f269fe81e3b'
+  '1.21.3:spigot-1.21.3-R0.1-SNAPSHOT.jar:72ff13989fe9de4b21c0a19a06c08f9b'
+  '1.21.3:authlib-6.0.55.jar:15de61de3817e36c8051d4f378ad79b3'
+  '1.21.3:datafixerupper-8.0.16.jar:d932ac637b6d83e6c45a8f269fe81e3b'
+  '1.21.4:spigot-1.21.4-R0.1-SNAPSHOT.jar:5b19eb7363596253b49ecde141005689'
+  '1.21.4:authlib-6.0.57.jar:f6c1f2b733258d1dc74533cbad0da8f6'
+  '1.21.4:datafixerupper-8.0.16.jar:d932ac637b6d83e6c45a8f269fe81e3b'
 )
 
 for versionWithMd5 in "${versionsMd5[@]}"; do

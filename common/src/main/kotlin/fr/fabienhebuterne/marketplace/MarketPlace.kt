@@ -47,13 +47,7 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.time.Clock
-
-
-// Used only to include slf4j for spigot and include with gradle shadowJar minimize()
-var logger: Logger = LoggerFactory.getLogger(MarketPlace::class.java)
 
 var COLLATION: String? = "utf8mb4_unicode_ci"
 
@@ -280,6 +274,14 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
 
         if (minecraftVersion == "1.21-R0.1-SNAPSHOT" || minecraftVersion == "1.21.1-R0.1-SNAPSHOT") {
             return fr.fabienhebuterne.marketplace.nms.v1_21_R1.ItemStackReflection
+        }
+
+        if (minecraftVersion == "1.21.3-R0.1-SNAPSHOT") {
+            return fr.fabienhebuterne.marketplace.nms.v1_21_R2.ItemStackReflection
+        }
+
+        if (minecraftVersion == "1.21.4-R0.1-SNAPSHOT") {
+            return fr.fabienhebuterne.marketplace.nms.v1_21_R3.ItemStackReflection
         }
 
         throw IllegalStateException("current server version is not supported by MarketPlace")

@@ -27,9 +27,6 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.vault}")
     implementation("org.kodein.di:kodein-di-jvm:${Versions.kodein}")
     implementation("joda-time:joda-time:${Versions.jodaTime}")
-    // Spigot doesn't have this dependency
-    implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
-    implementation("org.slf4j:slf4j-simple:${Versions.slf4j}")
     implementation("me.lucko:commodore:${Versions.commodore}")
     compileOnly("com.mojang:brigadier:${Versions.brigadier}")
 
@@ -66,4 +63,6 @@ dependencies {
     implementation(project(":nms:v1_20_R3"))
     implementation(project(":nms:v1_20_R4"))
     implementation(project(":nms:v1_21_R1"))
+    implementation(project(":nms:v1_21_R2"))
+    implementation(project(":nms:v1_21_R3"))
 }
