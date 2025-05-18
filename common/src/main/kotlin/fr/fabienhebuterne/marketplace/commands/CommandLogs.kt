@@ -142,10 +142,13 @@ class CommandLogs(kodein: DI) : CallCommand<MarketPlace>("logs") {
         prefix.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(prefixHover).create())
 
         val msg = TextComponent("")
-        msg.hoverEvent = HoverEvent(
-            HoverEvent.Action.SHOW_ITEM,
-            ComponentBuilder(itemStackReflection.serializeItemStack(logs.itemStack)).create()
-        )
+        // todo fhe : temporary disabled hover item in mp logs in 1.21.5 because cause error - need more time to find solution
+        if (itemStackReflection.getVersion() < 4325) {
+            msg.hoverEvent = HoverEvent(
+                HoverEvent.Action.SHOW_ITEM,
+                ComponentBuilder(itemStackReflection.serializeItemStack(logs.itemStack)).create()
+            )
+        }
         TextComponent.fromLegacyText(getMessageLogType(logs)).forEach {
             msg.addExtra(it)
         }
