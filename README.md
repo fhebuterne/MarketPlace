@@ -30,7 +30,8 @@ Use Bash (like git base on Windows) to install dependencies
 
 | MC Version | Supported    |
 |:----------:|:--------------:|
-|   1.20.X   |✅            |
+|   1.21.5   |✅            |
+|   1.20.6   |✅            |
 |   1.19.4   |✅            |
 |   1.18.2   |✅            |
 |   1.17.1   |✅            |

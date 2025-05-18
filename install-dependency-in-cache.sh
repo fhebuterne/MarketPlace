@@ -56,6 +56,9 @@ versionsMd5=(
   '1.21.4:spigot-1.21.4-R0.1-SNAPSHOT.jar:5b19eb7363596253b49ecde141005689'
   '1.21.4:authlib-6.0.57.jar:f6c1f2b733258d1dc74533cbad0da8f6'
   '1.21.4:datafixerupper-8.0.16.jar:d932ac637b6d83e6c45a8f269fe81e3b'
+  '1.21.5:spigot-1.21.5-R0.1-SNAPSHOT.jar:913a8885b38e01bdf8227da3745c7e1b'
+  '1.21.5:authlib-6.0.58.jar:8ac0063cc5e2d350f3bacf1da509181d'
+  '1.21.5:datafixerupper-8.0.16.jar:d932ac637b6d83e6c45a8f269fe81e3b'
 )
 
 for versionWithMd5 in "${versionsMd5[@]}"; do
