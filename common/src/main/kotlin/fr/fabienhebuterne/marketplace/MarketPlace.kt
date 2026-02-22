@@ -292,6 +292,10 @@ class MarketPlace(override var loader: JavaPlugin) : BootstrapLoader {
             return fr.fabienhebuterne.marketplace.nms.v1_21_R5.ItemStackReflection
         }
 
+        if (minecraftVersion == "1.21.10-R0.1-SNAPSHOT") {
+            return fr.fabienhebuterne.marketplace.nms.v1_21_R6.ItemStackReflection
+        }
+
         throw IllegalStateException("current server version is not supported by MarketPlace")
     }
 
