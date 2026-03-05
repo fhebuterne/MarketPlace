@@ -41,7 +41,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             // to avoid duplication on shadowJar
-            force("org.jetbrains:annotations:13.0")
+            force("org.jetbrains:annotations:24.1.0")
             force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinJvm}")
             force("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinReflect}")
         }
